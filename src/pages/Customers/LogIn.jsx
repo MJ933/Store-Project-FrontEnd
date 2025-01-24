@@ -8,8 +8,8 @@ import { useNavigate, useLocation } from "react-router-dom"; // Add this for nav
 
 const LogIn = () => {
   const location = useLocation(); // Initialize useLocation
-  const [emailOrPhone, setEmailOrPhone] = useState("jane.smith@example.com"); // Combined input for email or phone
-  const [password, setPassword] = useState("1");
+  const [emailOrPhone, setEmailOrPhone] = useState(""); // Combined input for email or phone
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loginMethod, setLoginMethod] = useState("email"); // Default to email
   const [userType, setUserType] = useState("customer"); // Default to customer
@@ -164,7 +164,7 @@ const LogIn = () => {
             type="button"
             onClick={() => {
               setLoginMethod("email");
-              setEmailOrPhone("jane.smith@example.com");
+              setEmailOrPhone("");
             }}
             className={`px-4 py-2 rounded-md font-medium ${
               loginMethod === "email"
@@ -178,7 +178,7 @@ const LogIn = () => {
             type="button"
             onClick={() => {
               setLoginMethod("phone");
-              setEmailOrPhone("999");
+              setEmailOrPhone("");
             }}
             className={`px-4 py-2 rounded-md font-medium ${
               loginMethod === "phone"
