@@ -28,7 +28,7 @@ const ProductCard = ({ product, image }) => {
   };
 
   const handleImageError = (e) => {
-    e.target.src = "https://via.placeholder.com/300";
+    e.target.src = "https://dummyimage.com/300x300/cccccc/000000&text=No+Image";
     e.target.onerror = null; // Prevent infinite loop
   };
 
@@ -65,7 +65,7 @@ const ProductCard = ({ product, image }) => {
       </div>
 
       <div className="p-4 flex flex-col flex-grow">
-        <h3 className="text-sm  font-semibold text-gray-800 mb-2 line-clamp-2">
+        <h3 className="text-sm font-semibold text-gray-800 mb-2 line-clamp-2">
           {product.productName}
         </h3>
         <p className="text-sm text-gray-600 mb-2">
@@ -85,7 +85,7 @@ const ProductCard = ({ product, image }) => {
           {product.isActive ? (
             <>
               <FaCartPlus className="mr-2" />
-              {/* Add to Cart */}
+              Add to Cart
             </>
           ) : (
             "Out of Stock"

@@ -112,12 +112,14 @@ const ProductPage = () => {
             <div className="relative w-full aspect-square overflow-hidden rounded-lg">
               <img
                 src={
-                  product.image?.imageURL || "https://via.placeholder.com/500"
+                  product.image?.imageURL ||
+                  "https://dummyimage.com/500x500/cccccc/000000&text=No+Image"
                 }
                 alt={product.product.productName}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 onError={(e) => {
-                  e.target.src = "https://via.placeholder.com/500";
+                  e.target.src =
+                    "https://dummyimage.com/500x500/cccccc/000000&text=No+Image";
                   e.target.onerror = null; // Prevent infinite loop
                 }}
               />
