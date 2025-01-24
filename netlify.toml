@@ -1,28 +1,8 @@
 [build]
-  command = "npm run build"  # Build command for Vite
-  publish = "dist"           # Vite's default output folder
+  command = "npm run build"
+  publish = "dist"
 
-# Headers configuration
-[[headers]]
-  for = "/*"  # Apply to all paths
-  [headers.values]
-    # Minimal Permissions-Policy (removes problematic features)
-    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
-    
-    # Security headers
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://ik.imagekit.io; connect-src 'self' https://storeapi-gxhdd9grbsducwc5.uaenorth-01.azurewebsites.net;"
-
-# SPA redirects (fix 404 errors for routes like /login)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Optional: Custom 404 page (if you have one)
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 404
