@@ -116,6 +116,10 @@ const ProductPage = () => {
                 }
                 alt={product.product.productName}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/500";
+                  e.target.onerror = null; // Prevent infinite loop
+                }}
               />
               <a
                 href={product.image?.imageURL}
