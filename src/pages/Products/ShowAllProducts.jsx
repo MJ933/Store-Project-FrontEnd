@@ -17,7 +17,7 @@ const ShowAllProducts = () => {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("No authentication token found");
+      // if (!token) throw new Error("No authentication token found");
 
       const response = await fetch(
         `${api.baseURL()}/API/ProductsAPI/GetALLWithImgPaged?pageNumber=${currentPage}&pageSize=${pageSize}`,
