@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
 
-export default function AddUpdateEmployee({ employee = {}, isShow, onClose }) {
+export default function AddUpdateEmployee({
+  employee = {},
+  isShow,
+  onClose,
+  showAlert,
+  refreshEmployees,
+}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -37,8 +43,8 @@ export default function AddUpdateEmployee({ employee = {}, isShow, onClose }) {
   const apiConfig = {
     method: isUpdateEmployee ? "PUT" : "POST",
     url: isUpdateEmployee
-      ? `${api.baseURL()}API/EmployeesAPI/Update/${employee.employeeID}`
-      : `${api.baseURL()}API/EmployeesAPI/Create`,
+      ? `${api.baseURL()}/API/EmployeesAPI/Update/${employee.employeeID}`
+      : `${api.baseURL()}/API/EmployeesAPI/Create`,
   };
 
   const handleChange = (e) => {
@@ -74,6 +80,9 @@ export default function AddUpdateEmployee({ employee = {}, isShow, onClose }) {
 
       const result = await response.json();
       setSuccess(true);
+      showAlert("Employee Added/Updated Successfully", "success");
+      refreshEmployees();
+      handleClose();
     } catch (error) {
       setError(error.message);
     } finally {
@@ -197,6 +206,12 @@ export default function AddUpdateEmployee({ employee = {}, isShow, onClose }) {
                 ? "Update Employee"
                 : "Add Employee"}
             </button>
+            <button
+              className="ml-96 mt-10 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              onClick={handleClose}
+            >
+              Close
+            </button>
           </div>
           {error && <div className="text-red-600 mt-4">{error}</div>}
           {success && (
@@ -206,12 +221,6 @@ export default function AddUpdateEmployee({ employee = {}, isShow, onClose }) {
           )}
         </form>
       )}
-      <button
-        className="ml-96 mt-10 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        onClick={handleClose}
-      >
-        Close
-      </button>
     </div>
   );
 }

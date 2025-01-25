@@ -6,19 +6,17 @@ export default function AddNewUpdateCustomer({
   customer = {},
   isShow,
   onClose,
-  isSignUp = false, // New prop for sign-up flow
+  isSignUp = false,
+  showAlert,
+  refresh,
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  // Determine if this is an update or a new customer
   const isUpdateCustomer = Boolean(customer?.customerID);
-  if (!isShow) {
-    return null; // Don't render if the component is not shown or customer data is missing
-  }
-  // Initialize form data based on the `customer` prop
+
   const initialFormData = {
     customerID: customer?.customerID || 0,
     firstName: customer?.firstName || "",
@@ -32,30 +30,19 @@ export default function AddNewUpdateCustomer({
 
   const [formData, setFormData] = useState(initialFormData);
 
-  // Update form data when the `customer` prop changes
   useEffect(() => {
-    setFormData({
-      customerID: customer?.customerID || 0,
-      firstName: customer?.firstName || "",
-      lastName: customer?.lastName || "",
-      email: customer?.email || "",
-      phone: customer?.phone || "",
-      registeredAt: customer?.registeredAt || new Date().toISOString(),
-      isActive: customer?.isActive || true,
-      password: customer?.password || "",
-    });
+    setFormData(initialFormData);
   }, [customer]);
+
   const api = new API();
 
-  // API configuration based on whether it's an update or a new customer
   const apiConfig = {
     method: isUpdateCustomer ? "PUT" : "POST",
     url: isUpdateCustomer
-      ? `${api.baseURL()}API/CustomersAPI/update/${customer.customerID}`
-      : `${api.baseURL()}API/CustomersAPI/Create`,
+      ? `${api.baseURL()}/API/CustomersAPI/update/${customer.customerID}`
+      : `${api.baseURL()}/API/CustomersAPI/Create`,
   };
 
-  // Handle form input changes
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
     setFormData({
@@ -64,7 +51,6 @@ export default function AddNewUpdateCustomer({
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -103,8 +89,13 @@ export default function AddNewUpdateCustomer({
 
       const result = await response.json();
       setSuccess(true);
+      showAlert(
+        isSignUp
+          ? "Sign-up successful!"
+          : `Customer ${isUpdateCustomer ? "updated" : "added"} successfully!`,
+        "success"
+      );
 
-      // Redirect after successful sign-up
       if (isSignUp) {
         navigate("/login", {
           state: {
@@ -113,9 +104,14 @@ export default function AddNewUpdateCustomer({
             password: formData.password,
           },
         });
+      } else {
+        refresh(); // Refresh the customer list
+        onClose(); // Close the modal
       }
     } catch (error) {
+      console.error("Error:", error);
       setError(error.message);
+      showAlert(error.message, "error");
     } finally {
       setLoading(false);
     }
@@ -130,13 +126,38 @@ export default function AddNewUpdateCustomer({
   };
 
   return (
-    <div className="mb-8">
-      {isShow && (
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md"
-        >
-          <div className="grid grid-cols-2 gap-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
+        <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            {isSignUp
+              ? "Sign Up"
+              : isUpdateCustomer
+              ? "Edit Customer"
+              : "Create New Customer"}
+          </h2>
+          <button
+            onClick={handleClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-8 py-6 space-y-6">
+          <div className="grid grid-cols-2 gap-6">
             {!isSignUp && (
               <input
                 type="hidden"
@@ -145,8 +166,8 @@ export default function AddNewUpdateCustomer({
               />
             )}
 
-            <div className="col-span-1">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                 First Name
               </label>
               <input
@@ -154,13 +175,14 @@ export default function AddNewUpdateCustomer({
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                placeholder="Enter first name"
                 required
               />
             </div>
 
-            <div className="col-span-1">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                 Last Name
               </label>
               <input
@@ -168,13 +190,14 @@ export default function AddNewUpdateCustomer({
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                placeholder="Enter last name"
                 required
               />
             </div>
 
-            <div className="col-span-1">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                 Email
               </label>
               <input
@@ -182,13 +205,14 @@ export default function AddNewUpdateCustomer({
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                placeholder="Enter email"
                 required
               />
             </div>
 
-            <div className="col-span-1">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                 Phone
               </label>
               <input
@@ -196,13 +220,14 @@ export default function AddNewUpdateCustomer({
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                placeholder="Enter phone number"
                 required
               />
             </div>
 
-            <div className="col-span-1">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
                 Password
               </label>
               <input
@@ -210,63 +235,124 @@ export default function AddNewUpdateCustomer({
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                placeholder="Enter password"
                 required
               />
             </div>
 
             {!isSignUp && (
-              <div className="col-span-1">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
-                  Is Active
-                </label>
-                <input
-                  type="checkbox"
-                  name="isActive"
-                  checked={formData.isActive}
-                  onChange={handleChange}
-                  className="mr-2 leading-tight"
-                />
-                <span className="text-sm">Customer is active</span>
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="isActive"
+                    id="isActive"
+                    checked={formData.isActive}
+                    onChange={handleChange}
+                    className="w-5 h-5 text-purple-600 border-2 border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 cursor-pointer transition-all"
+                  />
+                  <label
+                    htmlFor="isActive"
+                    className="ml-3 text-sm text-gray-600 cursor-pointer select-none"
+                  >
+                    Active Status
+                  </label>
+                </div>
               </div>
             )}
           </div>
 
-          <div className="flex items-center justify-between mt-4">
+          <div className="flex justify-end space-x-4 pt-6 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="px-6 py-2.5 text-gray-600 hover:text-gray-800 font-medium rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               disabled={loading}
+              className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading
-                ? isUpdateCustomer
-                  ? "Updating..."
-                  : "Adding..."
-                : isSignUp
-                ? "Sign Up"
-                : isUpdateCustomer
-                ? "Update Customer"
-                : "Add Customer"}
+              {loading ? (
+                <span className="flex items-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  {isSignUp
+                    ? "Signing Up..."
+                    : isUpdateCustomer
+                    ? "Updating..."
+                    : "Creating..."}
+                </span>
+              ) : isSignUp ? (
+                "Sign Up"
+              ) : isUpdateCustomer ? (
+                "Update Customer"
+              ) : (
+                "Create Customer"
+              )}
             </button>
           </div>
 
-          {error && <div className="text-red-600 mt-4">{error}</div>}
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-lg flex items-center space-x-2">
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
+
           {success && (
-            <div className="text-green-600 mt-4">
-              {isSignUp
-                ? "Sign-up successful!"
-                : "Customer added/updated successfully!"}
+            <div className="mt-4 p-4 bg-green-50 text-green-700 rounded-lg flex items-center space-x-2">
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>
+                {isSignUp
+                  ? "Sign-up successful!"
+                  : "Customer added/updated successfully!"}
+              </span>
             </div>
           )}
         </form>
-      )}
-
-      <button
-        className="ml-96 mt-10 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        onClick={handleClose}
-      >
-        Close
-      </button>
+      </div>
     </div>
   );
 }

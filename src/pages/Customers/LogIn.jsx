@@ -11,7 +11,7 @@ const LogIn = () => {
   const [emailOrPhone, setEmailOrPhone] = useState(""); // Combined input for email or phone
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loginMethod, setLoginMethod] = useState("email"); // Default to email
+  const [loginMethod, setLoginMethod] = useState("phone"); // Default to email
   const [userType, setUserType] = useState("customer"); // Default to customer
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -41,13 +41,13 @@ const LogIn = () => {
       if (userType === "customer") {
         endpoint =
           loginMethod === "email"
-            ? `${api.baseURL()}api/Auth/LoginCustomerByEmail`
-            : `${api.baseURL()}api/Auth/LoginCustomerByPhone`;
+            ? `${api.baseURL()}/API/Auth/LoginCustomerByEmail`
+            : `${api.baseURL()}/API/Auth/LoginCustomerByPhone`;
       } else {
         endpoint =
           loginMethod === "email"
-            ? `${api.baseURL()}api/Auth/LoginEmployeeByEmail`
-            : `${api.baseURL()}api/Auth/LoginEmployeeByPhone`;
+            ? `${api.baseURL()}/API/Auth/LoginEmployeeByEmail`
+            : `${api.baseURL()}/API/Auth/LoginEmployeeByPhone`;
       }
 
       const response = await axios.post(endpoint, {
@@ -88,11 +88,11 @@ const LogIn = () => {
       const response = await fetch(
         userType === "customer"
           ? loginMethod === "phone"
-            ? `${api.baseURL()}API/CustomersAPI/GetCustomerByPhone/${userIdentifier}`
-            : `${api.baseURL()}API/CustomersAPI/GetCustomerByEmail/${userIdentifier}`
+            ? `${api.baseURL()}/API/CustomersAPI/GetCustomerByPhone/${userIdentifier}`
+            : `${api.baseURL()}/API/CustomersAPI/GetCustomerByEmail/${userIdentifier}`
           : loginMethod === "phone"
-          ? `${api.baseURL()}API/EmployeesAPI/GetEmployeeByPhone/${userIdentifier}`
-          : `${api.baseURL()}API/EmployeesAPI/GetEmployeeByEmail/${userIdentifier}`,
+          ? `${api.baseURL()}/API/EmployeesAPI/GetEmployeeByPhone/${userIdentifier}`
+          : `${api.baseURL()}/API/EmployeesAPI/GetEmployeeByEmail/${userIdentifier}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

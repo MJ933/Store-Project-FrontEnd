@@ -21,7 +21,7 @@ export default function FindProduct() {
 
     try {
       const response = await fetch(
-        `${api.baseURL()}API/ProductsAPI/FindAndImageByProductID/${productId}`,
+        `${api.baseURL()}/API/ProductsAPI/FindAndImageByProductID/${productId}`,
         {
           method: "GET",
           headers: {

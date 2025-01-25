@@ -9,11 +9,14 @@ const ShowAllCategories = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${api.baseURL()}API/CategoriesAPI/GetAll`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await fetch(
+        `${api.baseURL()}/API/CategoriesAPI/GetAll`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }

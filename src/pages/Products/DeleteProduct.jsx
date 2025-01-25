@@ -6,6 +6,8 @@ const DeleteProduct = ({
   product = { product: {}, image: {} },
   isShow,
   onClose,
+  showAlert,
+  refreshProducts,
 }) => {
   const [productID, setProductID] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,7 @@ const DeleteProduct = ({
 
     try {
       const response = await fetch(
-        `${api.baseURL()}API/ProductsAPI/Delete/${productID}`,
+        `${api.baseURL()}/API/ProductsAPI/Delete/${productID}`,
         {
           method: "DELETE",
           headers: {
@@ -54,7 +56,9 @@ const DeleteProduct = ({
       }
 
       setSuccess(true);
-      setProductID(""); // Reset the input field
+      showAlert("Product Deleted Successfully", "success");
+      refreshProducts();
+      onClose();
     } catch (err) {
       setError(err.message);
     } finally {

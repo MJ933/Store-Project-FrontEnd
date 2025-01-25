@@ -2,9 +2,18 @@ import React, { useState, useEffect } from "react";
 import clsOrders from "../../Classes/clsOrders";
 import clsOrderItems from "../../Classes/clsOrderItems";
 import ManageOrderItems from "../OrderItems/ManageOrderItems";
+import ModernLoader from "../../components/ModernLoader";
+import ErrorComponent from "../../components/Error";
 
-export default function AddNewUpdateOrder({ order = {}, isShow, onClose }) {
+export default function AddNewUpdateOrder({
+  order = {},
+  isShow,
+  onClose,
+  showAlert,
+  refreshOrders,
+}) {
   const [loading, setLoading] = useState(false);
+  const [loadingOrderItems, setLoadingOrderItems] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [orderItems, setOrderItems] = useState([]);
@@ -31,12 +40,15 @@ export default function AddNewUpdateOrder({ order = {}, isShow, onClose }) {
   }, [order?.orderID, isUpdateOrder]);
 
   const fetchOrderItems = async (orderID) => {
+    setLoadingOrderItems(true);
     try {
       const orderItemInstance = new clsOrderItems();
       const data = await orderItemInstance.fetchOrderItemsByOrderID(orderID);
       setOrderItems(data);
     } catch (error) {
       setError(error.message);
+    } finally {
+      setLoadingOrderItems(false);
     }
   };
 
@@ -74,6 +86,9 @@ export default function AddNewUpdateOrder({ order = {}, isShow, onClose }) {
       }
 
       setSuccess(true);
+      refreshOrders();
+      showAlert("Order Added/Updated Successfully", "success");
+      onClose();
     } catch (error) {
       setError(error.message);
     } finally {
@@ -88,6 +103,13 @@ export default function AddNewUpdateOrder({ order = {}, isShow, onClose }) {
           onSubmit={handleSubmit}
           className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md"
         >
+          {loadingOrderItems && <ModernLoader />}
+          {error && (
+            <ErrorComponent
+              message={error}
+              onClose={() => setError(null)} // Clear the error when the user closes it
+            />
+          )}
           <div className="grid grid-cols-2 gap-4">
             <input type="hidden" name="orderID" value={formData.orderID} />
 
@@ -186,7 +208,7 @@ export default function AddNewUpdateOrder({ order = {}, isShow, onClose }) {
             <button
               type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              disabled={loading}
+              disabled={loading || loadingOrderItems}
             >
               {loading
                 ? isUpdateOrder
@@ -204,7 +226,8 @@ export default function AddNewUpdateOrder({ order = {}, isShow, onClose }) {
             </button>
           </div>
 
-          {error && <div className="text-red-600 mt-4">{error}</div>}
+          {/* {error && <div className="text-red-600 mt-4">{error}</div>} */}
+
           {success && (
             <div className="text-green-600 mt-4">
               Order {isUpdateOrder ? "Updated" : "Added"} successfully!

@@ -26,7 +26,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${api.baseURL()}API/OrdersAPI/GetOrdersByCustomerID/${
+          `${api.baseURL()}/API/OrdersAPI/GetOrdersByCustomerID/${
             customer.customerID
           }`,
           {
@@ -60,7 +60,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
       setError(null); // Reset error state before fetching
       try {
         const response = await fetch(
-          `${api.baseURL()}API/OrderItemsAPI/GetOrderItemByOrderID/${
+          `${api.baseURL()}/API/OrderItemsAPI/GetOrderItemByOrderID/${
             selectedOrder.orderID
           }`,
           {
@@ -107,7 +107,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${api.baseURL()}API/OrdersAPI/UpdateOrderStatusByOrderID/${orderID}/Canceled`,
+        `${api.baseURL()}/API/OrdersAPI/UpdateOrderStatusByOrderID/${orderID}/Canceled`,
         {
           method: "Put",
         }

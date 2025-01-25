@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import API from "../../Classes/clsAPI";
 
-const DeleteEmployee = ({ employee = {}, isShow, onClose }) => {
+const DeleteEmployee = ({
+  employee = {},
+  isShow,
+  onClose,
+  showAlert,
+  refreshEmployees,
+}) => {
   const [employeeID, setEmployeeID] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,7 +34,7 @@ const DeleteEmployee = ({ employee = {}, isShow, onClose }) => {
 
     try {
       const response = await fetch(
-        `${api.baseURL()}API/EmployeesAPI/Delete/${employeeID}`,
+        `${api.baseURL()}/API/EmployeesAPI/Delete/${employeeID}`,
         {
           method: "DELETE",
           headers: {
@@ -49,7 +55,9 @@ const DeleteEmployee = ({ employee = {}, isShow, onClose }) => {
       }
 
       setSuccess(true);
-      setEmployeeID(0);
+      showAlert("Employee Deleted Successfully", "success");
+      refreshEmployees();
+      onClose();
     } catch (err) {
       setError(err.message);
     } finally {

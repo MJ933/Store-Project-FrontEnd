@@ -19,7 +19,7 @@ const ProductPage = () => {
     const fetchProductDetails = async () => {
       try {
         const response = await fetch(
-          `${api.baseURL()}API/ProductsAPI/GetProductAndImageByID/${productID}`,
+          `${api.baseURL()}/API/ProductsAPI/GetProductAndImageByID/${productID}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
