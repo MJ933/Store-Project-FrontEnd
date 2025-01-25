@@ -1,6 +1,6 @@
 class clsCustomerService {
   api() {
-    return "https://localhost:7269";
+    return "https://storeapi-gxhdd9grbsducwc5.uaenorth-01.azurewebsites.net";
   }
 }
 
