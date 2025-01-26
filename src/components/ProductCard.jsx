@@ -34,29 +34,29 @@ const ProductCard = ({ product, image }) => {
 
   return (
     <div
-      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full cursor-pointer"
+      className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer border border-gray-100 overflow-hidden hover:-translate-y-1"
       onClick={handleProductClick}
     >
-      <div className="relative w-full aspect-square overflow-hidden">
+      <div className="relative w-full aspect-square overflow-hidden group">
         {image?.imageURL ? (
           <img
             src={image.imageURL}
             alt={product.productName}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             onError={handleImageError}
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-xs sm:text-sm">
+          <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400 text-sm">
             No Image Available
           </div>
         )}
-        <div className="absolute top-0 right-0 p-2">
+        <div className="absolute top-2 right-2">
           <span
-            className={`text-xs sm:text-sm leading-tight px-2 py-1 font-semibold rounded-full ${
+            className={`text-xs px-3 py-1 rounded-full ${
               product.isActive
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
+                ? "bg-green-500/20 text-green-700"
+                : "bg-red-500/20 text-red-700"
             }`}
           >
             {product.isActive ? "In Stock" : "Out of Stock"}
@@ -64,31 +64,31 @@ const ProductCard = ({ product, image }) => {
         </div>
       </div>
 
-      <div className="p-4 flex flex-col flex-grow">
-        <h3 className="text-xs sm:text-sm md:text-base font-semibold text-gray-800 mb-2 line-clamp-2">
+      <div className="p-4 flex flex-col flex-grow gap-2">
+        <h3 className="text-gray-900 font-medium text-sm sm:text-base line-clamp-2">
           {product.productName}
         </h3>
-        <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2">
-          <span className="font-bold text-gray-900">
-            ${product.sellingPrice?.toFixed(2) || "0.00"}
-          </span>
+
+        <p className="text-lg font-bold text-gray-900 mt-1">
+          ${product.sellingPrice?.toFixed(2) || "0.00"}
         </p>
-        <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-4 line-clamp-3">
+
+        <p className="text-gray-500 text-sm line-clamp-3 mb-3">
           {product.description || "No description available"}
         </p>
 
         <button
-          className="mt-auto w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-300 text-xs sm:text-sm md:text-base flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-auto w-full bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 text-sm flex items-center justify-center gap-2 disabled:opacity-70 disabled:bg-gray-400 disabled:bg-none disabled:cursor-not-allowed"
           onClick={handleAddToCart}
           disabled={!product.isActive}
         >
           {product.isActive ? (
             <>
-              <FaCartPlus className="mr-2 text-sm md:text-base" />
+              <FaCartPlus className="text-base" />
               Add to Cart
             </>
           ) : (
-            "Out of Stock"
+            "Unavailable"
           )}
         </button>
       </div>

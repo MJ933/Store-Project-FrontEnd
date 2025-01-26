@@ -11,7 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutCustomer } from "../redux/features/auth/authCustomerSlice";
 import { logoutEmployee } from "../redux/features/auth/authEmployeeSlice";
 import { FaCartPlus } from "react-icons/fa6";
-import { setSearchQuery } from "../redux/features/search/searchSlice";
+import {
+  clearSearchQuery,
+  setSearchQuery,
+} from "../redux/features/search/searchSlice";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -101,7 +104,7 @@ const Navbar = () => {
           {/* Right Side: Icons (Cart, Profile, Login/Logout) */}
           <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Search Icon (Only on Home Page) */}
-            {location.pathname === "/" && (
+            {["/", "/products/ShowAllProducts"].includes(location.pathname) && (
               <>
                 {/* Search Icon (Mobile) */}
                 <button
@@ -167,7 +170,11 @@ const Navbar = () => {
                 Find
               </button>
               <button
-                onClick={() => setIsSearchOpen(false)}
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  clearSearchQuery();
+                  dispatch(clearSearchQuery());
+                }}
                 className="p-2 text-gray-800 hover:text-cyan-600 focus:outline-none"
               >
                 <RiCloseLine className="w-5 h-5" />

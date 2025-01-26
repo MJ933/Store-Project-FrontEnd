@@ -19,6 +19,7 @@ import AddNewUpdateEmployee from "../pages/Employees/AddUpdateEmployee";
 import EmployeePage from "../pages/Employees/EmployeePage";
 import CustomerOrders from "../pages/Customers/CustomerOrders";
 import ProductPage from "../pages/Products/ProductPage";
+import HomePage from "../components/HomePage";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <ShowAllProducts />,
+        element: <HomePage />,
+      },
+      {
+        path: "/products/ShowAllProducts",
+        element: <ShowAllProducts selectedCategoryId={null} />,
       },
       {
         path: "/products/manage",
