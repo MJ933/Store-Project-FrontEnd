@@ -1,11 +1,19 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+
 import AddNewUpdateOrder from "./AddUpdateOrder";
+
 import OrderPage from "./OrderPage";
+
 import clsOrders from "../../Classes/clsOrders";
-import { FiEye, FiEdit, FiTrash2, FiPlus } from "react-icons/fi";
+
+import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi"; // Import FiFilter and FiX
+
 import API from "../../Classes/clsAPI";
+
 import Alert from "../../components/Alert";
+
 import ModernLoader from "../../components/ModernLoader";
+import Pagination from "../../components/Pagination"; // Import Pagination component
 
 const ManageOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -19,6 +27,36 @@ const ManageOrders = () => {
   });
   const [alertMessage, setAlertMessage] = useState(null);
   const [alertType, setAlertType] = useState("success"); // 'success' or 'error'
+  const initialLoad = useRef(true);
+  const scrollPositionRef = useRef(0);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // Filter state
+  const [filterOrderID, setFilterOrderID] = useState("");
+  const [filterCustomerID, setFilterCustomerID] = useState("");
+  const [filterOrderDate, setFilterOrderDate] = useState("");
+  const [filterTotal, setFilterTotal] = useState("");
+  const [filterOrderStatus, setFilterOrderStatus] = useState("");
+  const [filterShippingAddress, setFilterShippingAddress] = useState("");
+  const [filterNotes, setFilterNotes] = useState("");
+  const [appliedFilters, setAppliedFilters] = useState({
+    orderID: "",
+    customerID: "",
+    orderDate: "",
+    total: "",
+    orderStatus: "",
+    shippingAddress: "",
+    notes: "",
+  });
+
+  // Filter visibility state
+  const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+  const [filterChanged, setFilterChanged] = useState(false);
 
   const statusStyles = {
     Pending: "bg-yellow-100 text-yellow-800",
@@ -35,21 +73,77 @@ const ManageOrders = () => {
     }, 3000); // Hide alert after 3 seconds
   };
 
-  const fetchOrders = useCallback(async () => {
+  const fetchPaginatedOrders = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    scrollPositionRef.current = window.scrollY;
     try {
-      const orderInstance = new clsOrders();
-      const data = await orderInstance.fetchOrders();
-      setOrders(data);
-    } catch (error) {
-      setError(error.message);
+      const url = new URL(
+        `${new API().baseURL()}/API/OrdersAPI/GetOrdersPaginatedWithFilters`
+      );
+      const params = new URLSearchParams();
+      params.append("pageNumber", currentPage);
+      params.append("pageSize", pageSize);
+      if (appliedFilters.orderID)
+        params.append("orderID", appliedFilters.orderID);
+      if (appliedFilters.customerID)
+        params.append("customerID", appliedFilters.customerID);
+      if (appliedFilters.orderDate) {
+        const isoDate = new Date(appliedFilters.orderDate).toISOString();
+        params.append("orderDate", isoDate);
+      }
+      if (appliedFilters.total) params.append("total", appliedFilters.total);
+      if (appliedFilters.orderStatus)
+        params.append("orderStatus", appliedFilters.orderStatus);
+      if (appliedFilters.shippingAddress)
+        params.append("shippingAddress", appliedFilters.shippingAddress);
+      if (appliedFilters.notes) params.append("notes", appliedFilters.notes);
+
+      url.search = params.toString();
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setOrders([]);
+          setTotalCount(0);
+          setTotalPages(0);
+          return;
+        }
+        throw new Error(
+          `Failed to fetch orders: ${response.status} ${response.statusText}`
+        );
+      }
+      const data = await response.json();
+      setOrders(data.orderList); // Make sure to use `orderList` from response
+      setTotalCount(data.totalCount);
+      setTotalPages(Math.ceil(data.totalCount / pageSize));
+    } catch (err) {
+      setError(err.message);
+      setOrders([]);
+      setTotalCount(0);
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentPage, pageSize, appliedFilters]);
 
   useEffect(() => {
-    fetchOrders();
-  }, [selectedOrder]);
+    fetchPaginatedOrders();
+  }, [fetchPaginatedOrders, appliedFilters]);
+
+  useEffect(() => {
+    if (!loading) {
+      window.scrollTo({
+        top: scrollPositionRef.current,
+        behavior: "auto",
+      });
+    }
+  }, [loading]);
 
   const handleView = (view, order = null) => {
     setCurrentView(view);
@@ -79,7 +173,7 @@ const ManageOrders = () => {
       }
       return 0;
     });
-  }, [orders, sortConfig]);
+  }, [orders, sortConfig, filterChanged]);
 
   const api = new API();
   const handleCancelOrder = async (orderID) => {
@@ -124,13 +218,68 @@ const ManageOrders = () => {
     }
   };
 
+  const handleFilterChange = (e, filterSetter) => {
+    filterSetter(e.target.value);
+  };
+
+  const applyFilters = () => {
+    setAppliedFilters({
+      orderID: filterOrderID,
+      customerID: filterCustomerID,
+      orderDate: filterOrderDate,
+      total: filterTotal,
+      orderStatus: filterOrderStatus,
+      shippingAddress: filterShippingAddress,
+      notes: filterNotes,
+    });
+    setCurrentPage(1); // Reset to first page when applying filters
+    setFilterChanged((prev) => !prev);
+  };
+
+  const clearFilters = () => {
+    setFilterOrderID("");
+    setFilterCustomerID("");
+    setFilterOrderDate("");
+    setFilterTotal("");
+    setFilterOrderStatus("");
+    setFilterShippingAddress("");
+    setFilterNotes("");
+    setAppliedFilters({
+      orderID: "",
+      customerID: "",
+      orderDate: "",
+      total: "",
+      orderStatus: "",
+      shippingAddress: "",
+      notes: "",
+    });
+    setCurrentPage(1); // Reset pagination to first page
+  };
+
+  const toggleFiltersVisibility = () => {
+    setIsFiltersVisible(!isFiltersVisible);
+  };
+
   if (loading) return <ModernLoader />;
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
-  if (orders.length === 0)
-    return <div className="p-4 text-gray-500">No orders found</div>;
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      applyFilters();
+    }
+  };
 
   return (
     <div>
+      {orders.length === 0 && !loading && !error && isFiltersVisible && (
+        <Alert
+          message={
+            "No orders found with current filters. Please adjust filters or clear them."
+          }
+          type={"failure"}
+        />
+      )}
       <Alert
         message={alertMessage}
         type={alertType}
@@ -139,59 +288,232 @@ const ManageOrders = () => {
 
       {currentView === null ? (
         <div className="p-4 max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-2 gap-4">
             <h1 className="text-xl font-semibold text-gray-800 w-full md:w-auto">
               Orders
             </h1>
-            <button
-              onClick={() => handleView("add")}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center gap-2 w-full md:w-auto"
-            >
-              <FiPlus className="text-lg" />
-              <span className="hidden sm:inline">New Order</span>
-            </button>
+            <div className="w-full md:w-auto flex flex-col sm:flex-row justify-end gap-2">
+              <button
+                onClick={toggleFiltersVisibility}
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 flex items-center justify-center gap-2"
+              >
+                {isFiltersVisible ? (
+                  <FiX className="text-lg" />
+                ) : (
+                  <FiFilter className="text-lg" />
+                )}
+                <span className="hidden sm:inline">
+                  {isFiltersVisible ? "Hide Filters" : "Show Filters"}
+                </span>
+              </button>
+              <button
+                onClick={() => handleView("add")}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center gap-2 w-full md:w-auto"
+              >
+                <FiPlus className="text-lg" />
+                <span className="hidden sm:inline">New Order</span>
+              </button>
+            </div>
           </div>
 
+          {/* Filters */}
+          {isFiltersVisible && (
+            <div className="mb-4 p-4 bg-gray-50 rounded-md border border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterOrderID"
+                  >
+                    Order ID:
+                  </label>
+                  <input
+                    type="number"
+                    id="filterOrderID"
+                    placeholder="Order ID"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterOrderID}
+                    onChange={(e) => handleFilterChange(e, setFilterOrderID)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterCustomerID"
+                  >
+                    Customer ID:
+                  </label>
+                  <input
+                    type="number"
+                    id="filterCustomerID"
+                    placeholder="Customer ID"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterCustomerID}
+                    onChange={(e) => handleFilterChange(e, setFilterCustomerID)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterOrderDate"
+                  >
+                    Order Date:
+                  </label>
+                  <input
+                    type="date"
+                    id="filterOrderDate"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterOrderDate}
+                    onChange={(e) => handleFilterChange(e, setFilterOrderDate)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterTotal"
+                  >
+                    Total:
+                  </label>
+                  <input
+                    type="number"
+                    id="filterTotal"
+                    placeholder="Total"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterTotal}
+                    onChange={(e) => handleFilterChange(e, setFilterTotal)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterOrderStatus"
+                  >
+                    Order Status:
+                  </label>
+                  <select
+                    id="filterOrderStatus"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterOrderStatus}
+                    onChange={(e) =>
+                      handleFilterChange(e, setFilterOrderStatus)
+                    }
+                    onKeyDown={handleKeyDown}
+                  >
+                    <option value="">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Canceled">Canceled</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterShippingAddress"
+                  >
+                    Shipping Address:
+                  </label>
+                  <input
+                    type="text"
+                    id="filterShippingAddress"
+                    placeholder="Shipping Address"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterShippingAddress}
+                    onChange={(e) =>
+                      handleFilterChange(e, setFilterShippingAddress)
+                    }
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterNotes"
+                  >
+                    Notes:
+                  </label>
+                  <input
+                    type="text"
+                    id="filterNotes"
+                    placeholder="Notes"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterNotes}
+                    onChange={(e) => handleFilterChange(e, setFilterNotes)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+
+                <div className="flex items-end justify-end gap-2">
+                  <button
+                    onClick={clearFilters}
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="button"
+                  >
+                    Clear Filters
+                  </button>
+                  <button
+                    onClick={applyFilters}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="button"
+                  >
+                    Apply Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+            <div className="px-4 py-2 flex justify-between items-center">
+              <span className="text-sm text-gray-700">
+                Total Orders:{" "}
+                <span className="font-semibold">{totalCount}</span>
+              </span>
+              <Pagination
+                totalPages={totalPages}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+              />
+            </div>
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th
-                    className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
-                    onClick={() => handleSort("orderID")}
-                  >
-                    Order ID
-                    {sortConfig.key === "orderID" && (
-                      <span className="ml-1">
-                        {sortConfig.direction === "asc" ? "↑" : "↓"}
-                      </span>
-                    )}
-                  </th>
-                  <th
-                    className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
-                    onClick={() => handleSort("orderDate")}
-                  >
-                    Date
-                    {sortConfig.key === "orderDate" && (
-                      <span className="ml-1">
-                        {sortConfig.direction === "asc" ? "↑" : "↓"}
-                      </span>
-                    )}
-                  </th>
-                  <th
-                    className="hidden md:table-cell px-4 py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
-                    onClick={() => handleSort("total")}
-                  >
-                    Total
-                    {sortConfig.key === "total" && (
-                      <span className="ml-1">
-                        {sortConfig.direction === "asc" ? "↑" : "↓"}
-                      </span>
-                    )}
-                  </th>
-                  <th className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500">
-                    Status
-                  </th>
+                  {[
+                    "orderID",
+                    "customerID",
+                    "orderDate",
+                    "total",
+                    "orderStatus",
+                    "shippingAddress",
+                    "notes",
+                  ].map((key) => (
+                    <th
+                      key={key}
+                      className={`px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer ${
+                        ["shippingAddress", "notes"].includes(key)
+                          ? "hidden md:table-cell"
+                          : ""
+                      }`}
+                      onClick={() => handleSort(key)}
+                    >
+                      {key === "orderID"
+                        ? "Order ID"
+                        : key === "customerID"
+                        ? "Customer ID"
+                        : key === "orderDate"
+                        ? "Date"
+                        : key.charAt(0).toUpperCase() + key.slice(1)}{" "}
+                      {sortConfig.key === key && (
+                        <span className="ml-1">
+                          {sortConfig.direction === "asc" ? "↑" : "↓"}
+                        </span>
+                      )}
+                    </th>
+                  ))}
                   <th className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500">
                     Actions
                   </th>
@@ -201,8 +523,10 @@ const ManageOrders = () => {
                 {sortedOrders.map((order) => (
                   <tr key={order.orderID} className="hover:bg-gray-50">
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
-                      {/* <span className="md:hidden font-medium">Order #</span> */}
                       {order.orderID}
+                    </td>
+                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
+                      {order.customerID}
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
                       {new Date(order.orderDate).toLocaleDateString("en-US", {
@@ -211,7 +535,7 @@ const ManageOrders = () => {
                         day: "numeric",
                       })}
                     </td>
-                    <td className="hidden md:table-cell px-4 py-3 text-sm font-medium text-gray-900">
+                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm font-medium text-gray-900">
                       ${order.total.toFixed(2)}
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
@@ -223,6 +547,12 @@ const ManageOrders = () => {
                       >
                         {order.orderStatus}
                       </span>
+                    </td>
+                    <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
+                      {order.shippingAddress}
+                    </td>
+                    <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
+                      {order.notes}
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
                       <div className="flex items-center gap-2 md:gap-3">
@@ -253,6 +583,17 @@ const ManageOrders = () => {
                 ))}
               </tbody>
             </table>
+            <div className="px-4 py-2 flex justify-between items-center gap-2">
+              <span className="text-sm text-gray-700">
+                Total Orders:{" "}
+                <span className="font-semibold">{totalCount}</span>
+              </span>
+              <Pagination
+                totalPages={totalPages}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+              />
+            </div>
           </div>
         </div>
       ) : (
@@ -263,7 +604,7 @@ const ManageOrders = () => {
               isShow={true}
               onClose={() => handleView(null)}
               showAlert={showAlert}
-              refreshOrders={fetchOrders}
+              refreshOrders={fetchPaginatedOrders} // Use fetchPaginatedOrders for refresh
             />
           )}
 

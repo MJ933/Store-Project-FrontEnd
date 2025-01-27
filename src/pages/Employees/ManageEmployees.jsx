@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+
 import AddUpdateEmployee from "./AddUpdateEmployee";
 import DeleteEmployee from "./DeleteEmployee";
 import EmployeePage from "./EmployeePage";
-import { FiEye, FiEdit, FiTrash2, FiPlus } from "react-icons/fi";
+import Pagination from "../../components/Pagination"; // Assuming Pagination component is in this path
+import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi"; // Import new icons
 import API from "../../Classes/clsAPI";
 import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
@@ -19,6 +21,32 @@ const ManageEmployees = () => {
   });
   const [alertMessage, setAlertMessage] = useState(null);
   const [alertType, setAlertType] = useState("success");
+  const initialLoad = useRef(true);
+  const scrollPositionRef = useRef(0);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // Filter state
+  const [filterEmployeeID, setFilterEmployeeID] = useState("");
+  const [filterUserName, setFilterUserName] = useState("");
+  const [filterEmail, setFilterEmail] = useState("");
+  const [filterPhone, setFilterPhone] = useState("");
+  const [filterRole, setFilterRole] = useState("");
+  const [filterIsActive, setFilterIsActive] = useState("");
+  const [appliedFilters, setAppliedFilters] = useState({
+    employeeID: "",
+    userName: "",
+    email: "",
+    phone: "",
+    role: "",
+    isActive: "",
+  });
+  const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+  const [filterChanged, setFilterChanged] = useState(false);
 
   const statusStyles = {
     true: "bg-green-100 text-green-800",
@@ -33,29 +61,72 @@ const ManageEmployees = () => {
     }, 3000);
   };
 
-  const fetchEmployees = useCallback(async () => {
+  const fetchPaginatedEmployees = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    scrollPositionRef.current = window.scrollY;
     try {
-      const response = await fetch(
-        `${new API().baseURL()}/API/EmployeesAPI/GetAll`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      const url = new URL(
+        `${new API().baseURL()}/API/EmployeesAPI/GetEmployeesPaginatedWithFilters`
       );
-      if (!response.ok) throw new Error("Network response not ok");
+      const params = new URLSearchParams();
+      params.append("pageNumber", currentPage);
+      params.append("pageSize", pageSize);
+      if (appliedFilters.employeeID)
+        params.append("employeeID", appliedFilters.employeeID);
+      if (appliedFilters.userName)
+        params.append("userName", appliedFilters.userName);
+      if (appliedFilters.email) params.append("email", appliedFilters.email);
+      if (appliedFilters.phone) params.append("phone", appliedFilters.phone);
+      if (appliedFilters.role) params.append("role", appliedFilters.role);
+      if (appliedFilters.isActive !== "") {
+        params.append("isActive", appliedFilters.isActive === "true");
+      }
+      url.search = params.toString();
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setEmployees([]);
+          setTotalCount(0);
+          setTotalPages(0);
+          return;
+        }
+        throw new Error(
+          `Failed to fetch employees: ${response.status} ${response.statusText}`
+        );
+      }
       const data = await response.json();
-      setEmployees(data);
-    } catch (error) {
-      setError(error.message);
+      setEmployees(data.employees);
+      setTotalCount(data.totalCount);
+      setTotalPages(Math.ceil(data.totalCount / pageSize));
+    } catch (err) {
+      setError(err.message);
+      setEmployees([]);
+      setTotalCount(0);
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentPage, pageSize, appliedFilters]);
 
   useEffect(() => {
-    fetchEmployees();
-  }, [selectedEmployee]);
+    fetchPaginatedEmployees();
+  }, [fetchPaginatedEmployees, appliedFilters]);
+
+  useEffect(() => {
+    if (!loading) {
+      window.scrollTo({
+        top: scrollPositionRef.current,
+        behavior: "auto",
+      });
+    }
+  }, [loading]);
 
   const handleView = (view, employee = null) => {
     setCurrentView(view);
@@ -64,10 +135,10 @@ const ManageEmployees = () => {
 
   const handleSort = useCallback(
     (key) => {
-      let direction = "asc";
-      if (sortConfig.key === key && sortConfig.direction === "asc") {
-        direction = "desc";
-      }
+      const direction =
+        sortConfig.key === key && sortConfig.direction === "asc"
+          ? "desc"
+          : "asc";
       setSortConfig({ key, direction });
     },
     [sortConfig]
@@ -85,15 +156,66 @@ const ManageEmployees = () => {
       }
       return 0;
     });
-  }, [employees, sortConfig]);
+  }, [employees, sortConfig, filterChanged]);
+
+  const handleFilterChange = (e, filterSetter) => {
+    filterSetter(e.target.value);
+  };
+
+  const applyFilters = () => {
+    setAppliedFilters({
+      employeeID: filterEmployeeID,
+      userName: filterUserName,
+      email: filterEmail,
+      phone: filterPhone,
+      role: filterRole,
+      isActive: filterIsActive,
+    });
+    setCurrentPage(1);
+    setFilterChanged((prev) => !prev);
+  };
+
+  const clearFilters = () => {
+    setFilterEmployeeID("");
+    setFilterUserName("");
+    setFilterEmail("");
+    setFilterPhone("");
+    setFilterRole("");
+    setFilterIsActive("");
+    setCurrentPage(1);
+    setAppliedFilters({
+      employeeID: "",
+      userName: "",
+      email: "",
+      phone: "",
+      role: "",
+      isActive: "",
+    });
+  };
+  const toggleFiltersVisibility = () => {
+    setIsFiltersVisible(!isFiltersVisible);
+  };
 
   if (loading) return <ModernLoader />;
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
-  if (employees.length === 0)
-    return <div className="p-4 text-gray-500">No employees found</div>;
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      applyFilters();
+    }
+  };
 
   return (
     <div>
+      {employees.length === 0 && !loading && !error && isFiltersVisible && (
+        <Alert
+          message={
+            "No employees found with current filters. Please adjust filters or clear them."
+          }
+          type={"failure"}
+        />
+      )}
       <Alert
         message={alertMessage}
         type={alertType}
@@ -102,25 +224,181 @@ const ManageEmployees = () => {
 
       {currentView === null ? (
         <div className="p-4 max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-2 gap-4">
             <h1 className="text-xl font-semibold text-gray-800 w-full md:w-auto">
               Employees
             </h1>
-            <button
-              onClick={() => handleView("add")}
-              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 flex items-center justify-center gap-2 w-full md:w-auto"
-            >
-              <FiPlus className="text-lg" />
-              <span className="hidden sm:inline">New Employee</span>
-            </button>
+            <div className="w-full md:w-auto flex flex-col sm:flex-row justify-end gap-2">
+              <button
+                onClick={toggleFiltersVisibility}
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 flex items-center justify-center gap-2"
+              >
+                {isFiltersVisible ? (
+                  <FiX className="text-lg" />
+                ) : (
+                  <FiFilter className="text-lg" />
+                )}
+                <span className="hidden sm:inline">
+                  {isFiltersVisible ? "Hide Filters" : "Show Filters"}
+                </span>
+              </button>
+              <button
+                onClick={() => handleView("add")}
+                className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 flex items-center justify-center gap-2"
+              >
+                <FiPlus className="text-lg" />
+                <span className="hidden sm:inline">New Employee</span>
+              </button>
+            </div>
           </div>
 
+          {/* Filters */}
+          {isFiltersVisible && (
+            <div className="mb-4 p-4 bg-gray-50 rounded-md border border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterEmployeeID"
+                  >
+                    Employee ID:
+                  </label>
+                  <input
+                    type="number"
+                    id="filterEmployeeID"
+                    placeholder="Employee ID"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterEmployeeID}
+                    onChange={(e) => handleFilterChange(e, setFilterEmployeeID)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterUserName"
+                  >
+                    User Name:
+                  </label>
+                  <input
+                    type="text"
+                    id="filterUserName"
+                    placeholder="User Name"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterUserName}
+                    onChange={(e) => handleFilterChange(e, setFilterUserName)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterEmail"
+                  >
+                    Email:
+                  </label>
+                  <input
+                    type="email"
+                    id="filterEmail"
+                    placeholder="Email"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterEmail}
+                    onChange={(e) => handleFilterChange(e, setFilterEmail)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterPhone"
+                  >
+                    Phone:
+                  </label>
+                  <input
+                    type="text"
+                    id="filterPhone"
+                    placeholder="Phone"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterPhone}
+                    onChange={(e) => handleFilterChange(e, setFilterPhone)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterRole"
+                  >
+                    Role:
+                  </label>
+                  <input
+                    type="text"
+                    id="filterRole"
+                    placeholder="Role"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterRole}
+                    onChange={(e) => handleFilterChange(e, setFilterRole)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="filterIsActive"
+                  >
+                    Is Active:
+                  </label>
+                  <select
+                    id="filterIsActive"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={filterIsActive}
+                    onChange={(e) => handleFilterChange(e, setFilterIsActive)}
+                    onKeyDown={handleKeyDown}
+                  >
+                    <option value="">All</option>
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                  </select>
+                </div>
+
+                <div className="flex items-end justify-end gap-2">
+                  <button
+                    onClick={clearFilters}
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="button"
+                  >
+                    Clear Filters
+                  </button>
+                  <button
+                    onClick={applyFilters}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="button"
+                  >
+                    Apply Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+            <div className="px-4 py-2 flex justify-between items-center">
+              <span className="text-sm text-gray-700">
+                Total Employees:{" "}
+                <span className="font-semibold">{totalCount}</span>
+              </span>
+              <Pagination
+                totalPages={totalPages}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+              />
+            </div>
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
                   {[
-                    "employeeId",
+                    "employeeID",
                     "userName",
                     "email",
                     "phone",
@@ -132,7 +410,9 @@ const ManageEmployees = () => {
                       className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
                       onClick={() => handleSort(key)}
                     >
-                      {key.replace(/([A-Z])/g, " $1").trim()}
+                      {key === "employeeID"
+                        ? "Employee ID"
+                        : key.replace(/([A-Z])/g, " $1").trim()}
                       {sortConfig.key === key && (
                         <span className="ml-1">
                           {sortConfig.direction === "asc" ? "↑" : "↓"}
@@ -202,6 +482,17 @@ const ManageEmployees = () => {
                 ))}
               </tbody>
             </table>
+            <div className="px-4 py-2 flex justify-between items-center gap-2">
+              <span className="text-sm text-gray-700">
+                Total Employees:{" "}
+                <span className="font-semibold">{totalCount}</span>
+              </span>
+              <Pagination
+                totalPages={totalPages}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+              />
+            </div>
           </div>
         </div>
       ) : (
@@ -212,7 +503,7 @@ const ManageEmployees = () => {
               isShow={true}
               onClose={() => handleView(null)}
               showAlert={showAlert}
-              refreshEmployees={fetchEmployees}
+              refreshEmployees={fetchPaginatedEmployees}
             />
           )}
 
@@ -230,7 +521,7 @@ const ManageEmployees = () => {
               isShow={true}
               onClose={() => handleView(null)}
               showAlert={showAlert}
-              refreshEmployees={fetchEmployees}
+              refreshEmployees={fetchPaginatedEmployees}
             />
           )}
         </div>

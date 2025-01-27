@@ -1,7 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-const Alert = ({ message, type, onClose }) => {
-  if (!message) return null;
+const Alert = ({ message, type, onClose, duration = 3000 }) => {
+  // useState to control the visibility of the alert
+  const [isVisible, setIsVisible] = useState(!!message);
+
+  useEffect(() => {
+    if (message) {
+      // If there is a message, set the alert to visible
+      setIsVisible(true);
+
+      // Set a timeout to automatically hide the alert after the specified duration
+      const timer = setTimeout(() => {
+        setIsVisible(false); // Hide the alert after the duration
+
+        // Optionally call the onClose function prop when the timer finishes
+        if (onClose) {
+          onClose();
+        }
+      }, duration);
+
+      // Cleanup function: This runs if the component unmounts or if the message prop changes before the timeout finishes.
+      // It clears the timeout to prevent memory leaks and unexpected behavior.
+      return () => clearTimeout(timer);
+    } else {
+      // If there's no message (or message becomes null/empty), hide the alert
+      setIsVisible(false);
+    }
+  }, [message, duration, onClose]); // useEffect dependencies: message, duration, onClose. Effect runs when these change.
+
+  // If isVisible is false, don't render anything (null)
+  if (!isVisible) return null;
 
   return (
     <div

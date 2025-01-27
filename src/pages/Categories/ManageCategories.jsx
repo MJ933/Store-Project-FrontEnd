@@ -119,9 +119,9 @@ const ManageCategories = () => {
               <thead className="bg-gray-50">
                 <tr>
                   {[
-                    "categoryId",
+                    "categoryID",
                     "categoryName",
-                    "parentCategoryId",
+                    "parentCategoryID",
                     "isActive",
                   ].map((key) => (
                     <th
@@ -129,7 +129,11 @@ const ManageCategories = () => {
                       className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
                       onClick={() => handleSort(key)}
                     >
-                      {key.replace(/([A-Z])/g, " $1").trim()}
+                      {key === "categoryID"
+                        ? "category ID"
+                        : key === "parentCategoryID"
+                        ? "parent Category ID"
+                        : key.replace(/([A-Z])/g, " $1").trim()}
                       {sortConfig.key === key && (
                         <span className="ml-1">
                           {sortConfig.direction === "asc" ? "↑" : "↓"}
