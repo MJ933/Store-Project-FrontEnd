@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
+import { useTranslation } from "react-i18next";
 
 export default function AddNewUpdateCustomer({
   customer = {},
@@ -14,6 +15,7 @@ export default function AddNewUpdateCustomer({
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const isUpdateCustomer = Boolean(customer?.customerID);
 
@@ -79,10 +81,10 @@ export default function AddNewUpdateCustomer({
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 409) {
-          throw new Error("Email or phone is already used in another account.");
+          throw new Error(t("addNewUpdateCustomer.emailOrPhoneUsed"));
         } else {
           throw new Error(
-            errorData.message || "Failed to add/update the customer"
+            errorData.message || t("addNewUpdateCustomer.failedAddUpdate")
           );
         }
       }
@@ -91,8 +93,12 @@ export default function AddNewUpdateCustomer({
       setSuccess(true);
       showAlert(
         isSignUp
-          ? "Sign-up successful!"
-          : `Customer ${isUpdateCustomer ? "updated" : "added"} successfully!`,
+          ? t("addNewUpdateCustomer.signUpSuccess")
+          : t("addNewUpdateCustomer.customerSuccess", {
+              action: isUpdateCustomer
+                ? t("addNewUpdateCustomer.updated")
+                : t("addNewUpdateCustomer.added"),
+            }),
         "success"
       );
 
@@ -131,10 +137,10 @@ export default function AddNewUpdateCustomer({
         <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-gray-800">
             {isSignUp
-              ? "Sign Up"
+              ? t("addNewUpdateCustomer.signUp")
               : isUpdateCustomer
-              ? "Edit Customer"
-              : "Create New Customer"}
+              ? t("addNewUpdateCustomer.editCustomer")
+              : t("addNewUpdateCustomer.createCustomer")}
           </h2>
           <button
             onClick={handleClose}
@@ -168,7 +174,7 @@ export default function AddNewUpdateCustomer({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                First Name
+                {t("addNewUpdateCustomer.firstName")}
               </label>
               <input
                 type="text"
@@ -176,14 +182,14 @@ export default function AddNewUpdateCustomer({
                 value={formData.firstName}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
-                placeholder="Enter first name"
+                placeholder={t("addNewUpdateCustomer.firstNamePlaceholder")}
                 required
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                Last Name
+                {t("addNewUpdateCustomer.lastName")}
               </label>
               <input
                 type="text"
@@ -191,14 +197,14 @@ export default function AddNewUpdateCustomer({
                 value={formData.lastName}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
-                placeholder="Enter last name"
+                placeholder={t("addNewUpdateCustomer.lastNamePlaceholder")}
                 required
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                Email
+                {t("addNewUpdateCustomer.email")}
               </label>
               <input
                 type="email"
@@ -206,14 +212,14 @@ export default function AddNewUpdateCustomer({
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
-                placeholder="Enter email"
+                placeholder={t("addNewUpdateCustomer.emailPlaceholder")}
                 required
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                Phone
+                {t("addNewUpdateCustomer.phone")}
               </label>
               <input
                 type="text"
@@ -221,14 +227,14 @@ export default function AddNewUpdateCustomer({
                 value={formData.phone}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
-                placeholder="Enter phone number"
+                placeholder={t("addNewUpdateCustomer.phonePlaceholder")}
                 required
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                Password
+                {t("addNewUpdateCustomer.password")}
               </label>
               <input
                 type="password"
@@ -236,7 +242,7 @@ export default function AddNewUpdateCustomer({
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
-                placeholder="Enter password"
+                placeholder={t("addNewUpdateCustomer.passwordPlaceholder")}
                 required
               />
             </div>
@@ -256,7 +262,7 @@ export default function AddNewUpdateCustomer({
                     htmlFor="isActive"
                     className="ml-3 text-sm text-gray-600 cursor-pointer select-none"
                   >
-                    Active Status
+                    {t("addNewUpdateCustomer.activeStatus")}
                   </label>
                 </div>
               </div>
@@ -269,7 +275,7 @@ export default function AddNewUpdateCustomer({
               onClick={handleClose}
               className="px-6 py-2.5 text-gray-600 hover:text-gray-800 font-medium rounded-lg transition-colors"
             >
-              Cancel
+              {t("addNewUpdateCustomer.cancel")}
             </button>
             <button
               type="submit"
@@ -299,17 +305,17 @@ export default function AddNewUpdateCustomer({
                     ></path>
                   </svg>
                   {isSignUp
-                    ? "Signing Up..."
+                    ? t("addNewUpdateCustomer.signingUp")
                     : isUpdateCustomer
-                    ? "Updating..."
-                    : "Creating..."}
+                    ? t("addNewUpdateCustomer.updating")
+                    : t("addNewUpdateCustomer.creating")}
                 </span>
               ) : isSignUp ? (
-                "Sign Up"
+                t("addNewUpdateCustomer.signUp")
               ) : isUpdateCustomer ? (
-                "Update Customer"
+                t("addNewUpdateCustomer.updateCustomer")
               ) : (
-                "Create Customer"
+                t("addNewUpdateCustomer.createCustomer")
               )}
             </button>
           </div>
@@ -346,8 +352,12 @@ export default function AddNewUpdateCustomer({
               </svg>
               <span>
                 {isSignUp
-                  ? "Sign-up successful!"
-                  : "Customer added/updated successfully!"}
+                  ? t("addNewUpdateCustomer.signUpSuccess")
+                  : t("addNewUpdateCustomer.customerSuccess", {
+                      action: isUpdateCustomer
+                        ? t("addNewUpdateCustomer.updated")
+                        : t("addNewUpdateCustomer.added"),
+                    })}
               </span>
             </div>
           )}

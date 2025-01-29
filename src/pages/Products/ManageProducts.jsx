@@ -1,16 +1,20 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 import AddNewUpdateProduct from "./AddUpdateProduct";
 import DeleteProduct from "./DeleteProduct";
 import ProductPage from "./ProductPage";
-import Pagination from "../../components/Pagination"; // Assuming Pagination component is in this path
+import Pagination from "../../components/Pagination";
 
-import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi"; // Import new icons
+import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi";
 import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
 import API from "../../Classes/clsAPI";
+import { Link } from "react-router-dom";
 
 const ManageProducts = () => {
+  const { t } = useTranslation();
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,13 +29,11 @@ const ManageProducts = () => {
   const initialLoad = useRef(true);
   const scrollPositionRef = useRef(0);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Filter state
   const [filterProductID, setFilterProductID] = useState("");
   const [filterProductName, setFilterProductName] = useState("");
   const [filterInitialPrice, setFilterInitialPrice] = useState("");
@@ -71,6 +73,7 @@ const ManageProducts = () => {
     setLoading(true);
     setError(null);
     scrollPositionRef.current = window.scrollY;
+
     try {
       const url = new URL(
         `${new API().baseURL()}/API/ProductsAPI/GetProductsPaginatedWithFilters`
@@ -229,12 +232,7 @@ const ManageProducts = () => {
   return (
     <div>
       {products.length === 0 && !loading && !error && isFiltersVisible && (
-        <Alert
-          message={
-            "No products found with current filters. Please adjust filters or clear them."
-          }
-          type={"failure"}
-        />
+        <Alert message={t("manageProducts.noProductsFound")} type={"failure"} />
       )}
       <Alert
         message={alertMessage}
@@ -246,7 +244,7 @@ const ManageProducts = () => {
         <div className="p-4 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-2 gap-4">
             <h1 className="text-xl font-semibold text-gray-800 w-full md:w-auto">
-              Products
+              {t("manageProducts.productsTitle")}
             </h1>
             <div className="w-full md:w-auto flex flex-col sm:flex-row justify-end gap-2">
               <button
@@ -259,7 +257,9 @@ const ManageProducts = () => {
                   <FiFilter className="text-lg" />
                 )}
                 <span className="hidden sm:inline">
-                  {isFiltersVisible ? "Hide Filters" : "Show Filters"}
+                  {isFiltersVisible
+                    ? t("manageProducts.hideFiltersButton")
+                    : t("manageProducts.showFiltersButton")}
                 </span>
               </button>
               <button
@@ -267,7 +267,9 @@ const ManageProducts = () => {
                 className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 flex items-center justify-center gap-2"
               >
                 <FiPlus className="text-lg" />
-                <span className="hidden sm:inline">New Product</span>
+                <span className="hidden sm:inline">
+                  {t("manageProducts.newProductButton")}
+                </span>
               </button>
             </div>
           </div>
@@ -281,12 +283,12 @@ const ManageProducts = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterProductID"
                   >
-                    Product ID:
+                    {t("manageProducts.productIDHeader")}:
                   </label>
                   <input
                     type="number"
                     id="filterProductID"
-                    placeholder="Product ID"
+                    placeholder={t("manageProducts.productIDHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterProductID}
                     onChange={(e) => handleFilterChange(e, setFilterProductID)}
@@ -298,12 +300,12 @@ const ManageProducts = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterProductName"
                   >
-                    Product Name:
+                    {t("manageProducts.productNameHeader")}:
                   </label>
                   <input
                     type="text"
                     id="filterProductName"
-                    placeholder="Product Name"
+                    placeholder={t("manageProducts.productNameHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterProductName}
                     onChange={(e) =>
@@ -317,12 +319,12 @@ const ManageProducts = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterInitialPrice"
                   >
-                    Initial Price:
+                    {t("manageProducts.initialPriceHeader")}:
                   </label>
                   <input
                     type="number"
                     id="filterInitialPrice"
-                    placeholder="Initial Price"
+                    placeholder={t("manageProducts.initialPriceHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterInitialPrice}
                     onChange={(e) =>
@@ -336,12 +338,12 @@ const ManageProducts = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterSellingPrice"
                   >
-                    Selling Price:
+                    {t("manageProducts.sellingPriceHeader")}:
                   </label>
                   <input
                     type="number"
                     id="filterSellingPrice"
-                    placeholder="Selling Price"
+                    placeholder={t("manageProducts.sellingPriceHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterSellingPrice}
                     onChange={(e) =>
@@ -355,12 +357,12 @@ const ManageProducts = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterCategoryId"
                   >
-                    Category ID:
+                    {t("manageProducts.categoryIdHeader")}:
                   </label>
                   <input
                     type="number"
                     id="filterCategoryId"
-                    placeholder="Category ID"
+                    placeholder={t("manageProducts.categoryIdHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterCategoryId}
                     onChange={(e) => handleFilterChange(e, setFilterCategoryId)}
@@ -372,12 +374,12 @@ const ManageProducts = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterStockQuantity"
                   >
-                    Stock Quantity:
+                    {t("manageProducts.stockQuantityHeader")}:
                   </label>
                   <input
                     type="number"
                     id="filterStockQuantity"
-                    placeholder="Stock Quantity"
+                    placeholder={t("manageProducts.stockQuantityHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterStockQuantity}
                     onChange={(e) =>
@@ -392,7 +394,7 @@ const ManageProducts = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterIsActive"
                   >
-                    Is Active:
+                    {t("manageProducts.isActiveHeader")}:
                   </label>
                   <select
                     id="filterIsActive"
@@ -401,9 +403,13 @@ const ManageProducts = () => {
                     onChange={(e) => handleFilterChange(e, setFilterIsActive)}
                     onKeyDown={handleKeyDown}
                   >
-                    <option value="">All</option>
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
+                    <option value="">{t("manageProducts.allStatus")}</option>
+                    <option value="true">
+                      {t("manageProducts.activeStatus")}
+                    </option>
+                    <option value="false">
+                      {t("manageProducts.inactiveStatus")}
+                    </option>
                   </select>
                 </div>
 
@@ -413,14 +419,14 @@ const ManageProducts = () => {
                     className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                   >
-                    Clear Filters
+                    {t("manageProducts.clearFiltersButton")}
                   </button>
                   <button
                     onClick={applyFilters}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                   >
-                    Apply Filters
+                    {t("manageProducts.applyFiltersButton")}
                   </button>
                 </div>
               </div>
@@ -430,7 +436,7 @@ const ManageProducts = () => {
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
             <div className="px-4 py-2 flex justify-between items-center">
               <span className="text-sm text-gray-700">
-                Total Products:{" "}
+                {t("manageProducts.totalProductsText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>
               </span>
               <Pagination
@@ -454,9 +460,7 @@ const ManageProducts = () => {
                       className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
                       onClick={() => handleSort(key)}
                     >
-                      {key === "productID"
-                        ? "Product ID"
-                        : key.replace(/([A-Z])/g, " $1").trim()}
+                      {t(`manageProducts.${key}Header`)}
                       {sortConfig.key === key && (
                         <span className="ml-1">
                           {sortConfig.direction === "asc" ? "↑" : "↓"}
@@ -465,7 +469,7 @@ const ManageProducts = () => {
                     </th>
                   ))}
                   <th className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500">
-                    Actions
+                    {t("manageProducts.actionsHeader")}
                   </th>
                 </tr>
               </thead>
@@ -502,24 +506,25 @@ const ManageProducts = () => {
                       </td>
                       <td className="px-2 py-2 md:px-4 md:py-3">
                         <div className="flex items-center gap-2 md:gap-3">
-                          <button
-                            onClick={() => handleView("read", item)}
-                            className="text-gray-600 hover:text-blue-600"
-                            title="View"
+                          <Link
+                            to={`/products/${item.product.productID}`}
+                            title={t("manageProducts.viewTitle")}
                           >
-                            <FiEye className="w-4 h-4 md:w-5 md:h-5" />
-                          </button>
+                            <button className="text-gray-600 hover:text-blue-600">
+                              <FiEye className="w-4 mt-2 h-4 md:w-5 md:h-5" />
+                            </button>
+                          </Link>
                           <button
                             onClick={() => handleView("update", item)}
                             className="text-gray-600 hover:text-green-600"
-                            title="Edit"
+                            title={t("manageProducts.editTitle")}
                           >
                             <FiEdit className="w-4 h-4 md:w-5 md:h-5" />
                           </button>
                           <button
                             onClick={() => handleView("delete", item)}
                             className="text-gray-600 hover:text-red-600"
-                            title="Delete"
+                            title={t("manageProducts.deleteTitle")}
                           >
                             <FiTrash2 className="w-4 h-4 md:w-5 md:h-5" />
                           </button>
@@ -532,7 +537,7 @@ const ManageProducts = () => {
             </table>
             <div className="px-4 py-2 flex justify-between items-center gap-2">
               <span className="text-sm text-gray-700">
-                Total Products:{" "}
+                {t("manageProducts.totalProductsText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>
               </span>
               <Pagination
@@ -561,7 +566,7 @@ const ManageProducts = () => {
 
           {currentView === "read" && (
             <ProductPage
-              product={selectedProduct}
+              product={selectedProduct.product.productID}
               isShow={true}
               onClose={() => handleView(null)}
             />

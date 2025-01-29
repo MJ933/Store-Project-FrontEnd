@@ -1,10 +1,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function CustomerPage({ customer, isShow = false, onClose }) {
-  const navigate = useNavigate(); // Initialize useNavigate at the top level
+  const navigate = useNavigate();
   const userInfo = useSelector((state) => state.authCustomer.currentCustomer);
+  const { t } = useTranslation();
 
   if (!customer?.customerID) {
     customer =
@@ -12,14 +14,14 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
       JSON.parse(localStorage.getItem("currentCustomer"));
   }
   if (!isShow || !customer) {
-    return null; // Don't render if the component is not shown or customer data is missing
+    return null;
   }
 
   const handleClose = () => {
     if (onClose) {
-      onClose(); // Call the onClose prop if provided
+      onClose();
     } else {
-      navigate("/"); // Navigate to the home page only if onClose is not provided
+      navigate("/");
     }
   };
 
@@ -27,7 +29,7 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <h2 className="text-3xl font-extrabold mb-8 text-center text-gray-800">
-          Customer Details
+          {t("customerPage.customerDetails")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex items-center space-x-4">
@@ -43,7 +45,7 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Customer ID
+                {t("customerPage.customerID")}
               </label>
               <p className="text-gray-800 font-medium">{customer.customerID}</p>
             </div>
@@ -65,7 +67,7 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                First Name
+                {t("customerPage.firstName")}
               </label>
               <p className="text-gray-800 font-medium">{customer.firstName}</p>
             </div>
@@ -87,7 +89,7 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Last Name
+                {t("customerPage.lastName")}
               </label>
               <p className="text-gray-800 font-medium">{customer.lastName}</p>
             </div>
@@ -106,7 +108,7 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Email
+                {t("customerPage.email")}
               </label>
               <p className="text-gray-800 font-medium">{customer.email}</p>
             </div>
@@ -124,7 +126,7 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Phone
+                {t("customerPage.phone")}
               </label>
               <p className="text-gray-800 font-medium">{customer.phone}</p>
             </div>
@@ -146,7 +148,7 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Registered At
+                {t("customerPage.registeredAt")}
               </label>
               <p className="text-gray-800 font-medium">
                 {new Date(customer.registeredAt).toLocaleDateString()}
@@ -170,10 +172,12 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Is Active
+                {t("customerPage.isActive")}
               </label>
               <p className="text-gray-800 font-medium">
-                {customer.isActive ? "Yes" : "No"}
+                {customer.isActive
+                  ? t("customerPage.yes")
+                  : t("customerPage.no")}
               </p>
             </div>
           </div>
@@ -183,7 +187,7 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
             onClick={handleClose}
             className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none"
           >
-            Close
+            {t("customerPage.close")}
           </button>
         </div>
       </div>

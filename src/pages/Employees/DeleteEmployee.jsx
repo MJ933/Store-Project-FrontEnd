@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "../../Classes/clsAPI";
+import { useTranslation } from "react-i18next";
 
 const DeleteEmployee = ({
   employee = {},
@@ -13,6 +14,7 @@ const DeleteEmployee = ({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const api = new API();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (employee?.employeeID) {
@@ -27,7 +29,7 @@ const DeleteEmployee = ({
     setSuccess(false);
 
     if (!employeeID) {
-      setError("Please enter an employee ID.");
+      setError(t("deleteEmployee.enterIDError"));
       setLoading(false);
       return;
     }
@@ -46,16 +48,14 @@ const DeleteEmployee = ({
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error(
-            "Employee not found. Please check the ID and try again."
-          );
+          throw new Error(t("deleteEmployee.notFoundError"));
         } else {
-          throw new Error("Failed to delete the employee.");
+          throw new Error(t("deleteEmployee.deleteFailedError"));
         }
       }
 
       setSuccess(true);
-      showAlert("Employee Deleted Successfully", "success");
+      showAlert(t("deleteEmployee.deleteSuccess"), "success");
       refreshEmployees();
       onClose();
     } catch (err) {
@@ -73,7 +73,9 @@ const DeleteEmployee = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full transform transition-all duration-300 ease-in-out">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Delete Employee</h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            {t("deleteEmployee.title")}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -97,14 +99,14 @@ const DeleteEmployee = ({
         <form onSubmit={handleDeleteEmployee} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-500 mb-2">
-              Employee ID
+              {t("deleteEmployee.employeeIDLabel")}
             </label>
             <input
               type="number"
               value={employeeID}
               onChange={(e) => setEmployeeID(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter Employee ID"
+              placeholder={t("deleteEmployee.employeeIDPlaceholder")}
               required
             />
           </div>
@@ -114,14 +116,16 @@ const DeleteEmployee = ({
               onClick={onClose}
               className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all"
             >
-              Cancel
+              {t("deleteEmployee.cancelButton")}
             </button>
             <button
               type="submit"
               className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all"
               disabled={loading}
             >
-              {loading ? "Deleting..." : "Delete"}
+              {loading
+                ? t("deleteEmployee.deletingButton")
+                : t("deleteEmployee.deleteButton")}
             </button>
           </div>
           {error && (
@@ -131,7 +135,7 @@ const DeleteEmployee = ({
           )}
           {success && (
             <div className="mt-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
-              Employee deleted successfully!
+              {t("deleteEmployee.deleteSuccess")}
             </div>
           )}
         </form>

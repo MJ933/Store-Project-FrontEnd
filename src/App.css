@@ -1,19 +1,33 @@
-/* Apply custom scrollbar to the entire application */
+/* Existing CSS (scrollbar styles - keep these) */
 ::-webkit-scrollbar {
-  width: 8px; /* Width of the vertical scrollbar */
-  height: 8px; /* Height of the horizontal scrollbar */
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Color of the scrollbar track */
-  border-radius: 10px; /* Rounded corners for the track */
+  background: #f1f1f1;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888; /* Color of the scrollbar thumb */
-  border-radius: 10px; /* Rounded corners for the thumb */
+  background: #888;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Color of the scrollbar thumb on hover */
+  background: #555;
+}
+
+html.ar body {
+  direction: rtl;
+  text-align: right;
+}
+
+html.ar th.text-left {
+  text-align: start; /* or text-align: right; */
+}
+
+/* // No need to override direction for icons anymore! */
+html.ar .facebook-icon {
+  margin-left: 16px;
 }

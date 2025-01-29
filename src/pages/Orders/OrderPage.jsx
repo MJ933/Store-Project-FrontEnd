@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import clsOrders from "../../Classes/clsOrders";
 import clsOrderItems from "../../Classes/clsOrderItems";
 import ManageOrderItems from "../OrderItems/ManageOrderItems";
+import { useTranslation } from "react-i18next";
 
 const OrderPage = ({ order, isShow, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [orderItems, setOrderItems] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (isShow && order?.orderID) {
@@ -46,7 +48,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
 
             <div className="col-span-1">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Customer ID
+                {t("orderPage.customerID")}
               </label>
               <input
                 type="number"
@@ -59,7 +61,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
 
             <div className="col-span-1">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Order Date
+                {t("orderPage.orderDate")}
               </label>
               <input
                 type="datetime-local"
@@ -72,7 +74,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
 
             <div className="col-span-1">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Total
+                {t("orderPage.total")}
               </label>
               <input
                 type="number"
@@ -85,7 +87,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
 
             <div className="col-span-1">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Order Status
+                {t("orderPage.orderStatus")}
               </label>
               <input
                 type="text"
@@ -98,7 +100,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
 
             <div className="col-span-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Shipping Address
+                {t("orderPage.shippingAddress")}
               </label>
               <input
                 type="text"
@@ -111,7 +113,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
 
             <div className="col-span-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Notes
+                {t("orderPage.notes")}
               </label>
               <textarea
                 name="notes"
@@ -123,10 +125,12 @@ const OrderPage = ({ order, isShow, onClose }) => {
           </div>
 
           <div className="mt-6">
-            <h3 className="text-lg font-bold mb-4">Order Items</h3>
+            <h3 className="text-lg font-bold mb-4">
+              {t("orderPage.orderItems")}
+            </h3>
             {orderItems.length === 0 ? (
               <div className="text-gray-600 text-center">
-                No order items found.
+                {t("orderPage.noOrderItems")}
               </div>
             ) : (
               orderItems.map((item, index) => (
@@ -136,7 +140,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
                 >
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2">
-                      Product ID
+                      {t("orderPage.productID")}
                     </label>
                     <input
                       type="number"
@@ -147,7 +151,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
                   </div>
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2">
-                      Product Name
+                      {t("orderPage.productName")}
                     </label>
                     <input
                       type="text"
@@ -158,7 +162,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
                   </div>
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2">
-                      Quantity
+                      {t("orderPage.quantity")}
                     </label>
                     <input
                       type="number"
@@ -170,7 +174,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
 
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2">
-                      Price
+                      {t("orderPage.price")}
                     </label>
                     <input
                       type="number"
@@ -197,7 +201,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
               className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               onClick={onClose}
             >
-              Close
+              {t("orderPage.close")}
             </button>
           </div>
 

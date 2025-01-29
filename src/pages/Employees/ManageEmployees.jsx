@@ -1,15 +1,18 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 import AddUpdateEmployee from "./AddUpdateEmployee";
 import DeleteEmployee from "./DeleteEmployee";
 import EmployeePage from "./EmployeePage";
-import Pagination from "../../components/Pagination"; // Assuming Pagination component is in this path
-import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi"; // Import new icons
+import Pagination from "../../components/Pagination";
+import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi";
 import API from "../../Classes/clsAPI";
 import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
 
 const ManageEmployees = () => {
+  const { t } = useTranslation();
+
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,13 +27,11 @@ const ManageEmployees = () => {
   const initialLoad = useRef(true);
   const scrollPositionRef = useRef(0);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Filter state
   const [filterEmployeeID, setFilterEmployeeID] = useState("");
   const [filterUserName, setFilterUserName] = useState("");
   const [filterEmail, setFilterEmail] = useState("");
@@ -210,9 +211,7 @@ const ManageEmployees = () => {
     <div>
       {employees.length === 0 && !loading && !error && isFiltersVisible && (
         <Alert
-          message={
-            "No employees found with current filters. Please adjust filters or clear them."
-          }
+          message={t("manageEmployees.noEmployeesFound")}
           type={"failure"}
         />
       )}
@@ -226,7 +225,7 @@ const ManageEmployees = () => {
         <div className="p-4 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-2 gap-4">
             <h1 className="text-xl font-semibold text-gray-800 w-full md:w-auto">
-              Employees
+              {t("manageEmployees.employeesTitle")}
             </h1>
             <div className="w-full md:w-auto flex flex-col sm:flex-row justify-end gap-2">
               <button
@@ -239,7 +238,9 @@ const ManageEmployees = () => {
                   <FiFilter className="text-lg" />
                 )}
                 <span className="hidden sm:inline">
-                  {isFiltersVisible ? "Hide Filters" : "Show Filters"}
+                  {isFiltersVisible
+                    ? t("manageEmployees.hideFiltersButton")
+                    : t("manageEmployees.showFiltersButton")}
                 </span>
               </button>
               <button
@@ -247,7 +248,9 @@ const ManageEmployees = () => {
                 className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 flex items-center justify-center gap-2"
               >
                 <FiPlus className="text-lg" />
-                <span className="hidden sm:inline">New Employee</span>
+                <span className="hidden sm:inline">
+                  {t("manageEmployees.newEmployeeButton")}
+                </span>
               </button>
             </div>
           </div>
@@ -261,12 +264,12 @@ const ManageEmployees = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterEmployeeID"
                   >
-                    Employee ID:
+                    {t("manageEmployees.employeeIDHeader")}:
                   </label>
                   <input
                     type="number"
                     id="filterEmployeeID"
-                    placeholder="Employee ID"
+                    placeholder={t("manageEmployees.employeeIDHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterEmployeeID}
                     onChange={(e) => handleFilterChange(e, setFilterEmployeeID)}
@@ -278,12 +281,12 @@ const ManageEmployees = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterUserName"
                   >
-                    User Name:
+                    {t("manageEmployees.userNameHeader")}:
                   </label>
                   <input
                     type="text"
                     id="filterUserName"
-                    placeholder="User Name"
+                    placeholder={t("manageEmployees.userNameHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterUserName}
                     onChange={(e) => handleFilterChange(e, setFilterUserName)}
@@ -295,12 +298,12 @@ const ManageEmployees = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterEmail"
                   >
-                    Email:
+                    {t("manageEmployees.emailHeader")}:
                   </label>
                   <input
                     type="email"
                     id="filterEmail"
-                    placeholder="Email"
+                    placeholder={t("manageEmployees.emailHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterEmail}
                     onChange={(e) => handleFilterChange(e, setFilterEmail)}
@@ -312,12 +315,12 @@ const ManageEmployees = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterPhone"
                   >
-                    Phone:
+                    {t("manageEmployees.phoneHeader")}:
                   </label>
                   <input
                     type="text"
                     id="filterPhone"
-                    placeholder="Phone"
+                    placeholder={t("manageEmployees.phoneHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterPhone}
                     onChange={(e) => handleFilterChange(e, setFilterPhone)}
@@ -329,12 +332,12 @@ const ManageEmployees = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterRole"
                   >
-                    Role:
+                    {t("manageEmployees.roleHeader")}:
                   </label>
                   <input
                     type="text"
                     id="filterRole"
-                    placeholder="Role"
+                    placeholder={t("manageEmployees.roleHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterRole}
                     onChange={(e) => handleFilterChange(e, setFilterRole)}
@@ -347,7 +350,7 @@ const ManageEmployees = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterIsActive"
                   >
-                    Is Active:
+                    {t("manageEmployees.isActiveHeader")}:
                   </label>
                   <select
                     id="filterIsActive"
@@ -356,9 +359,13 @@ const ManageEmployees = () => {
                     onChange={(e) => handleFilterChange(e, setFilterIsActive)}
                     onKeyDown={handleKeyDown}
                   >
-                    <option value="">All</option>
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
+                    <option value="">{t("manageEmployees.allStatus")}</option>
+                    <option value="true">
+                      {t("manageEmployees.activeStatus")}
+                    </option>
+                    <option value="false">
+                      {t("manageEmployees.inactiveStatus")}
+                    </option>
                   </select>
                 </div>
 
@@ -368,14 +375,14 @@ const ManageEmployees = () => {
                     className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                   >
-                    Clear Filters
+                    {t("manageEmployees.clearFiltersButton")}
                   </button>
                   <button
                     onClick={applyFilters}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                   >
-                    Apply Filters
+                    {t("manageEmployees.applyFiltersButton")}
                   </button>
                 </div>
               </div>
@@ -385,7 +392,7 @@ const ManageEmployees = () => {
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
             <div className="px-4 py-2 flex justify-between items-center">
               <span className="text-sm text-gray-700">
-                Total Employees:{" "}
+                {t("manageEmployees.totalEmployeesText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>
               </span>
               <Pagination
@@ -410,9 +417,7 @@ const ManageEmployees = () => {
                       className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
                       onClick={() => handleSort(key)}
                     >
-                      {key === "employeeID"
-                        ? "Employee ID"
-                        : key.replace(/([A-Z])/g, " $1").trim()}
+                      {t(`manageEmployees.${key}Header`)}{" "}
                       {sortConfig.key === key && (
                         <span className="ml-1">
                           {sortConfig.direction === "asc" ? "↑" : "↓"}
@@ -421,7 +426,7 @@ const ManageEmployees = () => {
                     </th>
                   ))}
                   <th className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500">
-                    Actions
+                    {t("manageEmployees.actionsHeader")}
                   </th>
                 </tr>
               </thead>
@@ -450,7 +455,9 @@ const ManageEmployees = () => {
                           "bg-gray-100 text-gray-800"
                         }`}
                       >
-                        {employee.isActive ? "Active" : "Inactive"}
+                        {employee.isActive
+                          ? t("manageEmployees.activeStatus")
+                          : t("manageEmployees.inactiveStatus")}
                       </span>
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
@@ -458,21 +465,21 @@ const ManageEmployees = () => {
                         <button
                           onClick={() => handleView("read", employee)}
                           className="text-gray-600 hover:text-blue-600"
-                          title="View"
+                          title={t("manageEmployees.viewTitle")}
                         >
                           <FiEye className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
                         <button
                           onClick={() => handleView("update", employee)}
                           className="text-gray-600 hover:text-green-600"
-                          title="Edit"
+                          title={t("manageEmployees.editTitle")}
                         >
                           <FiEdit className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
                         <button
                           onClick={() => handleView("delete", employee)}
                           className="text-gray-600 hover:text-red-600"
-                          title="Delete"
+                          title={t("manageEmployees.deleteTitle")}
                         >
                           <FiTrash2 className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
@@ -484,7 +491,7 @@ const ManageEmployees = () => {
             </table>
             <div className="px-4 py-2 flex justify-between items-center gap-2">
               <span className="text-sm text-gray-700">
-                Total Employees:{" "}
+                {t("manageEmployees.totalEmployeesText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>
               </span>
               <Pagination

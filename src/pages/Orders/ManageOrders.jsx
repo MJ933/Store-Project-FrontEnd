@@ -1,21 +1,17 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-
+import { useTranslation } from "react-i18next";
 import AddNewUpdateOrder from "./AddUpdateOrder";
-
 import OrderPage from "./OrderPage";
-
 import clsOrders from "../../Classes/clsOrders";
-
-import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi"; // Import FiFilter and FiX
-
+import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi";
 import API from "../../Classes/clsAPI";
-
 import Alert from "../../components/Alert";
-
 import ModernLoader from "../../components/ModernLoader";
-import Pagination from "../../components/Pagination"; // Import Pagination component
+import Pagination from "../../components/Pagination";
 
 const ManageOrders = () => {
+  const { t, i18n } = useTranslation();
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,17 +22,15 @@ const ManageOrders = () => {
     direction: "desc",
   });
   const [alertMessage, setAlertMessage] = useState(null);
-  const [alertType, setAlertType] = useState("success"); // 'success' or 'error'
+  const [alertType, setAlertType] = useState("success");
   const initialLoad = useRef(true);
   const scrollPositionRef = useRef(0);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Filter state
   const [filterOrderID, setFilterOrderID] = useState("");
   const [filterCustomerID, setFilterCustomerID] = useState("");
   const [filterOrderDate, setFilterOrderDate] = useState("");
@@ -54,15 +48,35 @@ const ManageOrders = () => {
     notes: "",
   });
 
-  // Filter visibility state
   const [isFiltersVisible, setIsFiltersVisible] = useState(false);
   const [filterChanged, setFilterChanged] = useState(false);
 
   const statusStyles = {
-    Pending: "bg-yellow-100 text-yellow-800",
-    Shipped: "bg-blue-100 text-blue-800",
-    Delivered: "bg-green-100 text-green-800",
-    Canceled: "bg-red-100 text-red-800",
+    Pending: {
+      base: "bg-yellow-100 text-yellow-800",
+      ar: "px-2 py-1",
+      en: "px-3 py-1",
+    }, // Adjusted padding for ar and en
+    Shipped: {
+      base: "bg-blue-100 text-blue-800",
+      ar: "px-2 py-1",
+      en: "px-3 py-1",
+    }, // Adjusted padding for ar and en
+    Delivered: {
+      base: "bg-green-100 text-green-800",
+      ar: "px-2 py-1",
+      en: "px-3 py-1",
+    }, // Adjusted padding for ar and en
+    Canceled: {
+      base: "bg-red-100 text-red-800",
+      ar: "px-2 py-1",
+      en: "px-3 py-1",
+    }, // Adjusted padding for ar and en
+  };
+
+  const getStatusPaddingClass = (status) => {
+    const isAr = i18n.language === "ar";
+    return isAr ? statusStyles[status]?.ar : statusStyles[status]?.en;
   };
 
   const showAlert = (message, type) => {
@@ -70,7 +84,7 @@ const ManageOrders = () => {
     setAlertType(type);
     setTimeout(() => {
       setAlertMessage(null);
-    }, 3000); // Hide alert after 3 seconds
+    }, 3000);
   };
 
   const fetchPaginatedOrders = useCallback(async () => {
@@ -119,7 +133,7 @@ const ManageOrders = () => {
         );
       }
       const data = await response.json();
-      setOrders(data.orderList); // Make sure to use `orderList` from response
+      setOrders(data.orderList);
       setTotalCount(data.totalCount);
       setTotalPages(Math.ceil(data.totalCount / pageSize));
     } catch (err) {
@@ -180,39 +194,35 @@ const ManageOrders = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${api.baseURL()}/API/OrdersAPI/UpdateStatus/${orderID}`, // Updated endpoint
+        `${api.baseURL()}/API/OrdersAPI/UpdateStatus/${orderID}`,
         {
-          method: "PATCH", // Changed to PATCH
+          method: "PATCH",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json", // Set content type to JSON
-            accept: "*/*", // Add accept header
+            "Content-Type": "application/json",
+            accept: "*/*",
           },
-          body: JSON.stringify("Canceled"), // Send the plain string as JSON
+          body: JSON.stringify("Canceled"),
         }
       );
 
-      console.log(response);
-
       if (!response.ok) {
-        const errorResponse = await response.json(); // Parse the error response
+        const errorResponse = await response.json();
         console.error("Error response:", errorResponse);
         throw new Error("Failed to cancel the order");
       }
 
-      // Update the orders list after canceling
       const updatedOrders = orders.map((order) =>
         order.orderID === orderID
-          ? { ...order, orderStatus: "Canceled" } // Ensure status matches API response
+          ? { ...order, orderStatus: "Canceled" }
           : order
       );
       setOrders(updatedOrders);
 
-      // Show success alert
-      showAlert("Order canceled successfully!", "success");
+      showAlert(t("manageOrders.cancelSuccessAlert"), "success");
     } catch (err) {
       setError(err.message);
-      showAlert("Failed to cancel the order.", "error");
+      showAlert(t("manageOrders.cancelErrorAlert"), "error");
     } finally {
       setLoading(false);
     }
@@ -232,7 +242,7 @@ const ManageOrders = () => {
       shippingAddress: filterShippingAddress,
       notes: filterNotes,
     });
-    setCurrentPage(1); // Reset to first page when applying filters
+    setCurrentPage(1);
     setFilterChanged((prev) => !prev);
   };
 
@@ -253,7 +263,7 @@ const ManageOrders = () => {
       shippingAddress: "",
       notes: "",
     });
-    setCurrentPage(1); // Reset pagination to first page
+    setCurrentPage(1);
   };
 
   const toggleFiltersVisibility = () => {
@@ -272,95 +282,124 @@ const ManageOrders = () => {
 
   return (
     <div>
+           {" "}
       {orders.length === 0 && !loading && !error && isFiltersVisible && (
-        <Alert
-          message={
-            "No orders found with current filters. Please adjust filters or clear them."
-          }
-          type={"failure"}
-        />
+        <Alert message={t("manageOrders.noOrdersFound")} type={"failure"} />
       )}
+           {" "}
       <Alert
         message={alertMessage}
         type={alertType}
         onClose={() => setAlertMessage(null)}
       />
-
+           {" "}
       {currentView === null ? (
         <div className="p-4 max-w-7xl mx-auto">
+                   {" "}
           <div className="flex flex-col md:flex-row justify-between items-center mb-2 gap-4">
+                       {" "}
             <h1 className="text-xl font-semibold text-gray-800 w-full md:w-auto">
-              Orders
+                            {t("manageOrders.ordersTitle")}           {" "}
             </h1>
+                       {" "}
             <div className="w-full md:w-auto flex flex-col sm:flex-row justify-end gap-2">
+                           {" "}
               <button
                 onClick={toggleFiltersVisibility}
                 className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 flex items-center justify-center gap-2"
               >
+                               {" "}
                 {isFiltersVisible ? (
                   <FiX className="text-lg" />
                 ) : (
                   <FiFilter className="text-lg" />
                 )}
+                               {" "}
                 <span className="hidden sm:inline">
-                  {isFiltersVisible ? "Hide Filters" : "Show Filters"}
+                                   {" "}
+                  {isFiltersVisible
+                    ? t("manageOrders.hideFiltersButton")
+                    : t("manageOrders.showFiltersButton")}
+                                 {" "}
                 </span>
+                             {" "}
               </button>
+                           {" "}
               <button
                 onClick={() => handleView("add")}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center gap-2 w-full md:w-auto"
               >
-                <FiPlus className="text-lg" />
-                <span className="hidden sm:inline">New Order</span>
+                                <FiPlus className="text-lg" />               {" "}
+                <span className="hidden sm:inline">
+                                    {t("manageOrders.newOrderButton")}         
+                       {" "}
+                </span>
+                             {" "}
               </button>
+                         {" "}
             </div>
+                     {" "}
           </div>
-
-          {/* Filters */}
+                    {/* Filters */}         {" "}
           {isFiltersVisible && (
             <div className="mb-4 p-4 bg-gray-50 rounded-md border border-gray-200">
+                           {" "}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                               {" "}
                 <div>
+                                   {" "}
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterOrderID"
                   >
-                    Order ID:
+                                        {t("manageOrders.orderIDHeader")}:      
+                               {" "}
                   </label>
+                                   {" "}
                   <input
                     type="number"
                     id="filterOrderID"
-                    placeholder="Order ID"
+                    placeholder={t("manageOrders.orderIDHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterOrderID}
                     onChange={(e) => handleFilterChange(e, setFilterOrderID)}
                     onKeyDown={handleKeyDown}
                   />
+                                 {" "}
                 </div>
+                               {" "}
                 <div>
+                                   {" "}
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterCustomerID"
                   >
-                    Customer ID:
+                                        {t("manageOrders.customerIDHeader")}:  
+                                   {" "}
                   </label>
+                                   {" "}
                   <input
                     type="number"
                     id="filterCustomerID"
-                    placeholder="Customer ID"
+                    placeholder={t("manageOrders.customerIDHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterCustomerID}
                     onChange={(e) => handleFilterChange(e, setFilterCustomerID)}
                     onKeyDown={handleKeyDown}
                   />
+                                 {" "}
                 </div>
+                               {" "}
                 <div>
+                                   {" "}
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterOrderDate"
                   >
-                    Order Date:
+                                        {t("manageOrders.orderDateHeader")}:    
+                                 {" "}
                   </label>
+                                   {" "}
                   <input
                     type="date"
                     id="filterOrderDate"
@@ -369,31 +408,41 @@ const ManageOrders = () => {
                     onChange={(e) => handleFilterChange(e, setFilterOrderDate)}
                     onKeyDown={handleKeyDown}
                   />
+                                 {" "}
                 </div>
+                               {" "}
                 <div>
+                                   {" "}
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterTotal"
                   >
-                    Total:
+                                        {t("manageOrders.totalHeader")}:        
+                             {" "}
                   </label>
+                                   {" "}
                   <input
                     type="number"
                     id="filterTotal"
-                    placeholder="Total"
+                    placeholder={t("manageOrders.totalHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterTotal}
                     onChange={(e) => handleFilterChange(e, setFilterTotal)}
                     onKeyDown={handleKeyDown}
                   />
+                                 {" "}
                 </div>
+                               {" "}
                 <div>
+                                   {" "}
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterOrderStatus"
                   >
-                    Order Status:
+                                        {t("manageOrders.orderStatusHeader")}:  
+                                   {" "}
                   </label>
+                                   {" "}
                   <select
                     id="filterOrderStatus"
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -403,24 +452,51 @@ const ManageOrders = () => {
                     }
                     onKeyDown={handleKeyDown}
                   >
-                    <option value="">All</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Canceled">Canceled</option>
+                                       {" "}
+                    <option value="">{t("manageOrders.allStatus")}</option>     
+                                 {" "}
+                    <option value="Pending">
+                                           {" "}
+                      {t("manageOrders.orderStatus.pending")}{" "}
+                      {/* Translated Status */}                   {" "}
+                    </option>
+                                       {" "}
+                    <option value="Shipped">
+                                           {" "}
+                      {t("manageOrders.orderStatus.shipped")}{" "}
+                      {/* Translated Status */}                   {" "}
+                    </option>
+                                       {" "}
+                    <option value="Delivered">
+                                           {" "}
+                      {t("manageOrders.orderStatus.delivered")}{" "}
+                      {/* Translated Status */}                   {" "}
+                    </option>
+                                       {" "}
+                    <option value="Canceled">
+                                           {" "}
+                      {t("manageOrders.orderStatus.canceled")}{" "}
+                      {/* Translated Status */}                   {" "}
+                    </option>
+                                     {" "}
                   </select>
+                                 {" "}
                 </div>
+                               {" "}
                 <div>
+                                   {" "}
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterShippingAddress"
                   >
-                    Shipping Address:
+                                       {" "}
+                    {t("manageOrders.shippingAddressHeader")}:                  {" "}
                   </label>
+                                   {" "}
                   <input
                     type="text"
                     id="filterShippingAddress"
-                    placeholder="Shipping Address"
+                    placeholder={t("manageOrders.shippingAddressHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterShippingAddress}
                     onChange={(e) =>
@@ -428,60 +504,82 @@ const ManageOrders = () => {
                     }
                     onKeyDown={handleKeyDown}
                   />
+                                 {" "}
                 </div>
+                               {" "}
                 <div>
+                                   {" "}
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterNotes"
                   >
-                    Notes:
+                                        {t("manageOrders.notesHeader")}:        
+                             {" "}
                   </label>
+                                   {" "}
                   <input
                     type="text"
                     id="filterNotes"
-                    placeholder="Notes"
+                    placeholder={t("manageOrders.notesHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterNotes}
                     onChange={(e) => handleFilterChange(e, setFilterNotes)}
                     onKeyDown={handleKeyDown}
                   />
+                                 {" "}
                 </div>
-
+                               {" "}
                 <div className="flex items-end justify-end gap-2">
+                                   {" "}
                   <button
                     onClick={clearFilters}
                     className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                   >
-                    Clear Filters
+                                        {t("manageOrders.clearFiltersButton")} 
+                                   {" "}
                   </button>
+                                   {" "}
                   <button
                     onClick={applyFilters}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                   >
-                    Apply Filters
+                                        {t("manageOrders.applyFiltersButton")} 
+                                   {" "}
                   </button>
+                                 {" "}
                 </div>
+                             {" "}
               </div>
+                         {" "}
             </div>
           )}
-
+                   {" "}
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+                       {" "}
             <div className="px-4 py-2 flex justify-between items-center">
+                           {" "}
               <span className="text-sm text-gray-700">
-                Total Orders:{" "}
-                <span className="font-semibold">{totalCount}</span>
+                                {t("manageOrders.totalOrdersText")}:            
+                    <span className="font-semibold">{totalCount}</span>         
+                   {" "}
               </span>
+                           {" "}
               <Pagination
                 totalPages={totalPages}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
               />
+                         {" "}
             </div>
+                       {" "}
             <table className="w-full">
+                           {" "}
               <thead className="bg-gray-50">
+                               {" "}
                 <tr>
+                                   {" "}
                   {[
                     "orderID",
                     "customerID",
@@ -500,114 +598,159 @@ const ManageOrders = () => {
                       }`}
                       onClick={() => handleSort(key)}
                     >
-                      {key === "orderID"
-                        ? "Order ID"
-                        : key === "customerID"
-                        ? "Customer ID"
-                        : key === "orderDate"
-                        ? "Date"
-                        : key.charAt(0).toUpperCase() + key.slice(1)}{" "}
+                                            {t(`manageOrders.${key}Header`)}   
+                                       {" "}
                       {sortConfig.key === key && (
                         <span className="ml-1">
-                          {sortConfig.direction === "asc" ? "↑" : "↓"}
+                                                   {" "}
+                          {sortConfig.direction === "asc" ? "↑" : "↓"}         
+                                       {" "}
                         </span>
                       )}
+                                         {" "}
                     </th>
                   ))}
+                                   {" "}
                   <th className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500">
-                    Actions
+                                        {t("manageOrders.actionsHeader")}       
+                             {" "}
                   </th>
+                                 {" "}
                 </tr>
+                             {" "}
               </thead>
+                           {" "}
               <tbody className="divide-y divide-gray-200">
+                               {" "}
                 {sortedOrders.map((order) => (
                   <tr key={order.orderID} className="hover:bg-gray-50">
+                                       {" "}
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
-                      {order.orderID}
+                                            {order.orderID}                   {" "}
                     </td>
+                                       {" "}
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
-                      {order.customerID}
+                                            {order.customerID}                 
+                       {" "}
                     </td>
+                                       {" "}
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
+                                           {" "}
                       {new Date(order.orderDate).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
                       })}
+                                         {" "}
                     </td>
+                                       {" "}
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm font-medium text-gray-900">
-                      ${order.total.toFixed(2)}
+                                            ${order.total.toFixed(2)}           
+                             {" "}
                     </td>
+                                       {" "}
                     <td className="px-2 py-2 md:px-4 md:py-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          statusStyles[order.orderStatus] ||
+                        className={`rounded-full text-xs font-medium inline-block ${
+                          statusStyles[order.orderStatus]?.base ||
                           "bg-gray-100 text-gray-800"
+                        } ${
+                          // Changed comma to space here
+                          getStatusPaddingClass(order.orderStatus)
                         }`}
                       >
-                        {order.orderStatus}
+                        {t(
+                          `manageOrders.orderStatus.${order.orderStatus.toLowerCase()}`
+                        )}
                       </span>
                     </td>
+                                       {" "}
                     <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
-                      {order.shippingAddress}
+                                            {order.shippingAddress}             
+                           {" "}
                     </td>
+                                       {" "}
                     <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
-                      {order.notes}
+                                            {order.notes}                   {" "}
                     </td>
+                                       {" "}
                     <td className="px-2 py-2 md:px-4 md:py-3">
+                                           {" "}
                       <div className="flex items-center gap-2 md:gap-3">
+                                               {" "}
                         <button
                           onClick={() => handleView("read", order)}
                           className="text-gray-600 hover:text-blue-600"
-                          title="View"
+                          title={t("manageOrders.viewTitle")}
                         >
-                          <FiEye className="w-4 h-4 md:w-5 md:h-5" />
+                                                   {" "}
+                          <FiEye className="w-4 h-4 md:w-5 md:h-5" />           
+                                     {" "}
                         </button>
+                                               {" "}
                         <button
                           onClick={() => handleView("update", order)}
                           className="text-gray-600 hover:text-green-600"
-                          title="Edit"
+                          title={t("manageOrders.editTitle")}
                         >
-                          <FiEdit className="w-4 h-4 md:w-5 md:h-5" />
+                                                   {" "}
+                          <FiEdit className="w-4 h-4 md:w-5 md:h-5" />         
+                                       {" "}
                         </button>
+                                               {" "}
                         <button
                           onClick={() => handleCancelOrder(order.orderID)}
                           className="text-gray-600 hover:text-red-600"
-                          title="Delete"
+                          title={t("manageOrders.deleteTitle")}
                         >
-                          <FiTrash2 className="w-4 h-4 md:w-5 md:h-5" />
+                                                   {" "}
+                          <FiTrash2 className="w-4 h-4 md:w-5 md:h-5" />       
+                                         {" "}
                         </button>
+                                             {" "}
                       </div>
+                                         {" "}
                     </td>
+                                     {" "}
                   </tr>
                 ))}
+                             {" "}
               </tbody>
+                         {" "}
             </table>
+                       {" "}
             <div className="px-4 py-2 flex justify-between items-center gap-2">
+                           {" "}
               <span className="text-sm text-gray-700">
-                Total Orders:{" "}
-                <span className="font-semibold">{totalCount}</span>
+                                {t("manageOrders.totalOrdersText")}:            
+                    <span className="font-semibold">{totalCount}</span>         
+                   {" "}
               </span>
+                           {" "}
               <Pagination
                 totalPages={totalPages}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
               />
+                         {" "}
             </div>
+                     {" "}
           </div>
+                 {" "}
         </div>
       ) : (
         <div>
+                   {" "}
           {(currentView === "add" || currentView === "update") && (
             <AddNewUpdateOrder
               order={currentView === "update" ? selectedOrder : null}
               isShow={true}
               onClose={() => handleView(null)}
               showAlert={showAlert}
-              refreshOrders={fetchPaginatedOrders} // Use fetchPaginatedOrders for refresh
+              refreshOrders={fetchPaginatedOrders}
             />
           )}
-
+                   {" "}
           {currentView === "read" && (
             <OrderPage
               order={selectedOrder}
@@ -615,8 +758,10 @@ const ManageOrders = () => {
               onClose={() => handleView(null)}
             />
           )}
+                 {" "}
         </div>
       )}
+         {" "}
     </div>
   );
 };

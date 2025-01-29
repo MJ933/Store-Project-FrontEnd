@@ -4,6 +4,7 @@ import clsOrderItems from "../../Classes/clsOrderItems";
 import ManageOrderItems from "../OrderItems/ManageOrderItems";
 import ModernLoader from "../../components/ModernLoader";
 import ErrorComponent from "../../components/Error";
+import { useTranslation } from "react-i18next";
 
 export default function AddNewUpdateOrder({
   order = {},
@@ -17,6 +18,7 @@ export default function AddNewUpdateOrder({
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [orderItems, setOrderItems] = useState([]);
+  const { t } = useTranslation();
 
   const isUpdateOrder = Boolean(order?.orderID);
 
@@ -87,7 +89,7 @@ export default function AddNewUpdateOrder({
 
       setSuccess(true);
       refreshOrders();
-      showAlert("Order Added/Updated Successfully", "success");
+      showAlert(t("addNewUpdateOrder.orderSuccess"), "success");
       onClose();
     } catch (error) {
       setError(error.message);
@@ -115,7 +117,7 @@ export default function AddNewUpdateOrder({
 
             <div className="col-span-1">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Customer ID
+                {t("addNewUpdateOrder.customerID")}
               </label>
               <input
                 type="number"
@@ -129,7 +131,7 @@ export default function AddNewUpdateOrder({
 
             <div className="col-span-1">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Order Date
+                {t("addNewUpdateOrder.orderDate")}
               </label>
               <input
                 type="datetime-local"
@@ -143,7 +145,7 @@ export default function AddNewUpdateOrder({
 
             <div className="col-span-1">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Total
+                {t("addNewUpdateOrder.total")}
               </label>
               <input
                 type="number"
@@ -157,7 +159,7 @@ export default function AddNewUpdateOrder({
 
             <div className="col-span-1">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Order Status
+                {t("addNewUpdateOrder.orderStatus")}
               </label>
               <select
                 name="orderStatus"
@@ -166,16 +168,24 @@ export default function AddNewUpdateOrder({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                 required
               >
-                <option value="Pending">Pending</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Delivered">Delivered</option>
-                <option value="Cancelled">Cancelled</option>
+                <option value="Pending">
+                  {t("addNewUpdateOrder.pending")}
+                </option>
+                <option value="Shipped">
+                  {t("addNewUpdateOrder.shipped")}
+                </option>
+                <option value="Delivered">
+                  {t("addNewUpdateOrder.delivered")}
+                </option>
+                <option value="Cancelled">
+                  {t("addNewUpdateOrder.cancelled")}
+                </option>
               </select>
             </div>
 
             <div className="col-span-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Shipping Address
+                {t("addNewUpdateOrder.shippingAddress")}
               </label>
               <input
                 type="text"
@@ -188,7 +198,7 @@ export default function AddNewUpdateOrder({
 
             <div className="col-span-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Notes
+                {t("addNewUpdateOrder.notes")}
               </label>
               <textarea
                 name="notes"
@@ -212,17 +222,17 @@ export default function AddNewUpdateOrder({
             >
               {loading
                 ? isUpdateOrder
-                  ? "Updating..."
-                  : "Adding..."
+                  ? t("addNewUpdateOrder.updating")
+                  : t("addNewUpdateOrder.adding")
                 : isUpdateOrder
-                ? "Update Order"
-                : "Add Order"}
+                ? t("addNewUpdateOrder.updateOrder")
+                : t("addNewUpdateOrder.addOrder")}
             </button>
             <button
               className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               onClick={onClose}
             >
-              Close
+              {t("addNewUpdateOrder.close")}
             </button>
           </div>
 
@@ -230,7 +240,7 @@ export default function AddNewUpdateOrder({
 
           {success && (
             <div className="text-green-600 mt-4">
-              Order {isUpdateOrder ? "Updated" : "Added"} successfully!
+              {t("addNewUpdateOrder.orderSuccess")}
             </div>
           )}
         </form>

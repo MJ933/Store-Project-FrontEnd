@@ -1,3 +1,4 @@
+// E:\My Projects\Store Project\Store FrontEnd\i18next-parser.config.cjs
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -15,6 +16,7 @@ import {
   clearSearchQuery,
   setSearchQuery,
 } from "../redux/features/search/searchSlice";
+import { useTranslation } from "react-i18next"; // Import useTranslation hook
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -23,6 +25,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation(); // Get the current route
+  const { t, i18n } = useTranslation(); // Initialize useTranslation hook
 
   const cartItems = useSelector((state) => state.cart.cartItems);
   const currentCustomer = useSelector(
@@ -39,7 +42,7 @@ const Navbar = () => {
     } else if (currentEmployee) {
       dispatch(logoutEmployee());
     } else {
-      alert("You are not logged in.");
+      alert(t("navbar.notLoggedInAlert")); // Use translation key for alert message
     }
     navigate("/");
   };
@@ -58,6 +61,10 @@ const Navbar = () => {
     }
   };
 
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <nav className="bg-white text-gray-800 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
@@ -66,7 +73,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             {/* Logo */}
             <Link to="/" className="text-xl font-bold text-cyan-600">
-              Store
+              {t("navbar.store")} {/* Translation key for Store */}
             </Link>
 
             {/* Employee-Specific Options (Desktop) */}
@@ -84,7 +91,8 @@ const Navbar = () => {
                     to={`/${item.toLowerCase()}/manage`}
                     className="px-3 py-2 text-lg font-medium text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
                   >
-                    {item}
+                    {t(`navbar.${item.toLowerCase()}`)}{" "}
+                    {/* Translation keys for employee menu items */}
                   </Link>
                 ))}
               </div>
@@ -96,13 +104,23 @@ const Navbar = () => {
                 to="/orders/customer-orders"
                 className="hidden sm:block px-3 py-2 text-lg font-medium text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                My Orders
+                {t("navbar.myOrders")} {/* Translation key for My Orders */}
               </Link>
             )}
           </div>
 
           {/* Right Side: Icons (Cart, Profile, Login/Logout) */}
           <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Language Switch Button */}
+            <button
+              onClick={() =>
+                changeLanguage(i18n.resolvedLanguage === "en" ? "ar" : "en")
+              }
+              className="p-1 sm:p-2 text-gray-800 hover:text-cyan-600 focus:outline-none"
+            >
+              {i18n.resolvedLanguage === "en" ? "العربية" : "English"}
+            </button>
+
             {/* Search Icon (Only on Home Page) */}
             {["/", "/products/ShowAllProducts"].includes(location.pathname) && (
               <>
@@ -157,7 +175,7 @@ const Navbar = () => {
             <div className="flex items-center space-x-2">
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder={t("navbar.searchPlaceholder")} // Translation key for search placeholder
                 value={localSearchQuery}
                 onChange={(e) => setLocalSearchQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -167,7 +185,7 @@ const Navbar = () => {
                 onClick={handleSearch}
                 className="px-3 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 focus:outline-none"
               >
-                Find
+                {t("navbar.find")} {/* Translation key for Find button */}
               </button>
               <button
                 onClick={() => {
@@ -198,6 +216,7 @@ const Navbar = () => {
 
 // Mobile Menu Component
 const MobileMenu = ({ userType, currentCustomer, currentEmployee }) => {
+  const { t } = useTranslation(); // Initialize useTranslation hook
   return (
     <div className="sm:hidden bg-white">
       <div className="px-2 pt-2 pb-3 space-y-1">
@@ -210,7 +229,8 @@ const MobileMenu = ({ userType, currentCustomer, currentEmployee }) => {
                 to={`/${item.toLowerCase()}/manage`}
                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-800 hover:bg-gray-100"
               >
-                {item}
+                {t(`navbar.${item.toLowerCase()}`)}{" "}
+                {/* Translation keys for mobile employee menu items */}
               </Link>
             )
           )}
@@ -221,7 +241,7 @@ const MobileMenu = ({ userType, currentCustomer, currentEmployee }) => {
             to="/orders/customer-orders"
             className="block px-3 py-2 rounded-md text-base font-medium text-gray-800 hover:bg-gray-100"
           >
-            My Orders
+            {t("navbar.myOrders")} {/* Translation key for mobile My Orders */}
           </Link>
         )}
       </div>
@@ -253,6 +273,7 @@ const ProfileSection = ({
   currentEmployee,
   handleLogOut,
 }) => {
+  const { t } = useTranslation(); // Initialize useTranslation hook
   return currentCustomer || currentEmployee ? (
     <div className="flex items-center space-x-2">
       <button

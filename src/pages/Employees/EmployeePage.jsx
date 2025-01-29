@@ -1,9 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function EmployeePage({ employee, isShow = false, onClose }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   // const userInfo = useSelector((state) => state.authCustomer.currentUser);
 
   if (!employee?.employeeID) {
@@ -26,7 +28,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <h2 className="text-3xl font-extrabold mb-8 text-center text-gray-800">
-          Employee Details
+          {t("employeePage.employeeDetails")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex items-center space-x-4">
@@ -42,7 +44,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Employee ID
+                {t("employeePage.employeeID")}
               </label>
               <p className="text-gray-800 font-medium">{employee.employeeID}</p>
             </div>
@@ -64,7 +66,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Username
+                {t("employeePage.userName")}
               </label>
               <p className="text-gray-800 font-medium">{employee.userName}</p>
             </div>
@@ -86,7 +88,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Email
+                {t("employeePage.email")}
               </label>
               <p className="text-gray-800 font-medium">{employee.email}</p>
             </div>
@@ -105,7 +107,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Phone
+                {t("employeePage.phone")}
               </label>
               <p className="text-gray-800 font-medium">{employee.phone}</p>
             </div>
@@ -123,7 +125,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Role
+                {t("employeePage.role")}
               </label>
               <p className="text-gray-800 font-medium">{employee.role}</p>
             </div>
@@ -145,10 +147,12 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
             </div>
             <div>
               <label className="block text-gray-600 text-sm font-semibold mb-1">
-                Is Active
+                {t("employeePage.isActive")}
               </label>
               <p className="text-gray-800 font-medium">
-                {employee.isActive ? "Yes" : "No"}
+                {employee.isActive
+                  ? t("employeePage.yes")
+                  : t("employeePage.no")}
               </p>
             </div>
           </div>
@@ -158,7 +162,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
             onClick={handleClose}
             className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none"
           >
-            Close
+            {t("employeePage.close")}
           </button>
         </div>
       </div>

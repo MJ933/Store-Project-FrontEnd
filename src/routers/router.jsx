@@ -20,11 +20,13 @@ import EmployeePage from "../pages/Employees/EmployeePage";
 import CustomerOrders from "../pages/Customers/CustomerOrders";
 import ProductPage from "../pages/Products/ProductPage";
 import HomePage from "../components/HomePage";
+import TestErrorComponent from "../components/TestErrorComponent";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+
     children: [
       {
         path: "/",
@@ -82,6 +84,11 @@ const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    // *** ADD THIS TEST ROUTE ***
+    path: "/test-error",
+    element: <TestErrorComponent />,
   },
 ]);
 

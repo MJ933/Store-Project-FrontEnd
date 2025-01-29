@@ -100,7 +100,7 @@ const CategoriesCarousel = ({ selectedCategoryId, onCategorySelect }) => {
       >
         <button
           onClick={() => onCategorySelect(null)}
-          className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-lg
+          className={`flex-shrink-0 mx-4 w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-lg
             bg-gradient-to-r from-purple-400 to-purple-600 flex items-center justify-center
             font-semibold text-white text-xs md:text-sm
             ${

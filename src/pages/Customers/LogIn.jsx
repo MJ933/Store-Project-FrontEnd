@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { loginSuccessCustomer } from "../../redux/features/auth/authCustomerSlice";
 import { clearSearchQuery } from "../../redux/features/search/searchSlice";
 import { useNavigate, useLocation } from "react-router-dom"; // Add this for navigation
+import { useTranslation } from "react-i18next";
 
 const LogIn = () => {
   const location = useLocation(); // Initialize useLocation
@@ -17,6 +18,7 @@ const LogIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Add this for navigation
   const api = new API();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (location.state?.email) {
@@ -67,17 +69,17 @@ const LogIn = () => {
         // Update Redux state
         dispatch(loginSuccessCustomer({ identifier: userIdentifier }));
 
-        console.log("Login successful:", userIdentifier);
+        console.log(t("login.loginSuccess"), userIdentifier);
         fetchUserData(userIdentifier);
 
         // Redirect after successful login
         navigate("/"); // Change this to your desired route
       } else {
-        setError("Invalid credentials");
+        setError(t("login.invalidCredentials"));
       }
     } catch (error) {
-      setError("Failed to login. Please check your credentials.");
-      console.error("Login error:", error);
+      setError(t("login.loginFailed"));
+      console.error(t("login.loginError"), error);
     } finally {
       setLoading(false);
     }
@@ -101,7 +103,7 @@ const LogIn = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error(t("login.networkError"));
       }
       const data = await response.json();
       dispatch(loginSuccessCustomer({ identifier: data }));
@@ -124,7 +126,7 @@ const LogIn = () => {
         className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
       >
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Sign In
+          {t("login.signIn")}
         </h2>
         {error && (
           <div className="mb-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -137,42 +139,42 @@ const LogIn = () => {
           <button
             type="button"
             onClick={() => setUserType("customer")}
-            className={`px-4 py-2 rounded-md font-medium ${
+            className={` mx-4 px-4 py-2 rounded-md font-medium ${
               userType === "customer"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700"
             }`}
           >
-            Customer
+            {t("login.customer")}
           </button>
           <button
             type="button"
             onClick={() => setUserType("employee")}
-            className={`px-4 py-2 rounded-md font-medium ${
+            className={`mx-4 px-4 py-2 rounded-md font-medium ${
               userType === "employee"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700"
             }`}
           >
-            Employee
+            {t("login.employee")}
           </button>
         </div>
 
         {/* Toggle between Email and Phone */}
-        <div className="mb-4 flex justify-center space-x-4">
+        <div className=" mb-4 flex justify-center space-x-4">
           <button
             type="button"
             onClick={() => {
               setLoginMethod("email");
               setEmailOrPhone("");
             }}
-            className={`px-4 py-2 rounded-md font-medium ${
+            className={`mx-4 px-4 py-2 rounded-md font-medium ${
               loginMethod === "email"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700"
             }`}
           >
-            Email
+            {t("login.email")}
           </button>
           <button
             type="button"
@@ -180,13 +182,13 @@ const LogIn = () => {
               setLoginMethod("phone");
               setEmailOrPhone("");
             }}
-            className={`px-4 py-2 rounded-md font-medium ${
+            className={`mx-4 px-4 py-2 rounded-md font-medium ${
               loginMethod === "phone"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700"
             }`}
           >
-            Phone
+            {t("login.phone")}
           </button>
         </div>
 
@@ -196,7 +198,7 @@ const LogIn = () => {
             htmlFor="emailOrPhone"
             className="block text-sm font-medium text-gray-700"
           >
-            {loginMethod === "email" ? "Email" : "Phone"}
+            {loginMethod === "email" ? t("login.email") : t("login.phone")}
           </label>
           <input
             type={loginMethod === "email" ? "email" : "tel"}
@@ -214,7 +216,7 @@ const LogIn = () => {
             htmlFor="password"
             className="block text-sm font-medium text-gray-700"
           >
-            Password
+            {t("login.password")}
           </label>
           <input
             type="password"
@@ -232,19 +234,19 @@ const LogIn = () => {
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           disabled={loading}
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? t("login.loggingIn") : t("login.login")}
         </button>
 
         {/* Sign Up Link */}
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
+            {t("login.dontHaveAccount")}
             <button
               type="button"
               onClick={() => navigate("/signup")} // Navigate to the sign-up page
               className="text-blue-600 hover:underline focus:outline-none"
             >
-              Sign Up
+              {t("login.signUp")}
             </button>
           </p>
         </div>
@@ -256,7 +258,7 @@ const LogIn = () => {
             onClick={() => navigate("/forgot-password")} // Navigate to the forgot password page
             className="text-blue-600 hover:underline focus:outline-none text-sm"
           >
-            Forgot Password?
+            {t("login.forgotPassword")}
           </button>
         </div>
       </form>

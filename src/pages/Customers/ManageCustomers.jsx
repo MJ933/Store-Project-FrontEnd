@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 import AddNewUpdateCustomer from "./AddUpdateCustomer";
 import DeleteCustomer from "./DeleteCustomer";
 import CustomerPage from "./CustomerPage";
 import CustomerOrders from "./CustomerOrders";
-import Pagination from "../../components/Pagination"; // Assuming Pagination component is in this path
+import Pagination from "../../components/Pagination";
 import {
   FiEye,
   FiEdit,
@@ -13,12 +14,14 @@ import {
   FiPlus,
   FiFilter,
   FiX,
-} from "react-icons/fi"; // Import new icons
+} from "react-icons/fi";
 import API from "../../Classes/clsAPI";
 import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
 
 const ManageCustomers = () => {
+  const { t } = useTranslation();
+
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,16 +33,14 @@ const ManageCustomers = () => {
   });
   const [alertMessage, setAlertMessage] = useState(null);
   const [alertType, setAlertType] = useState("success");
-  const initialLoad = useRef(true); // Add this line
+  const initialLoad = useRef(true);
   const scrollPositionRef = useRef(0);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Filter state - Storing filter values in state
   const [filterCustomerID, setFilterCustomerID] = useState("");
   const [filterFirstName, setFilterFirstName] = useState("");
   const [filterLastName, setFilterLastName] = useState("");
@@ -56,7 +57,6 @@ const ManageCustomers = () => {
     registeredAt: "",
     isActive: "",
   });
-  // Filter visibility state
   const [isFiltersVisible, setIsFiltersVisible] = useState(false);
   const [filterChanged, setFilterChanged] = useState(false);
   const statusStyles = {
@@ -195,7 +195,7 @@ const ManageCustomers = () => {
     setFilterPhone("");
     setFilterRegisteredAt("");
     setFilterIsActive("");
-    setCurrentPage(1); // Reset pagination to first page
+    setCurrentPage(1);
     setAppliedFilters({
       customerID: "",
       firstName: "",
@@ -216,7 +216,7 @@ const ManageCustomers = () => {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // Prevent form submission if inside a form
+      e.preventDefault();
       applyFilters();
     }
   };
@@ -224,9 +224,7 @@ const ManageCustomers = () => {
     <div>
       {customers.length === 0 && !loading && !error && isFiltersVisible && (
         <Alert
-          message={
-            "No customers found with current filters. Please adjust filters or clear them."
-          }
+          message={t("manageCustomers.noCustomersFound")}
           type={"failure"}
         />
       )}
@@ -240,7 +238,7 @@ const ManageCustomers = () => {
         <div className="p-4 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-2 gap-4">
             <h1 className="text-xl font-semibold text-gray-800 w-full md:w-auto">
-              Customers
+              {t("manageCustomers.customersTitle")}
             </h1>
             <div className="w-full md:w-auto flex flex-col sm:flex-row justify-end gap-2">
               <button
@@ -253,7 +251,9 @@ const ManageCustomers = () => {
                   <FiFilter className="text-lg" />
                 )}
                 <span className="hidden sm:inline">
-                  {isFiltersVisible ? "Hide Filters" : "Show Filters"}
+                  {isFiltersVisible
+                    ? t("manageCustomers.hideFiltersButton")
+                    : t("manageCustomers.showFiltersButton")}
                 </span>
               </button>
 
@@ -262,7 +262,9 @@ const ManageCustomers = () => {
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center gap-2"
               >
                 <FiPlus className="text-lg" />
-                <span className="hidden sm:inline">New Customer</span>
+                <span className="hidden sm:inline">
+                  {t("manageCustomers.newCustomerButton")}
+                </span>
               </button>
             </div>
           </div>
@@ -276,12 +278,12 @@ const ManageCustomers = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterCustomerID"
                   >
-                    Customer ID:
+                    {t("manageCustomers.customerIDHeader")}:
                   </label>
                   <input
                     type="number"
                     id="filterCustomerID"
-                    placeholder="Customer ID"
+                    placeholder={t("manageCustomers.customerIDHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterCustomerID}
                     onChange={(e) => handleFilterChange(e, setFilterCustomerID)}
@@ -293,12 +295,12 @@ const ManageCustomers = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterFirstName"
                   >
-                    First Name:
+                    {t("manageCustomers.firstNameHeader")}:
                   </label>
                   <input
                     type="text"
                     id="filterFirstName"
-                    placeholder="First Name"
+                    placeholder={t("manageCustomers.firstNameHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterFirstName}
                     onChange={(e) => handleFilterChange(e, setFilterFirstName)}
@@ -310,16 +312,16 @@ const ManageCustomers = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterLastName"
                   >
-                    Last Name:
+                    {t("manageCustomers.lastNameHeader")}:
                   </label>
                   <input
                     type="text"
                     id="filterLastName"
-                    placeholder="Last Name"
+                    placeholder={t("manageCustomers.lastNameHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterLastName}
                     onChange={(e) => handleFilterChange(e, setFilterLastName)}
-                    onKeyDown={handleKeyDown} // Added onKeyDown handler
+                    onKeyDown={handleKeyDown}
                   />
                 </div>
                 <div>
@@ -327,12 +329,12 @@ const ManageCustomers = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterEmail"
                   >
-                    Email:
+                    {t("manageCustomers.emailHeader")}:
                   </label>
                   <input
                     type="email"
                     id="filterEmail"
-                    placeholder="Email"
+                    placeholder={t("manageCustomers.emailHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterEmail}
                     onChange={(e) => handleFilterChange(e, setFilterEmail)}
@@ -344,12 +346,12 @@ const ManageCustomers = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterPhone"
                   >
-                    Phone:
+                    {t("manageCustomers.phoneHeader")}:
                   </label>
                   <input
                     type="text"
                     id="filterPhone"
-                    placeholder="Phone"
+                    placeholder={t("manageCustomers.phoneHeader")}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={filterPhone}
                     onChange={(e) => handleFilterChange(e, setFilterPhone)}
@@ -361,7 +363,7 @@ const ManageCustomers = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterRegisteredAt"
                   >
-                    Registered At:
+                    {t("manageCustomers.registeredAtHeader")}:
                   </label>
                   <input
                     type="date"
@@ -379,7 +381,7 @@ const ManageCustomers = () => {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="filterIsActive"
                   >
-                    Is Active:
+                    {t("manageCustomers.isActiveHeader")}:
                   </label>
                   <select
                     id="filterIsActive"
@@ -388,9 +390,13 @@ const ManageCustomers = () => {
                     onChange={(e) => handleFilterChange(e, setFilterIsActive)}
                     onKeyDown={handleKeyDown}
                   >
-                    <option value="">All</option>
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
+                    <option value="">{t("manageCustomers.allStatus")}</option>
+                    <option value="true">
+                      {t("manageCustomers.activeStatus")}
+                    </option>
+                    <option value="false">
+                      {t("manageCustomers.inactiveStatus")}
+                    </option>
                   </select>
                 </div>
                 <div className="flex items-end justify-end gap-2">
@@ -399,14 +405,14 @@ const ManageCustomers = () => {
                     className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                   >
-                    Clear Filters
+                    {t("manageCustomers.clearFiltersButton")}
                   </button>
                   <button
                     onClick={applyFilters}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
                   >
-                    Apply Filters
+                    {t("manageCustomers.applyFiltersButton")}
                   </button>
                 </div>
               </div>
@@ -416,7 +422,7 @@ const ManageCustomers = () => {
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
             <div className="px-4 py-2 flex justify-between items-center">
               <span className="text-sm text-gray-700">
-                Total Customers:{" "}
+                {t("manageCustomers.totalCustomersText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>
               </span>
               <Pagination
@@ -446,9 +452,7 @@ const ManageCustomers = () => {
                       }`}
                       onClick={() => handleSort(key)}
                     >
-                      {key === "customerID"
-                        ? "Customer ID"
-                        : key.replace(/([A-Z])/g, " $1").trim()}{" "}
+                      {t(`manageCustomers.${key}Header`)}{" "}
                       {sortConfig.key === key && (
                         <span className="ml-1">
                           {sortConfig.direction === "asc" ? "↑" : "↓"}
@@ -457,7 +461,7 @@ const ManageCustomers = () => {
                     </th>
                   ))}
                   <th className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500">
-                    Actions
+                    {t("manageCustomers.actionsHeader")}
                   </th>
                 </tr>
               </thead>
@@ -488,7 +492,9 @@ const ManageCustomers = () => {
                           statusStyles[customer.isActive]
                         }`}
                       >
-                        {customer.isActive ? "Active" : "Inactive"}
+                        {customer.isActive
+                          ? t("manageCustomers.activeStatus")
+                          : t("manageCustomers.inactiveStatus")}
                       </span>
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
@@ -496,28 +502,28 @@ const ManageCustomers = () => {
                         <button
                           onClick={() => handleView("read", customer)}
                           className="text-gray-600 hover:text-blue-600"
-                          title="View"
+                          title={t("manageCustomers.viewTitle")}
                         >
                           <FiEye className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
                         <button
                           onClick={() => handleView("update", customer)}
                           className="text-gray-600 hover:text-green-600"
-                          title="Edit"
+                          title={t("manageCustomers.editTitle")}
                         >
                           <FiEdit className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
                         <button
                           onClick={() => handleView("delete", customer)}
                           className="text-gray-600 hover:text-red-600"
-                          title="Delete"
+                          title={t("manageCustomers.deleteTitle")}
                         >
                           <FiTrash2 className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
                         <button
                           onClick={() => handleView("orders", customer)}
                           className="text-gray-600 hover:text-yellow-600"
-                          title="Orders"
+                          title={t("manageCustomers.ordersTitle")}
                         >
                           <FiList className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
@@ -529,7 +535,7 @@ const ManageCustomers = () => {
             </table>
             <div className="px-4 py-2 flex justify-between items-center gap-2">
               <span className="text-sm text-gray-700">
-                Total Customers:{" "}
+                {t("manageCustomers.totalCustomersText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>
               </span>
               <Pagination

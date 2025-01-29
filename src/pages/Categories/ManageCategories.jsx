@@ -5,6 +5,7 @@ import { FiEye, FiEdit, FiTrash2, FiPlus } from "react-icons/fi";
 import API from "../../Classes/clsAPI";
 import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 const ManageCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -18,6 +19,7 @@ const ManageCategories = () => {
   });
   const [alertMessage, setAlertMessage] = useState(null);
   const [alertType, setAlertType] = useState("success");
+  const { t } = useTranslation(); // Initialize useTranslation hook
 
   const statusStyles = {
     true: "bg-green-100 text-green-800",
@@ -87,9 +89,18 @@ const ManageCategories = () => {
   }, [categories, sortConfig]);
 
   if (loading) return <ModernLoader />;
-  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (error)
+    return (
+      <div className="p-4 text-red-500">
+        {t("manageCategories.error")} {error}
+      </div>
+    ); // Translation key for "Error: "
   if (categories.length === 0)
-    return <div className="p-4 text-gray-500">No categories found</div>;
+    return (
+      <div className="p-4 text-gray-500">
+        {t("manageCategories.noCategoriesFound")}
+      </div>
+    ); // Translation key for "No categories found"
 
   return (
     <div>
@@ -103,14 +114,18 @@ const ManageCategories = () => {
         <div className="p-4 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <h1 className="text-xl font-semibold text-gray-800 w-full md:w-auto">
-              Categories
+              {t("manageCategories.categoriesTitle")}{" "}
+              {/* Translation key for "Categories" */}
             </h1>
             <button
               onClick={() => handleView("add")}
               className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 flex items-center justify-center gap-2 w-full md:w-auto"
             >
               <FiPlus className="text-lg" />
-              <span className="hidden sm:inline">New Category</span>
+              <span className="hidden sm:inline">
+                {t("manageCategories.newCategoryButton")}
+              </span>{" "}
+              {/* Translation key for "New Category" */}
             </button>
           </div>
 
@@ -130,10 +145,13 @@ const ManageCategories = () => {
                       onClick={() => handleSort(key)}
                     >
                       {key === "categoryID"
-                        ? "category ID"
+                        ? t("manageCategories.categoryIDHeader") // Translation key for "category ID"
                         : key === "parentCategoryID"
-                        ? "parent Category ID"
-                        : key.replace(/([A-Z])/g, " $1").trim()}
+                        ? t("manageCategories.parentCategoryIDHeader") // Translation key for "parent Category ID"
+                        : t(`manageCategories.${key}Header`, {
+                            // Dynamic translation keys for other headers
+                            defaultValue: key.replace(/([A-Z])/g, " $1").trim(), // Fallback to default if translation is missing
+                          })}
                       {sortConfig.key === key && (
                         <span className="ml-1">
                           {sortConfig.direction === "asc" ? "↑" : "↓"}
@@ -142,7 +160,8 @@ const ManageCategories = () => {
                     </th>
                   ))}
                   <th className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500">
-                    Actions
+                    {t("manageCategories.actionsHeader")}{" "}
+                    {/* Translation key for "Actions" */}
                   </th>
                 </tr>
               </thead>
@@ -156,7 +175,8 @@ const ManageCategories = () => {
                       {category.categoryName}
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
-                      {category.parentCategoryID || "N/A"}
+                      {category.parentCategoryID || t("manageCategories.na")}{" "}
+                      {/* Translation key for "N/A" */}
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
                       <span
@@ -165,7 +185,10 @@ const ManageCategories = () => {
                           "bg-gray-100 text-gray-800"
                         }`}
                       >
-                        {category.isActive ? "Active" : "Inactive"}
+                        {category.isActive
+                          ? t("manageCategories.activeStatus")
+                          : t("manageCategories.inactiveStatus")}{" "}
+                        {/* Translation keys for "Active" and "Inactive" */}
                       </span>
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
@@ -180,14 +203,14 @@ const ManageCategories = () => {
                         <button
                           onClick={() => handleView("update", category)}
                           className="text-gray-600 hover:text-green-600"
-                          title="Edit"
+                          title={t("manageCategories.editTitle")} // Translation key for "Edit" tooltip
                         >
                           <FiEdit className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
                         <button
                           onClick={() => handleView("delete", category)}
                           className="text-gray-600 hover:text-red-600"
-                          title="Delete"
+                          title={t("manageCategories.deleteTitle")} // Translation key for "Delete" tooltip
                         >
                           <FiTrash2 className="w-4 h-4 md:w-5 md:h-5" />
                         </button>

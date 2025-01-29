@@ -1,17 +1,24 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const ManageOrderItems = ({ orderItems, handleOrderItemChange }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="mt-6">
-      <h3 className="text-lg font-bold mb-4">Order Items</h3>
+      <h3 className="text-lg font-bold mb-4">
+        {t("manageOrderItems.orderItems")}
+      </h3>
       {orderItems.length === 0 ? (
-        <div className="text-gray-600 text-center">No order items found.</div>
+        <div className="text-gray-600 text-center">
+          {t("manageOrderItems.noOrderItems")}
+        </div>
       ) : (
         orderItems.map((item, index) => (
           <div key={item.orderItemID} className="grid grid-cols-5 gap-4 mb-4">
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Product ID
+                {t("manageOrderItems.productID")}
               </label>
               <input
                 type="number"
@@ -25,7 +32,7 @@ const ManageOrderItems = ({ orderItems, handleOrderItemChange }) => {
             </div>
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Product Name
+                {t("manageOrderItems.productName")}
               </label>
               <input
                 type="text"
@@ -39,7 +46,7 @@ const ManageOrderItems = ({ orderItems, handleOrderItemChange }) => {
             </div>
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Quantity
+                {t("manageOrderItems.quantity")}
               </label>
               <input
                 type="number"
@@ -54,7 +61,7 @@ const ManageOrderItems = ({ orderItems, handleOrderItemChange }) => {
 
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Price
+                {t("manageOrderItems.price")}
               </label>
               <input
                 type="number"

@@ -1,23 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
+import { useTranslation } from "react-i18next";
 
 const CustomerOrders = ({ customer, isShow, onClose }) => {
-  const [orders, setOrders] = useState([]); // Stores the list of orders
-  const [selectedOrder, setSelectedOrder] = useState(null); // Stores the selected order's details
-  const [orderItems, setOrderItems] = useState([]); // Stores the items of the selected order
-  const [loading, setLoading] = useState(false); // Tracks loading state
-  const [error, setError] = useState(null); // Tracks errors
-  const [alertMessage, setAlertMessage] = useState(null); // Tracks alert message
+  const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [orderItems, setOrderItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [alertMessage, setAlertMessage] = useState(null);
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
+  const [alertType, setAlertType] = useState("success");
+  const showAlert = (message, type) => {
+    setAlertMessage(message);
+    setAlertType(type);
+    setTimeout(() => {
+      setAlertMessage(null);
+    }, 3000);
+  };
   // Fetch orders for the customer
   if (!customer?.customerID) {
     customer = JSON.parse(localStorage.getItem("currentCustomer"));
   }
 
   if (!customer) {
-    return <h1> You do not have any orders</h1>; // Don't render if the component is not shown or customer data is missing
+    return <h1>{t("customerOrders.noOrders")}</h1>; // Don't render if the component is not shown or customer data is missing
   }
   const api = new API();
 
@@ -37,7 +46,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
         );
         console.log(response);
         if (!response.ok) {
-          throw new Error("Failed to fetch orders");
+          throw new Error(t("customerOrders.fetchOrdersError"));
         }
         const data = await response.json();
         setOrders(data);
@@ -69,8 +78,9 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
             },
           }
         );
+
         if (!response.ok) {
-          throw new Error("Failed to fetch order items");
+          throw new Error(t("customerOrders.fetchOrderItemsError"));
         }
         const data = await response.json();
         setOrderItems(data);
@@ -107,31 +117,35 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${api.baseURL()}/API/OrdersAPI/UpdateOrderStatusByOrderID/${orderID}/Canceled`,
+        `${api.baseURL()}/API/OrdersAPI/UpdateStatus/${orderID}`,
         {
-          method: "Put",
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+            accept: "*/*",
+          },
+          body: JSON.stringify("Canceled"),
         }
       );
 
       if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error("Error response:", errorResponse);
         throw new Error("Failed to cancel the order");
       }
 
-      // Update the orders list after canceling
       const updatedOrders = orders.map((order) =>
         order.orderID === orderID
-          ? { ...order, orderStatus: "Cancelled" }
+          ? { ...order, orderStatus: "Canceled" }
           : order
       );
       setOrders(updatedOrders);
 
-      // Show success alert
-      setAlertMessage("Order canceled successfully!");
-      setTimeout(() => setAlertMessage(null), 2000); // Hide alert after 2 seconds
+      showAlert(t("manageOrders.cancelSuccessAlert"), "success");
     } catch (err) {
       setError(err.message);
-      setAlertMessage("Failed to cancel the order.");
-      setTimeout(() => setAlertMessage(null), 2000); // Hide alert after 2 seconds
+      showAlert(t("manageOrders.cancelErrorAlert"), "error");
     } finally {
       setLoading(false);
     }
@@ -140,8 +154,12 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
   // Render the component
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Customer Orders</h1>
-      {loading && <p className="text-gray-600">Loading...</p>}
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        {t("customerOrders.customerOrders")}
+      </h1>
+      {loading && (
+        <p className="text-gray-600">{t("customerOrders.loading")}</p>
+      )}
 
       {/* Alert Message */}
       {alertMessage && (
@@ -155,13 +173,15 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
           onClick={handleClose}
           className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none"
         >
-          Close
+          {t("customerOrders.close")}
         </button>
       </div>
 
       {/* Orders List */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-700">Orders</h2>
+        <h2 className="text-xl font-semibold text-gray-700">
+          {t("customerOrders.orders")}
+        </h2>
         {orders.length > 0 ? (
           orders.map((order) => (
             <div
@@ -176,10 +196,10 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="text-lg font-medium text-gray-800">
-                    Order #{order.orderID}
+                    {t("customerOrders.order")} #{order.orderID}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    Date: {formatDate(order.orderDate)}
+                    {t("customerOrders.date")}: {formatDate(order.orderDate)}
                   </p>
                 </div>
                 <div className="text-right">
@@ -195,7 +215,9 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
                         : "text-yellow-600"
                     }`}
                   >
-                    {order.orderStatus}
+                    {t(
+                      `customerOrders.orderStatus.${order.orderStatus.toLowerCase()}`
+                    )}
                   </p>
                 </div>
               </div>
@@ -209,7 +231,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
                   }}
                   className="mt-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
                 >
-                  Cancel Order
+                  {t("customerOrders.cancelOrder")}
                 </button>
               )}
 
@@ -217,10 +239,12 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
               {selectedOrder?.orderID === order.orderID && (
                 <div className="mt-4">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                    Items
+                    {t("customerOrders.items")}
                   </h3>
                   {loading ? (
-                    <p className="text-gray-600">Loading items...</p>
+                    <p className="text-gray-600">
+                      {t("customerOrders.loadingItems")}
+                    </p>
                   ) : error ? (
                     <p className="text-red-600">{error}</p>
                   ) : orderItems.length > 0 ? (
@@ -229,19 +253,19 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
                         <thead>
                           <tr className="bg-gray-200">
                             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                              Image
+                              {t("customerOrders.image")}
                             </th>
                             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                              Product Name
+                              {t("customerOrders.productName")}
                             </th>
                             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                              Quantity
+                              {t("customerOrders.quantity")}
                             </th>
                             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                              Price
+                              {t("customerOrders.price")}
                             </th>
                             <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                              Total
+                              {t("customerOrders.total")}
                             </th>
                           </tr>
                         </thead>
@@ -277,7 +301,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
                     </div>
                   ) : (
                     <p className="text-gray-600">
-                      No items found for this order.
+                      {t("customerOrders.noItems")}
                     </p>
                   )}
                 </div>
@@ -285,7 +309,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
             </div>
           ))
         ) : (
-          <h1>No Orders Found</h1>
+          <h1>{t("customerOrders.noOrdersFound")}</h1>
         )}
       </div>
     </div>

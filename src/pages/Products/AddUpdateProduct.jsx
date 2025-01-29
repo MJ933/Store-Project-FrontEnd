@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
+import { useTranslation } from "react-i18next";
 
 export default function AddNewUpdateProduct({
   product = { product: {}, image: {} },
@@ -16,6 +17,7 @@ export default function AddNewUpdateProduct({
   const isUpdateProduct = Boolean(product?.product);
   const isUpdateImage = Boolean(product?.image);
   const api = new API();
+  const { t } = useTranslation();
 
   const initialFormData = {
     productID: product?.product?.productID || 1,
@@ -100,7 +102,7 @@ export default function AddNewUpdateProduct({
       if (!productResponse.ok) {
         const errorData = await productResponse.json();
         throw new Error(
-          errorData.message || "Failed to Add/update the product"
+          errorData.message || t("addNewUpdateProduct.addProductError")
         );
       }
 
@@ -126,15 +128,15 @@ export default function AddNewUpdateProduct({
         });
 
         if (!imageResponse.ok) {
-          throw new Error("Failed to Add/update image");
+          throw new Error(t("addNewUpdateProduct.addImageError"));
         }
 
         const imageResult = await imageResponse.json();
-        console.log("Image Added/updated successfully:", imageResult);
+        console.log(t("addNewUpdateProduct.imageUpdateSuccess"), imageResult);
       }
 
       setSuccess(true);
-      showAlert("Product Added/Updated Successfully", "success");
+      showAlert(t("addNewUpdateProduct.productUpdateSuccess"), "success");
       refreshProducts();
       handleClose();
     } catch (error) {
@@ -164,7 +166,7 @@ export default function AddNewUpdateProduct({
           {/* Product Name */}
           <div className="col-span-2 md:col-span-1">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Product Name
+              {t("addNewUpdateProduct.productNameLabel")}
             </label>
             <input
               type="text"
@@ -179,7 +181,7 @@ export default function AddNewUpdateProduct({
           {/* Prices */}
           <div className="col-span-1">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Initial Price
+              {t("addNewUpdateProduct.initialPriceLabel")}
             </label>
             <input
               type="number"
@@ -193,7 +195,7 @@ export default function AddNewUpdateProduct({
 
           <div className="col-span-1">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Selling Price
+              {t("addNewUpdateProduct.sellingPriceLabel")}
             </label>
             <input
               type="number"
@@ -208,7 +210,7 @@ export default function AddNewUpdateProduct({
           {/* Description */}
           <div className="col-span-2 md:col-span-3">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Description
+              {t("addNewUpdateProduct.descriptionLabel")}
             </label>
             <textarea
               name="description"
@@ -225,17 +227,19 @@ export default function AddNewUpdateProduct({
           {isUpdateProduct && (
             <div className="col-span-1">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Current Image
+                {t("addNewUpdateProduct.currentImageLabel")}
               </label>
               <div className="w-full aspect-square max-h-40 sm:max-h-none border border-gray-300 rounded-lg overflow-hidden">
                 {product?.image?.imageURL ? (
                   <img
                     src={product.image.imageURL}
-                    alt="Current Product"
+                    alt={t("addNewUpdateProduct.currentProductAlt")}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-gray-400 text-sm">No Image</span>
+                  <span className="text-gray-400 text-sm">
+                    {t("addNewUpdateProduct.noImage")}
+                  </span>
                 )}
               </div>
             </div>
@@ -243,17 +247,19 @@ export default function AddNewUpdateProduct({
 
           <div className="col-span-1">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              New Image Preview
+              {t("addNewUpdateProduct.newImagePreviewLabel")}
             </label>
             <div className="w-full aspect-square max-h-40 sm:max-h-none border border-gray-300 rounded-lg overflow-hidden">
               {formData.imageFile ? (
                 <img
                   src={URL.createObjectURL(formData.imageFile)}
-                  alt="New Product"
+                  alt={t("addNewUpdateProduct.newProductAlt")}
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-gray-400 text-sm">No Image</span>
+                <span className="text-gray-400 text-sm">
+                  {t("addNewUpdateProduct.noImage")}
+                </span>
               )}
             </div>
           </div>
@@ -262,7 +268,7 @@ export default function AddNewUpdateProduct({
           <div className="col-span-2 md:col-span-1 space-y-2">
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Category ID
+                {t("addNewUpdateProduct.categoryIDLabel")}
               </label>
               <input
                 type="number"
@@ -276,7 +282,7 @@ export default function AddNewUpdateProduct({
 
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Stock Quantity
+                {t("addNewUpdateProduct.stockQuantityLabel")}
               </label>
               <input
                 type="number"
@@ -290,7 +296,7 @@ export default function AddNewUpdateProduct({
 
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                Product Image
+                {t("addNewUpdateProduct.productImageLabel")}
               </label>
               <input
                 type="file"
@@ -312,7 +318,9 @@ export default function AddNewUpdateProduct({
                 onChange={handleChange}
                 className="form-checkbox h-4 w-4 text-blue-600"
               />
-              <span className="text-sm">Product is active</span>
+              <span className="text-sm">
+                {t("addNewUpdateProduct.productIsActiveLabel")}
+              </span>
             </label>
 
             <label className="flex items-center gap-2">
@@ -323,7 +331,9 @@ export default function AddNewUpdateProduct({
                 onChange={handleChange}
                 className="form-checkbox h-4 w-4 text-blue-600"
               />
-              <span className="text-sm">Primary image</span>
+              <span className="text-sm">
+                {t("addNewUpdateProduct.primaryImageLabel")}
+              </span>
             </label>
           </div>
         </div>
@@ -337,11 +347,11 @@ export default function AddNewUpdateProduct({
           >
             {loading
               ? isUpdateProduct
-                ? "Updating..."
-                : "Adding..."
+                ? t("addNewUpdateProduct.updatingButton")
+                : t("addNewUpdateProduct.addingButton")
               : isUpdateProduct
-              ? "Update Product"
-              : "Add Product"}
+              ? t("addNewUpdateProduct.updateProductButton")
+              : t("addNewUpdateProduct.addProductButton")}
           </button>
 
           <button
@@ -349,7 +359,7 @@ export default function AddNewUpdateProduct({
             className="w-full sm:w-auto bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm sm:text-base"
             onClick={handleClose}
           >
-            Close
+            {t("addNewUpdateProduct.closeButton")}
           </button>
         </div>
 
@@ -358,7 +368,7 @@ export default function AddNewUpdateProduct({
         )}
         {success && (
           <div className="text-green-600 mt-4 text-center text-sm">
-            Product {isUpdateProduct ? "Updated" : "Added"} successfully!
+            {t("addNewUpdateProduct.productUpdateSuccess")}
           </div>
         )}
       </form>
