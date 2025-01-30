@@ -9,7 +9,10 @@
     "myOrders": "My Orders",
     "searchPlaceholder": "Search...",
     "find": "Find",
-    "notLoggedInAlert": "You are not logged in."
+    "notLoggedInAlert": "You are not logged in.",
+    "login": "Login",
+    "profile": "Profile",
+    "logout": "Logout"
   },
   "hero": {
     "newSeasonArrivals": "New Season Arrivals",
@@ -41,8 +44,14 @@
     "inactiveStatus": "Inactive",
     "editTitle": "Edit",
     "deleteTitle": "Delete",
-    "error": "Error:",
-    "noCategoriesFound": "No categories found"
+    "error": "Error: ",
+    "noCategoriesFound": "No categories found",
+    "showFiltersButton": "Show Filters",
+    "hideFiltersButton": "Hide Filters",
+    "allStatus": "All",
+    "clearFiltersButton": "Clear Filters",
+    "applyFiltersButton": "Apply Filters",
+    "totalCategoriesText": "Total Categories"
   },
   "manageCustomers": {
     "customersTitle": "Customers",
@@ -160,7 +169,10 @@
     "addToCartButton": "Add to Cart",
     "descriptionHeader": "Description",
     "productNotFound": "Product not found, Please check the product ID and try again.",
-    "whatsappButton": "Contact us"
+    "whatsappButton": "Contact us",
+    "imageGallery": "Image Gallery",
+    "stockAvailable": "Stock Available",
+    "close": "Close"
   },
   "addNewUpdateProduct": {
     "productNameLabel": "Product Name",
@@ -185,7 +197,12 @@
     "addProductError": "Failed to Add/update the product",
     "addImageError": "Failed to Add/update image",
     "imageUpdateSuccess": "Image Added/updated successfully:",
-    "productUpdateSuccess": "Product Added/Updated Successfully"
+    "productUpdateSuccess": "Product Added/Updated Successfully",
+    "updateImageError": "Failed to update image.",
+    "imagesLabel": "Product Images",
+    "setPrimaryLabel": "Set as Primary",
+    "primaryLabel": "Primary",
+    "addImagesLabel": "Add Images"
   },
   "deleteProduct": {
     "deleteProductTitle": "Delete Product",
@@ -428,5 +445,38 @@
     "noDescriptionAvailable": "No description available",
     "addToCart": "Add to Cart",
     "unavailable": "Unavailable"
+  },
+  "addUpdateCategory": {
+    "editCategoryTitle": "Edit Category",
+    "createCategoryTitle": "Create New Category",
+    "categoryUpdatedSuccess": "Category updated successfully!",
+    "categoryCreatedSuccess": "Category created successfully!",
+    "categoryNameLabel": "Category Name",
+    "categoryNamePlaceholder": "Enter category name",
+    "parentCategoryIdLabel": "Parent Category ID (optional)",
+    "parentCategoryIdPlaceholder": "Enter parent category ID",
+    "activeStatusLabel": "Active Status",
+    "cancelButton": "Cancel",
+    "updatingButton": "Updating...",
+    "creatingButton": "Creating...",
+    "updateCategoryButton": "Update Category",
+    "createCategoryButton": "Create Category"
+  },
+  "common": {
+    "error": {
+      "networkResponseNotOk": "Network response was not ok"
+    }
+  },
+  "deleteCategory": {
+    "deleteCategoryTitle": "Delete Category",
+    "categoryIdLabel": "Category ID",
+    "categoryIdPlaceholder": "Enter category ID",
+    "cancelButton": "Cancel",
+    "deletingButton": "Deleting...",
+    "deleteCategoryButton": "Delete Category",
+    "categoryIdRequiredError": "Please enter a category ID.",
+    "categoryNotFoundError": "Category not found. Please check the ID and try again.",
+    "categoryDeleteFailedError": "Failed to delete the category.",
+    "categoryDeleteSuccess": "Category deleted successfully!"
   }
 }

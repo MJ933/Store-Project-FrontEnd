@@ -111,7 +111,7 @@ const DeleteCustomer = ({
               required
             />
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="flex mx-4 justify-end gap-4">
             <button
               type="button"
               onClick={onClose}

@@ -146,7 +146,7 @@ const CategoriesCarousel = ({ selectedCategoryId, onCategorySelect }) => {
       {/* Right Navigation Button */}
       <button
         onClick={() => scroll("right")}
-        className="absolute right-0 z-10 p-1 md:p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 mr-1 md:mr-2"
+        className="absolute right-0 z-10 p-1 md:p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 m-1 md:m-2"
       >
         <svg
           className="w-4 h-4 md:w-6 md:h-6"

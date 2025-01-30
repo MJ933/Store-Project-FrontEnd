@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "../../Classes/clsAPI";
+import { useTranslation } from "react-i18next";
 
 const DeleteCategory = ({
   category = {},
@@ -12,6 +13,7 @@ const DeleteCategory = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (category?.categoryID) {
@@ -28,7 +30,7 @@ const DeleteCategory = ({
     setSuccess(false);
 
     if (!categoryID) {
-      setError("Please enter a category ID.");
+      setError(t("deleteCategory.categoryIdRequiredError"));
       setLoading(false);
       return;
     }
@@ -47,16 +49,14 @@ const DeleteCategory = ({
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error(
-            "Category not found. Please check the ID and try again."
-          );
+          throw new Error(t("deleteCategory.categoryNotFoundError"));
         } else {
-          throw new Error("Failed to delete the category.");
+          throw new Error(t("deleteCategory.categoryDeleteFailedError"));
         }
       }
 
       setSuccess(true);
-      showAlert("Category deleted successfully!", "success");
+      showAlert(t("deleteCategory.categoryDeleteSuccess"), "success");
       refreshCategories(); // Refresh the category list
       onClose(); // Close the modal
     } catch (err) {
@@ -73,7 +73,7 @@ const DeleteCategory = ({
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Delete Category
+            {t("deleteCategory.deleteCategoryTitle")}
           </h2>
           <button
             onClick={onClose}
@@ -98,14 +98,14 @@ const DeleteCategory = ({
         <form onSubmit={handleDeleteCategory} className="px-8 py-6 gap-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-              Category ID
+              {t("deleteCategory.categoryIdLabel")}
             </label>
             <input
               type="number"
               value={categoryID}
               onChange={(e) => setCategoryID(e.target.value)}
               className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
-              placeholder="Enter category ID"
+              placeholder={t("deleteCategory.categoryIdPlaceholder")}
               required
             />
           </div>
@@ -116,7 +116,7 @@ const DeleteCategory = ({
               onClick={onClose}
               className="px-6 py-2.5 text-gray-600 hover:text-gray-800 font-medium rounded-lg transition-colors"
             >
-              Cancel
+              {t("deleteCategory.cancelButton")}
             </button>
             <button
               type="submit"
@@ -126,7 +126,7 @@ const DeleteCategory = ({
               {loading ? (
                 <span className="flex items-center">
                   <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    className="animate-spin -ml-1 m-3 h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -145,10 +145,10 @@ const DeleteCategory = ({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Deleting...
+                  {t("deleteCategory.deletingButton")}
                 </span>
               ) : (
-                "Delete Category"
+                t("deleteCategory.deleteCategoryButton")
               )}
             </button>
           </div>
@@ -183,7 +183,7 @@ const DeleteCategory = ({
                   clipRule="evenodd"
                 />
               </svg>
-              <span>Category deleted successfully!</span>
+              <span>{t("deleteCategory.categoryDeleteSuccess")}</span>
             </div>
           )}
         </form>

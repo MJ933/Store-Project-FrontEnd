@@ -34,7 +34,7 @@ const ModernLoader = () => {
         <p className="text-gray-600 font-medium animate-pulse">
           {t("loader.loadingText")} {/* Translation key for "Loading..." */}
           {/* <span
-            className={`inline-block ${isAr ? "mr-1.5" : "ml-1.5"}`} // Conditional margin class
+            className={`inline-block ${isAr ? "m-1.5" : "ml-1.5"}`} // Conditional margin class
           >
             <span className="animate-bounce">.</span>
             <span className="animate-bounce delay-100">.</span>

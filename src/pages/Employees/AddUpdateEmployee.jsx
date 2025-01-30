@@ -209,7 +209,7 @@ export default function AddUpdateEmployee({
                 name="isActive"
                 checked={formData.isActive}
                 onChange={handleChange}
-                className="mr-2 leading-tight"
+                className="m-2 leading-tight"
               />
               <span className="text-sm">
                 {t("addUpdateEmployee.activeEmployee")}

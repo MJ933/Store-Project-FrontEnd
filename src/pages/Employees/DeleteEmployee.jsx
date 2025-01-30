@@ -110,7 +110,7 @@ const DeleteEmployee = ({
               required
             />
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="my-4 flex justify-end gap-4">
             <button
               type="button"
               onClick={onClose}

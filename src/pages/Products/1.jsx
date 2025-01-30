@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
 
-export default function AddNewUpdateProduct({
+export default function n1({
   product,
   isShow,
   onClose,
@@ -15,25 +15,53 @@ export default function AddNewUpdateProduct({
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const isUpdateProduct = Boolean(product?.product);
+  const isUpdateImage = Boolean(product?.images && product.images.length > 0);
   const api = new API();
   const { t } = useTranslation();
 
+  const getLastPrimaryImage = (images) => {
+    if (!images || images.length === 0) {
+      return null;
+    }
+    let primaryImages = images.filter((img) => img.isPrimary);
+    if (primaryImages.length > 0) {
+      return primaryImages[primaryImages.length - 1];
+    }
+    return null;
+  };
+
   const initialFormData = {
     productID: product?.product?.productID || 1,
-    productName: product?.product?.productName || "",
-    initialPrice: product?.product?.initialPrice || 0,
-    sellingPrice: product?.product?.sellingPrice || 0,
-    description: product?.product?.description || "",
+    productName: product?.product?.productName || "1",
+    initialPrice: product?.product?.initialPrice || 1,
+    sellingPrice: product?.product?.sellingPrice || 1,
+    description: product?.product?.description || "1",
     categoryID: product?.product?.categoryID || 1,
-    stockQuantity: product?.product?.stockQuantity || 0,
+    stockQuantity: product?.product?.stockQuantity || 1,
     isActive: product?.product?.isActive || true,
-    images: product?.images || [], // Array to handle multiple images
+    imageFile: null,
+    isPrimary: false,
+    currentImageURL: getLastPrimaryImage(product?.images)?.imageURL || null,
+    currentImageID: getLastPrimaryImage(product?.images)?.imageID || null,
   };
 
   const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
-    setFormData(initialFormData);
+    setFormData({
+      productID: product?.product?.productID || 1,
+      productName: product?.product?.productName || "1",
+      initialPrice: product?.product?.initialPrice || 1,
+      sellingPrice: product?.product?.sellingPrice || 1,
+      description: product?.product?.description || "1",
+      categoryID: product?.product?.categoryID || 1,
+      stockQuantity: product?.product?.stockQuantity || 1,
+      isActive: product?.product?.isActive || true,
+      imageFile: null,
+      isPrimary: false,
+      currentImageURL: getLastPrimaryImage(product?.images)?.imageURL || null,
+      currentImageID: getLastPrimaryImage(product?.images)?.imageID || null,
+    });
   }, [product]);
 
   const apiConfig = {
@@ -42,86 +70,23 @@ export default function AddNewUpdateProduct({
     urlProduct: isUpdateProduct
       ? `${api.baseURL()}/API/ProductsAPI/update/${product.product.productID}`
       : `${api.baseURL()}/API/ProductsAPI/create`,
+    methodImage: isUpdateImage ? "Put" : "Post",
+    routeImage: isUpdateImage ? "update" : "create",
+    urlImage: isUpdateImage
+      ? `${api.baseURL()}/API/ImagesAPI/update/${formData.currentImageID}/${
+          formData.isPrimary
+        }`
+      : `${api.baseURL()}/API/ImagesAPI/create/${formData.productID}/${
+          formData.isPrimary
+        }`,
   };
 
   const handleChange = (e) => {
     const { name, value, files, checked, type } = e.target;
-
-    if (type === "file") {
-      const newImages = Array.from(files).map((file) => ({
-        imageFile: file,
-        isPrimary: formData.images.length === 0, // Make first image primary if no images exist
-        imageURL: URL.createObjectURL(file),
-      }));
-
-      setFormData({
-        ...formData,
-        images: [...formData.images, ...newImages],
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: type === "checkbox" ? checked : value,
-      });
-    }
-  };
-
-  // Function to remove an image from the array
-  const [pendingChanges, setPendingChanges] = useState({
-    removedImageIds: [],
-    primaryImageId: null,
-  });
-
-  // Modify the remove and setPrimary handlers
-  const handleRemoveImage = (index) => {
-    const imageToRemove = formData.images[index];
-
-    if (imageToRemove.imageID) {
-      setPendingChanges((prev) => ({
-        ...prev,
-        removedImageIds: [...prev.removedImageIds, imageToRemove.imageID],
-      }));
-    }
-
     setFormData({
       ...formData,
-      images: formData.images.filter((_, i) => i !== index),
+      [name]: type === "checkbox" ? checked : files ? files[0] : value,
     });
-  };
-
-  const handleSetPrimary = (index) => {
-    const imageToSetPrimary = formData.images[index];
-    const isCurrentlyPrimary = imageToSetPrimary.isPrimary;
-
-    if (isCurrentlyPrimary) {
-      // Unset primary if it's already primary
-      setPendingChanges((prev) => ({
-        ...prev,
-        primaryImageId: null, // or keep the previous primary image id if needed to unset in backend explicitly
-      }));
-      setFormData({
-        ...formData,
-        images: formData.images.map((image, i) => ({
-          ...image,
-          isPrimary: i === index ? false : image.isPrimary, // Keep other images' primary status
-        })),
-      });
-    } else {
-      // Set primary if it's not primary
-      if (imageToSetPrimary.imageID) {
-        setPendingChanges((prev) => ({
-          ...prev,
-          primaryImageId: imageToSetPrimary.imageID,
-        }));
-      }
-      setFormData({
-        ...formData,
-        images: formData.images.map((image, i) => ({
-          ...image,
-          isPrimary: i === index,
-        })),
-      });
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -131,7 +96,6 @@ export default function AddNewUpdateProduct({
     setSuccess(false);
 
     try {
-      // Update product details
       const productResponse = await fetch(apiConfig.urlProduct, {
         method: apiConfig.methodProduct,
         headers: {
@@ -158,86 +122,34 @@ export default function AddNewUpdateProduct({
       }
 
       const productResult = await productResponse.json();
-      const productID = isUpdateProduct
-        ? formData.productID
-        : productResult.productID;
-      // Process removed images
-      for (const imageId of pendingChanges.removedImageIds) {
-        await fetch(`${api.baseURL()}/API/ImagesAPI/Delete/${imageId}`, {
-          method: "DELETE",
+      if (formData.imageFile) {
+        if (isUpdateImage && formData.currentImageID) {
+          apiConfig.urlImage = `${api.baseURL()}/API/ImagesAPI/update/${
+            formData.currentImageID
+          }/${formData.isPrimary}`;
+        } else {
+          apiConfig.urlImage = `${api.baseURL()}/API/ImagesAPI/create/${
+            productResult.productID || formData.productID
+          }/${formData.isPrimary}`;
+        }
+
+        const formDataImage = new FormData();
+        formDataImage.append("imageFile", formData.imageFile);
+
+        const imageResponse = await fetch(apiConfig.urlImage, {
+          method: apiConfig.methodImage,
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
+          body: formDataImage,
         });
-      }
 
-      // Inside handleSubmit, modify the image processing loop:
-      for (const image of formData.images) {
-        if (image.imageID) {
-          // Only handle existing images
-          // Update isPrimary status for each image
-          await fetch(
-            `${api.baseURL()}/API/ImagesAPI/UpdateIsPrimaryState/${
-              image.imageID
-            }/${image.isPrimary}`,
-            {
-              method: "PUT",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
+        if (!imageResponse.ok) {
+          throw new Error(t("addNewUpdateProduct.addImageError"));
         }
-      }
 
-      // Upload or update each image
-      // Inside handleSubmit, replace the image upload/update loop with:
-      for (const image of formData.images) {
-        const formDataImage = new FormData();
-
-        // Case 1: Existing image that needs updating
-        if (image.imageID) {
-          if (image.imageFile) {
-            // Only update if there's a new file
-            formDataImage.append("imageFile", image.imageFile);
-            const imageResponse = await fetch(
-              `${api.baseURL()}/API/ImagesAPI/update/${image.imageID}/${
-                image.isPrimary
-              }`,
-              {
-                method: "Put",
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: formDataImage,
-              }
-            );
-
-            if (!imageResponse.ok) {
-              throw new Error(t("addNewUpdateProduct.updateImageError"));
-            }
-          }
-        }
-        // Case 2: New image that needs to be created
-        else if (image.imageFile) {
-          formDataImage.append("imageFile", image.imageFile);
-          const imageResponse = await fetch(
-            `${api.baseURL()}/API/ImagesAPI/create/${productID}/${
-              image.isPrimary
-            }`,
-            {
-              method: "Post",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-              body: formDataImage,
-            }
-          );
-
-          if (!imageResponse.ok) {
-            throw new Error(t("addNewUpdateProduct.addImageError"));
-          }
-        }
+        const imageResult = await imageResponse.json();
+        console.log(t("addNewUpdateProduct.imageUpdateSuccess"), imageResult);
       }
 
       setSuccess(true);
@@ -267,7 +179,6 @@ export default function AddNewUpdateProduct({
       >
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           <input type="hidden" name="productID" value={formData.productID} />
-
           {/* Product Name */}
           <div className="col-span-2 md:col-span-1">
             <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -282,7 +193,6 @@ export default function AddNewUpdateProduct({
               required
             />
           </div>
-
           {/* Prices */}
           <div className="col-span-1">
             <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -297,7 +207,6 @@ export default function AddNewUpdateProduct({
               required
             />
           </div>
-
           <div className="col-span-1">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               {t("addNewUpdateProduct.sellingPriceLabel")}
@@ -311,7 +220,6 @@ export default function AddNewUpdateProduct({
               required
             />
           </div>
-
           {/* Description */}
           <div className="col-span-2 md:col-span-3">
             <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -327,79 +235,45 @@ export default function AddNewUpdateProduct({
               required
             />
           </div>
-
           {/* Images */}
-          <div className="col-span-2 md:col-span-3">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              {t("addNewUpdateProduct.imagesLabel")}
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {formData.images.map((image, index) => (
-                <div key={index} className="relative">
+          {isUpdateProduct && (
+            <div className="col-span-1">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                {t("addNewUpdateProduct.currentImageLabel")}
+              </label>
+              <div className="w-full aspect-square max-h-40 sm:max-h-none border border-gray-300 rounded-lg overflow-hidden">
+                {formData.currentImageURL ? (
                   <img
-                    src={image.imageURL}
-                    alt={`Product image ${index + 1}`}
-                    className="w-full aspect-square object-cover border border-gray-300 rounded-lg"
+                    src={formData.currentImageURL}
+                    alt={t("addNewUpdateProduct.currentProductAlt")}
+                    className="w-full h-full object-cover"
                   />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(index)}
-                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-full text-xs"
-                  >
-                    X
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSetPrimary(index)}
-                    className={`absolute bottom-2 left-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded-full text-xs ${
-                      image.isPrimary ? "bg-green-500" : ""
-                    }`}
-                  >
-                    {image.isPrimary
-                      ? t("addNewUpdateProduct.primaryLabel")
-                      : t("addNewUpdateProduct.setPrimaryLabel")}
-                  </button>
-                </div>
-              ))}
-              {/* Input to add more images */}
-              <div className="flex items-center justify-center w-full aspect-square border-2 border-dashed border-gray-300 rounded-lg">
-                <label
-                  htmlFor="imageFiles"
-                  className="flex flex-col items-center justify-center w-full h-full cursor-pointer"
-                >
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <svg
-                      className="w-8 h-8 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      ></path>
-                    </svg>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {t("addNewUpdateProduct.addImagesLabel")}
-                    </p>
-                  </div>
-                  <input
-                    id="imageFiles"
-                    type="file"
-                    name="imageFiles"
-                    onChange={handleChange}
-                    className="hidden"
-                    accept="image/*"
-                    multiple
-                  />
-                </label>
+                ) : (
+                  <span className="text-gray-400 text-sm">
+                    {t("addNewUpdateProduct.noImage")}
+                  </span>
+                )}
               </div>
             </div>
+          )}
+          <div className="col-span-1">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              {t("addNewUpdateProduct.newImagePreviewLabel")}
+            </label>
+            <div className="w-full aspect-square max-h-40 sm:max-h-none border border-gray-300 rounded-lg overflow-hidden">
+              {formData.imageFile ? (
+                <img
+                  src={URL.createObjectURL(formData.imageFile)}
+                  alt={t("addNewUpdateProduct.newProductAlt")}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-gray-400 text-sm">
+                  {t("addNewUpdateProduct.noImage")}
+                </span>
+              )}
+            </div>
           </div>
-
           {/* Category and Stock */}
           <div className="col-span-2 md:col-span-1 gap-y-2">
             <div>
@@ -415,7 +289,6 @@ export default function AddNewUpdateProduct({
                 required
               />
             </div>
-
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addNewUpdateProduct.stockQuantityLabel")}
@@ -429,8 +302,19 @@ export default function AddNewUpdateProduct({
                 required
               />
             </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                {t("addNewUpdateProduct.productImageLabel")}
+              </label>
+              <input
+                type="file"
+                name="imageFile"
+                onChange={handleChange}
+                className="w-full text-sm"
+                accept="image/*"
+              />
+            </div>
           </div>
-
           {/* Checkboxes */}
           <div className="col-span-2 md:col-span-1 gap-y-3">
             <label className="flex items-center gap-2">
@@ -445,9 +329,20 @@ export default function AddNewUpdateProduct({
                 {t("addNewUpdateProduct.productIsActiveLabel")}
               </span>
             </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="isPrimary"
+                checked={formData.isPrimary}
+                onChange={handleChange}
+                className="form-checkbox h-4 w-4 text-blue-600"
+              />
+              <span className="text-sm">
+                {t("addNewUpdateProduct.primaryImageLabel")}
+              </span>
+            </label>
           </div>
         </div>
-
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-3">
           <button
@@ -463,7 +358,6 @@ export default function AddNewUpdateProduct({
               ? t("addNewUpdateProduct.updateProductButton")
               : t("addNewUpdateProduct.addProductButton")}
           </button>
-
           <button
             type="button"
             className="w-full sm:w-auto bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm sm:text-base"
@@ -472,7 +366,6 @@ export default function AddNewUpdateProduct({
             {t("addNewUpdateProduct.closeButton")}
           </button>
         </div>
-
         {error && (
           <div className="text-red-600 mt-4 text-center text-sm">{error}</div>
         )}

@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-
 import AddNewUpdateProduct from "./AddUpdateProduct";
 import DeleteProduct from "./DeleteProduct";
 import ProductPage from "./ProductPage";
 import Pagination from "../../components/Pagination";
-
 import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi";
 import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
@@ -76,7 +74,7 @@ const ManageProducts = () => {
 
     try {
       const url = new URL(
-        `${new API().baseURL()}/API/ProductsAPI/GetProductsPaginatedWithFilters`
+        `${new API().baseURL()}/API/ProductsAPI/GetProductsPaginatedWithFiltersAllImages`
       );
       const params = new URLSearchParams();
       params.append("pageNumber", currentPage);
@@ -118,7 +116,12 @@ const ManageProducts = () => {
         );
       }
       const data = await response.json();
-      setProducts(data.productList);
+      setProducts(
+        data.productList.map((item) => ({
+          product: item.product,
+          images: item.images,
+        }))
+      );
       setTotalCount(data.totalCount);
       setTotalPages(Math.ceil(data.totalCount / pageSize));
     } catch (err) {
@@ -239,7 +242,6 @@ const ManageProducts = () => {
         type={alertType}
         onClose={() => setAlertMessage(null)}
       />
-
       {currentView === null ? (
         <div className="p-4 max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-2 gap-4">
@@ -273,7 +275,6 @@ const ManageProducts = () => {
               </button>
             </div>
           </div>
-
           {/* Filters */}
           {isFiltersVisible && (
             <div className="mb-4 p-4 bg-gray-50 rounded-md border border-gray-200">
@@ -388,7 +389,6 @@ const ManageProducts = () => {
                     onKeyDown={handleKeyDown}
                   />
                 </div>
-
                 <div>
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -412,7 +412,6 @@ const ManageProducts = () => {
                     </option>
                   </select>
                 </div>
-
                 <div className="flex items-end justify-end gap-2">
                   <button
                     onClick={clearFilters}
@@ -432,11 +431,10 @@ const ManageProducts = () => {
               </div>
             </div>
           )}
-
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
             <div className="px-4 py-2 flex justify-between items-center">
               <span className="text-sm text-gray-700">
-                {t("manageProducts.totalProductsText")}:{" "}
+                {t("manageProducts.totalProductsText")}:
                 <span className="font-semibold">{totalCount}</span>
               </span>
               <Pagination
@@ -476,6 +474,14 @@ const ManageProducts = () => {
               <tbody className="divide-y divide-gray-200">
                 {sortedProducts.map((item) => {
                   if (!item.product) return null;
+                  const primaryImages = item.images.filter(
+                    (img) => img.isPrimary
+                  );
+                  const lastPrimaryImage =
+                    primaryImages.length > 0
+                      ? primaryImages[primaryImages.length - 1]
+                      : null;
+
                   return (
                     <tr
                       key={item.product.productID}
@@ -494,10 +500,10 @@ const ManageProducts = () => {
                         {item.product.stockQuantity}
                       </td>
                       <td className="px-2 py-2 md:px-4 md:py-3">
-                        {item.image && item.image.isPrimary && (
+                        {lastPrimaryImage && (
                           <div className="w-12 h-12 overflow-hidden rounded-lg border border-gray-200">
                             <img
-                              src={item.image.imageURL}
+                              src={lastPrimaryImage.imageURL}
                               alt={item.product.productName}
                               className="w-full h-full object-cover"
                             />
@@ -537,7 +543,7 @@ const ManageProducts = () => {
             </table>
             <div className="px-4 py-2 flex justify-between items-center gap-2">
               <span className="text-sm text-gray-700">
-                {t("manageProducts.totalProductsText")}:{" "}
+                {t("manageProducts.totalProductsText")}:
                 <span className="font-semibold">{totalCount}</span>
               </span>
               <Pagination
@@ -555,7 +561,7 @@ const ManageProducts = () => {
               product={
                 currentView === "update"
                   ? selectedProduct
-                  : { product: null, image: null }
+                  : { product: null, images: null }
               }
               isShow={true}
               onClose={() => handleView(null)}
@@ -563,7 +569,6 @@ const ManageProducts = () => {
               refreshProducts={fetchPaginatedProducts}
             />
           )}
-
           {currentView === "read" && (
             <ProductPage
               product={selectedProduct.product.productID}
@@ -571,7 +576,6 @@ const ManageProducts = () => {
               onClose={() => handleView(null)}
             />
           )}
-
           {currentView === "delete" && (
             <DeleteProduct
               product={selectedProduct}

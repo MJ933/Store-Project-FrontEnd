@@ -9,7 +9,10 @@
     "myOrders": "طلباتي",
     "searchPlaceholder": "ابحث...",
     "find": "بحث",
-    "notLoggedInAlert": "أنت غير مسجل الدخول."
+    "notLoggedInAlert": "أنت غير مسجل الدخول.",
+    "login": "تسجيل الدخول",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج"
   },
   "hero": {
     "newSeasonArrivals": "تشكيلة الموسم الجديد وصلت!",
@@ -30,19 +33,25 @@
   },
   "manageCategories": {
     "categoriesTitle": "الأقسام",
-    "newCategoryButton": "إضافة قسم جديد",
-    "categoryIDHeader": "معرّف القسم",
-    "parentCategoryIDHeader": "معرّف القسم الرئيسي",
+    "newCategoryButton": "قسم جديد",
+    "categoryIDHeader": "رقم القسم",
+    "parentCategoryIDHeader": "رقم القسم الأب",
     "categoryNameHeader": "اسم القسم",
-    "isActiveHeader": "الحالة",
-    "actionsHeader": "الإجراءات",
-    "na": "غير متاح",
+    "isActiveHeader": "نشط",
+    "actionsHeader": "إجراءات",
+    "na": "غير متوفر",
     "activeStatus": "نشط",
     "inactiveStatus": "غير نشط",
     "editTitle": "تعديل",
     "deleteTitle": "حذف",
-    "error": "خطأ:",
-    "noCategoriesFound": "لم يتم العثور على أقسام."
+    "error": "خطأ: ",
+    "noCategoriesFound": "لا توجد أقسام",
+    "showFiltersButton": "إظهار الفلاتر",
+    "hideFiltersButton": "إخفاء الفلاتر",
+    "allStatus": "الكل",
+    "clearFiltersButton": "مسح الفلاتر",
+    "applyFiltersButton": "تطبيق الفلاتر",
+    "totalCategoriesText": "إجمالي الأقسام"
   },
   "manageCustomers": {
     "customersTitle": "العملاء",
@@ -160,7 +169,10 @@
     "addToCartButton": "أضف إلى السلة",
     "descriptionHeader": "الوصف",
     "productNotFound": "المنتج غير موجود، يرجى التحقق من معرّف المنتج والمحاولة مرة أخرى.",
-    "whatsappButton": "تواصل معنا"
+    "whatsappButton": "تواصل معنا",
+    "imageGallery": "معرض الصور",
+    "stockAvailable": "المخزون المتوفر",
+    "close": "إغلاق"
   },
   "addNewUpdateProduct": {
     "productNameLabel": "اسم المنتج",
@@ -185,7 +197,12 @@
     "addProductError": "فشل في إضافة/تحديث المنتج",
     "addImageError": "فشل في إضافة/تحديث الصورة",
     "imageUpdateSuccess": "تم تحديث/إضافة الصورة بنجاح:",
-    "productUpdateSuccess": "تم تحديث/إضافة المنتج بنجاح"
+    "productUpdateSuccess": "تم تحديث/إضافة المنتج بنجاح",
+    "updateImageError": "فشل في تحديث الصورة.",
+    "imagesLabel": "صور المنتج",
+    "setPrimaryLabel": "تعيين كصورة رئيسية",
+    "primaryLabel": "رئيسي",
+    "addImagesLabel": "إضافة صور"
   },
   "deleteProduct": {
     "deleteProductTitle": "حذف المنتج",
@@ -428,5 +445,38 @@
     "noDescriptionAvailable": "لا يوجد وصف متاح",
     "addToCart": "أضف إلى السلة",
     "unavailable": "غير متوفر"
+  },
+  "addUpdateCategory": {
+    "editCategoryTitle": "تعديل الفئة",
+    "createCategoryTitle": "إنشاء فئة جديدة",
+    "categoryUpdatedSuccess": "تم تحديث الفئة بنجاح!",
+    "categoryCreatedSuccess": "تم إنشاء الفئة بنجاح!",
+    "categoryNameLabel": "اسم الفئة",
+    "categoryNamePlaceholder": "أدخل اسم الفئة",
+    "parentCategoryIdLabel": "معرف الفئة الأب (اختياري)",
+    "parentCategoryIdPlaceholder": "أدخل معرف الفئة الأب",
+    "activeStatusLabel": "الحالة النشطة",
+    "cancelButton": "إلغاء",
+    "updatingButton": "جاري التحديث...",
+    "creatingButton": "جاري الإنشاء...",
+    "updateCategoryButton": "تحديث الفئة",
+    "createCategoryButton": "إنشاء الفئة"
+  },
+  "common": {
+    "error": {
+      "networkResponseNotOk": "استجابة الشبكة غير صحيحة"
+    }
+  },
+  "deleteCategory": {
+    "deleteCategoryTitle": "حذف الفئة",
+    "categoryIdLabel": "معرف الفئة",
+    "categoryIdPlaceholder": "أدخل معرف الفئة",
+    "cancelButton": "إلغاء",
+    "deletingButton": "جاري الحذف...",
+    "deleteCategoryButton": "حذف الفئة",
+    "categoryIdRequiredError": "الرجاء إدخال معرف الفئة.",
+    "categoryNotFoundError": "الفئة غير موجودة. يرجى التحقق من المعرف والمحاولة مرة أخرى.",
+    "categoryDeleteFailedError": "فشل حذف الفئة.",
+    "categoryDeleteSuccess": "تم حذف الفئة بنجاح!"
   }
 }

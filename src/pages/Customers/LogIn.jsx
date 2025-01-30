@@ -135,11 +135,11 @@ const LogIn = () => {
         )}
 
         {/* Toggle between Customer and Employee */}
-        <div className="mb-4 flex justify-center gap-4">
+        <div className="mb-4 flex justify-center gap-2">
           <button
             type="button"
             onClick={() => setUserType("customer")}
-            className={` mx-4 px-4 py-2 rounded-md font-medium ${
+            className={`  px-4 py-2 rounded-md font-medium ${
               userType === "customer"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700"
@@ -150,7 +150,7 @@ const LogIn = () => {
           <button
             type="button"
             onClick={() => setUserType("employee")}
-            className={`mx-4 px-4 py-2 rounded-md font-medium ${
+            className={` px-4 py-2 rounded-md font-medium ${
               userType === "employee"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700"
@@ -161,14 +161,14 @@ const LogIn = () => {
         </div>
 
         {/* Toggle between Email and Phone */}
-        <div className=" mb-4 flex justify-center gap-4">
+        <div className=" mb-4 flex justify-center gap-2">
           <button
             type="button"
             onClick={() => {
               setLoginMethod("email");
               setEmailOrPhone("");
             }}
-            className={`mx-4 px-4 py-2 rounded-md font-medium ${
+            className={` px-4 py-2 rounded-md font-medium ${
               loginMethod === "email"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700"
@@ -182,7 +182,7 @@ const LogIn = () => {
               setLoginMethod("phone");
               setEmailOrPhone("");
             }}
-            className={`mx-4 px-4 py-2 rounded-md font-medium ${
+            className={` px-4 py-2 rounded-md font-medium ${
               loginMethod === "phone"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700"

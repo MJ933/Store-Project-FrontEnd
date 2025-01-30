@@ -88,7 +88,7 @@ const DeleteProduct = ({
           </div>
           <button
             type="submit"
-            className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-full my-4 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
             disabled={loading}
           >
             {loading
@@ -96,7 +96,7 @@ const DeleteProduct = ({
               : t("deleteProduct.deleteProductButton")}
           </button>
           <button
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="my-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             onClick={onClose}
           >
             {t("deleteProduct.closeButton")}

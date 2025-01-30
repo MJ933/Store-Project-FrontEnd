@@ -12,14 +12,15 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
-
   const searchQuery = useSelector((state) => state.search.searchQuery);
   const api = new API();
 
   const fetchProducts = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const token = localStorage.getItem("token");
-      let url = `${api.baseURL()}/API/ProductsAPI/GetAllProductsWithItsImagePagedWithSearch?pageNumber=${currentPage}&pageSize=${pageSize}`;
+      let url = `${api.baseURL()}/API/ProductsAPI/GetProductsPaginatedWithFiltersAllImages?pageNumber=${currentPage}&pageSize=${pageSize}`;
       if (selectedCategoryId) url += `&categoryId=${selectedCategoryId}`;
       if (searchQuery) url += `&searchTerm=${searchQuery}`;
 
@@ -27,11 +28,10 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Handle specific HTTP status codes
       if (response.status === 404) {
         setError("No products found for the selected category.");
-        setProducts([]); // Clear existing products
-        setTotalCount(0); // Reset total count
+        setProducts([]);
+        setTotalCount(0);
         return;
       }
 
@@ -46,20 +46,20 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
       }
 
       const data = await response.json();
-      setProducts(data.items);
+      setProducts(data.productList);
       setTotalCount(data.totalCount);
-      setError(null); // Clear any previous errors
+      setError(null);
     } catch (error) {
       setError(error.message);
-      setProducts([]); // Clear products in case of error
-      setTotalCount(0); // Reset total count
+      setProducts([]);
+      setTotalCount(0);
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchProducts();
-    // window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage, selectedCategoryId, searchQuery]);
 
   const totalPages = Math.ceil(totalCount / pageSize);
@@ -85,9 +85,9 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {products.map((item, index) => (
                 <ProductCard
-                  key={`${item.product?.productID}-${item.image?.imageID}-${index}`}
+                  key={`${item.product?.productID}-${item.images?.[0]?.imageID}-${index}`}
                   product={item.product}
-                  image={item.image}
+                  image={item.images?.[0]}
                 />
               ))}
             </div>

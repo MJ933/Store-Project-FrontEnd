@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
+import { useTranslation } from "react-i18next";
 
 export default function AddUpdateCategory({
   category = {},
@@ -14,6 +15,7 @@ export default function AddUpdateCategory({
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const isUpdateCategory = Boolean(category?.categoryID);
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     categoryName: category?.categoryName || "",
@@ -74,14 +76,18 @@ export default function AddUpdateCategory({
         throw new Error(
           errorData.errors?.CategoryName?.[0] ||
             errorData.message ||
-            "Network response was not ok"
+            t("common.error.networkResponseNotOk")
         );
       }
 
       const data = await response.json();
       setSuccess(true);
       showAlert(
-        `Category ${isUpdateCategory ? "updated" : "created"} successfully!`,
+        t(
+          isUpdateCategory
+            ? "addUpdateCategory.categoryUpdatedSuccess"
+            : "addUpdateCategory.categoryCreatedSuccess"
+        ),
         "success"
       );
       refreshCategories(); // Refresh the category list
@@ -108,7 +114,9 @@ export default function AddUpdateCategory({
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-gray-800">
-            {isUpdateCategory ? "Edit Category" : "Create New Category"}
+            {isUpdateCategory
+              ? t("addUpdateCategory.editCategoryTitle")
+              : t("addUpdateCategory.createCategoryTitle")}
           </h2>
           <button
             onClick={handleClose}
@@ -133,7 +141,7 @@ export default function AddUpdateCategory({
         <form onSubmit={handleSubmit} className="px-8 py-6 gap-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-              Category Name
+              {t("addUpdateCategory.categoryNameLabel")}
             </label>
             <input
               type="text"
@@ -141,14 +149,14 @@ export default function AddUpdateCategory({
               value={formData.categoryName}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
-              placeholder="Enter category name"
+              placeholder={t("addUpdateCategory.categoryNamePlaceholder")}
               required
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wide">
-              Parent Category ID (optional)
+              {t("addUpdateCategory.parentCategoryIdLabel")}
             </label>
             <input
               type="number"
@@ -156,10 +164,10 @@ export default function AddUpdateCategory({
               value={formData.parentCategoryID || ""}
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
-              placeholder="Enter parent category ID"
+              placeholder={t("addUpdateCategory.parentCategoryIdPlaceholder")}
             />
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex my-3 items-center gap-3">
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -173,9 +181,9 @@ export default function AddUpdateCategory({
               />
               <label
                 htmlFor="isActive"
-                className="ml-3 text-sm text-gray-600 cursor-pointer select-none"
+                className="mx-3 text-sm text-gray-600 cursor-pointer select-none"
               >
-                Active Status
+                {t("addUpdateCategory.activeStatusLabel")}
               </label>
             </div>
           </div>
@@ -186,7 +194,7 @@ export default function AddUpdateCategory({
               onClick={handleClose}
               className="px-6 py-2.5 text-gray-600 hover:text-gray-800 font-medium rounded-lg transition-colors"
             >
-              Cancel
+              {t("addUpdateCategory.cancelButton")}
             </button>
             <button
               type="submit"
@@ -196,7 +204,7 @@ export default function AddUpdateCategory({
               {loading ? (
                 <span className="flex items-center">
                   <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    className="animate-spin -ml-1 m-3 h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -215,12 +223,14 @@ export default function AddUpdateCategory({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  {isUpdateCategory ? "Updating..." : "Creating..."}
+                  {isUpdateCategory
+                    ? t("addUpdateCategory.updatingButton")
+                    : t("addUpdateCategory.creatingButton")}
                 </span>
               ) : isUpdateCategory ? (
-                "Update Category"
+                t("addUpdateCategory.updateCategoryButton")
               ) : (
-                "Create Category"
+                t("addUpdateCategory.createCategoryButton")
               )}
             </button>
           </div>
@@ -256,8 +266,11 @@ export default function AddUpdateCategory({
                 />
               </svg>
               <span>
-                Category {isUpdateCategory ? "updated" : "created"}{" "}
-                successfully!
+                {t(
+                  isUpdateCategory
+                    ? "addUpdateCategory.categoryUpdatedSuccess"
+                    : "addUpdateCategory.categoryCreatedSuccess"
+                )}
               </span>
             </div>
           )}
