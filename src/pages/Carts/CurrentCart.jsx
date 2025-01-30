@@ -5,38 +5,38 @@ import {
   removeFromCart,
   updateQuantity,
   clearCart,
-} from "../../redux/features/cart/cartSlice"; // Adjust the path as needed
-import { FaPlus, FaMinus, FaTrash } from "react-icons/fa"; // Icons for buttons
-import clsOrders from "../../Classes/clsOrders"; // Import the clsOrders class
-import clsOrderItems from "../../Classes/clsOrderItems"; // Import the clsOrderItems class
+} from "../../redux/features/cart/cartSlice";
+import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
+import clsOrders from "../../Classes/clsOrders";
+import clsOrderItems from "../../Classes/clsOrderItems";
+import LocationSelector from "../../components/LocationSelector"; // Import LocationSelector
+// Assuming you have a translation function 't' from your i18n setup
+import { useTranslation } from "react-i18next"; // or your translation hook/function
 
 const CurrentCart = () => {
+  const { t } = useTranslation(); // if using react-i18next, otherwise use your translation function
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const currentCustomer = useSelector(
     (state) => state.authCustomer.currentCustomer
   );
 
-  // State for shipping address and notes
-  const [shippingAddress, setShippingAddress] = useState("karbala");
-  const [notes, setNotes] = useState("99999");
+  const [shippingAddress, setShippingAddress] = useState(""); // Initialize as empty
+  const [notes, setNotes] = useState("");
+  const [showLocationSelector, setShowLocationSelector] = useState(false); // Control visibility
 
-  // Handle increasing the quantity of a product
   const handleIncreaseQuantity = (productID) => {
     dispatch(addToCart({ productID, quantity: 1 }));
   };
 
-  // Handle decreasing the quantity of a product
   const handleDecreaseQuantity = (productID) => {
     dispatch(updateQuantity({ productID, quantity: -1 }));
   };
 
-  // Handle removing a product from the cart
   const handleRemoveProduct = (productID) => {
     dispatch(removeFromCart({ productID }));
   };
 
-  // Handle sending the order
   const handleSendOrder = async () => {
     try {
       const orderInstance = new clsOrders();
@@ -84,46 +84,59 @@ const CurrentCart = () => {
 
       // Clear the cart after the order is successfully created
       dispatch(clearCart());
-      alert("Order created successfully!");
+      alert(t("currentCart.orderSuccessMessage")); // Use translation for success alert
     } catch (error) {
       console.error("Error creating order:", error);
-      alert("An error occurred while creating the order.");
+      alert(t("currentCart.orderErrorMessage")); // Use translation for error alert
     }
+  };
+
+  const handleLocationSelect = (location) => {
+    setShippingAddress(location);
+    setShowLocationSelector(false); // Hide after selection
   };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Your Cart</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">
+        {t("currentCart.title")}
+      </h2>
       {cartItems.length === 0 ? (
-        <p className="text-gray-600 text-center">Your cart is empty.</p>
+        <p className="text-gray-600 text-center">
+          {t("currentCart.emptyMessage")}
+        </p>
       ) : (
-        <div className="space-y-4">
+        <div className="gap-y-4">
           {cartItems.map((item, index) => (
             <div
               key={index}
               className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200"
             >
-              <div className="flex items-center space-x-4">
+              <div className=" flex items-center gap-x-4">
                 <img
                   src={item.imageUrl}
                   alt={item.productName}
-                  className="w-16 h-16 object-cover rounded-lg"
+                  className="mx-2 w-16 h-16 object-cover rounded-lg"
                 />
                 <div>
                   <p className="text-gray-700 font-semibold">
                     {item.productName}
                   </p>
-                  <p className="text-gray-600">Quantity: {item.quantity}</p>
-                  <p className="text-gray-600">Price: ${item.price}</p>
+                  <p className="text-gray-600">
+                    {t("currentCart.quantityLabel")} {item.quantity}
+                  </p>
+                  <p className="text-gray-600">
+                    {t("currentCart.priceLabel")} ${item.price}
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-x-3">
                 {/* Increase Quantity Button */}
                 <button
                   onClick={() => handleIncreaseQuantity(item.productID)}
-                  className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200"
+                  className=" p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200"
                 >
-                  <FaPlus className="w-4 h-4" />
+                  <FaPlus className=" w-4 h-4" />
                 </button>
 
                 {/* Decrease Quantity Button */}
@@ -149,28 +162,53 @@ const CurrentCart = () => {
 
       {/* Shipping Address and Notes Input Fields */}
       {cartItems.length > 0 && (
-        <div className="mt-6 space-y-4">
+        <div className="mt-6 gap-y-4">
+          {/* Location Selector Button */}
           <div>
             <label className="block text-gray-700 font-semibold mb-2">
-              Shipping Address
+              {t("currentCart.selectShippingLocation")}
+            </label>
+            <button
+              onClick={() => setShowLocationSelector(!showLocationSelector)}
+              className="w-full p-2 border border-gray-300 rounded-lg text-left"
+            >
+              {shippingAddress || t("currentCart.selectLocationPlaceholder")}
+            </button>
+
+            {/* Location Selector Dropdown */}
+            {showLocationSelector && (
+              <LocationSelector
+                onLocationSelect={handleLocationSelect}
+                onClose={() => setShowLocationSelector(false)}
+              />
+            )}
+          </div>
+
+          {/* Shipping Address Display/Edit */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">
+              {t("currentCart.shippingAddressLabel")}
             </label>
             <input
               type="text"
               value={shippingAddress}
               onChange={(e) => setShippingAddress(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg"
-              placeholder="Enter your shipping address"
+              placeholder={t("currentCart.shippingAddressPlaceholder")}
+              // readOnly={!!shippingAddress} // Readonly if address is from selector
             />
           </div>
+
+          {/* Notes */}
           <div>
             <label className="block text-gray-700 font-semibold mb-2">
-              Notes
+              {t("currentCart.notesLabel")}
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg"
-              placeholder="Enter any additional notes"
+              placeholder={t("currentCart.notesPlaceholder")}
             />
           </div>
         </div>
@@ -183,7 +221,7 @@ const CurrentCart = () => {
             onClick={handleSendOrder}
             className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-all duration-200"
           >
-            Send Order
+            {t("currentCart.sendOrderButton")}
           </button>
         </div>
       )}

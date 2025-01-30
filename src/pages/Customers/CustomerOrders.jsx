@@ -178,7 +178,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
       </div>
 
       {/* Orders List */}
-      <div className="space-y-4">
+      <div className="gap-y-4">
         <h2 className="text-xl font-semibold text-gray-700">
           {t("customerOrders.orders")}
         </h2>

@@ -31,7 +31,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
           {t("employeePage.employeeDetails")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +49,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
               <p className="text-gray-800 font-medium">{employee.employeeID}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +71,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
               <p className="text-gray-800 font-medium">{employee.userName}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +93,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
               <p className="text-gray-800 font-medium">{employee.email}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +112,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
               <p className="text-gray-800 font-medium">{employee.phone}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +130,7 @@ export default function EmployeePage({ employee, isShow = false, onClose }) {
               <p className="text-gray-800 font-medium">{employee.role}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

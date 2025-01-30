@@ -13,6 +13,7 @@ export default function App() {
   if (!ready) {
     return <div>Loading translations...</div>; // Or a spinner, or null
   }
+
   useEffect(() => {
     const lang = i18nInstance.language; // Use the i18n instance from the hook
     const htmlElement = document.documentElement;
@@ -26,9 +27,9 @@ export default function App() {
 
   return (
     <>
-      <div>
+      <div className="min-h-screen flex flex-col">
         <Navbar />
-        <main>
+        <main className="flex-grow">
           <Outlet />
         </main>
         <Footer />

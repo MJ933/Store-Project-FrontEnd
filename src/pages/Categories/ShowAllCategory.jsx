@@ -113,7 +113,7 @@ const ShowAllCategories = () => {
                     {item.isActive ? "Yes" : "No"}
                   </td>
                   <td className="py-2 px-3 sm:py-3 sm:px-4 border-b">
-                    <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+                    <div className="flex flex-col sm:flex-row sm:gap-2 gap-y-2 sm:gap-y-0">
                       <button
                         onClick={() => handleRead(item.categoryID)}
                         className="bg-blue-500 text-white px-2 py-1 sm:px-3 sm:py-1 rounded hover:bg-blue-600 text-sm sm:text-base"

@@ -95,7 +95,7 @@ const CategoriesCarousel = ({ selectedCategoryId, onCategorySelect }) => {
       {/* Carousel Items */}
       <div
         ref={carouselRef}
-        className="flex space-x-2 md:space-x-4 overflow-x-auto custom-scrollbar px-10 md:px-14 py-2 md:py-4"
+        className="flex gap-2 md:gap-4 overflow-x-auto custom-scrollbar px-10 md:px-14 py-2 md:py-4"
         style={{ scrollBehavior: "smooth" }}
       >
         <button

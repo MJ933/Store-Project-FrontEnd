@@ -97,7 +97,7 @@ const DeleteCustomer = ({
             </svg>
           </button>
         </div>
-        <form onSubmit={handleDeleteCustomer} className="space-y-6">
+        <form onSubmit={handleDeleteCustomer} className="gap-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-500 mb-2">
               {t("deleteCustomer.customerIDLabel")}
@@ -111,7 +111,7 @@ const DeleteCustomer = ({
               required
             />
           </div>
-          <div className="flex justify-end space-x-4">
+          <div className="flex justify-end gap-4">
             <button
               type="button"
               onClick={onClose}

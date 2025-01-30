@@ -3,11 +3,12 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addToCart } from "../redux/features/cart/cartSlice";
 import { FaCartPlus } from "react-icons/fa6";
+import { useTranslation } from "react-i18next"; // Import useTranslation hook
 
 const ProductCard = ({ product, image }) => {
+  const { t } = useTranslation(); // Initialize the translation hook
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   if (!product) return null;
 
   const handleAddToCart = (e) => {
@@ -48,7 +49,7 @@ const ProductCard = ({ product, image }) => {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400 text-sm">
-            No Image Available
+            {t("productCard.noImageAvailable")}
           </div>
         )}
         <div className="absolute top-2 right-2">
@@ -59,7 +60,9 @@ const ProductCard = ({ product, image }) => {
                 : "bg-red-500/20 text-red-700"
             }`}
           >
-            {product.isActive ? "In Stock" : "Out of Stock"}
+            {product.isActive
+              ? t("productCard.inStock")
+              : t("productCard.outOfStock")}
           </span>
         </div>
       </div>
@@ -74,7 +77,7 @@ const ProductCard = ({ product, image }) => {
         </p>
 
         <p className="text-gray-500 text-sm line-clamp-3 mb-3">
-          {product.description || "No description available"}
+          {product.description || t("productCard.noDescriptionAvailable")}
         </p>
 
         <button
@@ -85,10 +88,10 @@ const ProductCard = ({ product, image }) => {
           {product.isActive ? (
             <>
               <FaCartPlus className="text-base" />
-              Add to Cart
+              {t("productCard.addToCart")}
             </>
           ) : (
-            "Unavailable"
+            t("productCard.unavailable")
           )}
         </button>
       </div>

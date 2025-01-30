@@ -63,7 +63,7 @@ export default function FindProduct() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <form onSubmit={handleFindProduct} className="space-y-4">
+      <form onSubmit={handleFindProduct} className="gap-y-4">
         <div>
           <label
             htmlFor="productId"

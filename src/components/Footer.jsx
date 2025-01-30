@@ -21,7 +21,7 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-white mb-4">
               {t("footer.helpContactTitle")}
             </h4>
-            <ul className="space-y-2">
+            <ul className="gap-y-2">
               <li>
                 <a href="#" className="hover:text-gray-100">
                   {t("footer.faqsLink")}
@@ -46,7 +46,7 @@ const Footer = () => {
               {t("footer.stayConnectedTitle")}
             </h4>
             <p className="mb-4">{t("footer.stayConnectedDescription")}</p>
-            <div className="flex space-x-4 mt-2 footer-icons-container">
+            <div className="flex gap-4 mt-2 footer-icons-container">
               {" "}
               {/* ADD CLASS HERE */}
               <a
@@ -100,7 +100,7 @@ const Footer = () => {
               {t("footer.copyright", { year: new Date().getFullYear() })}
             </p>
             <div className="mt-2 md:mt-0">
-              <ul className="flex space-x-4 justify-center md:justify-start">
+              <ul className="flex gap-4 justify-center md:justify-start">
                 <li>
                   <a href="#" className="text-sm mx-4 hover:text-gray-100">
                     {t("footer.privacyLink")}

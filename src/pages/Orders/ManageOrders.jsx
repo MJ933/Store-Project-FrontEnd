@@ -655,7 +655,7 @@ const ManageOrders = () => {
                           statusStyles[order.orderStatus]?.base ||
                           "bg-gray-100 text-gray-800"
                         } ${
-                          // Changed comma to space here
+                          // Changed comma to gap here
                           getStatusPaddingClass(order.orderStatus)
                         }`}
                       >

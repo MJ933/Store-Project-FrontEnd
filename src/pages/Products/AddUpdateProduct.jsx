@@ -265,7 +265,7 @@ export default function AddNewUpdateProduct({
           </div>
 
           {/* Category and Stock */}
-          <div className="col-span-2 md:col-span-1 space-y-2">
+          <div className="col-span-2 md:col-span-1 gap-y-2">
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addNewUpdateProduct.categoryIDLabel")}
@@ -309,7 +309,7 @@ export default function AddNewUpdateProduct({
           </div>
 
           {/* Checkboxes */}
-          <div className="col-span-2 md:col-span-1 space-y-3">
+          <div className="col-span-2 md:col-span-1 gap-y-3">
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"

@@ -96,7 +96,7 @@ const DeleteEmployee = ({
             </svg>
           </button>
         </div>
-        <form onSubmit={handleDeleteEmployee} className="space-y-6">
+        <form onSubmit={handleDeleteEmployee} className="gap-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-500 mb-2">
               {t("deleteEmployee.employeeIDLabel")}
@@ -110,7 +110,7 @@ const DeleteEmployee = ({
               required
             />
           </div>
-          <div className="flex justify-end space-x-4">
+          <div className="flex justify-end gap-4">
             <button
               type="button"
               onClick={onClose}

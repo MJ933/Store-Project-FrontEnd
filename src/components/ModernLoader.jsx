@@ -8,7 +8,7 @@ const ModernLoader = () => {
   const isAr = i18n.language === "ar";
   return (
     <div className="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="text-center space-y-4">
+      <div className="text-center gap-y-4">
         {/* Main spinner container */}
         <div className="relative">
           {/* Outer ring with gradient */}

@@ -393,5 +393,40 @@
     "copyright": "© {{year}} Your Store Name",
     "privacyLink": "Privacy",
     "termsLink": "Terms"
+  },
+  "currentCart": {
+    "title": "Your Cart",
+    "emptyMessage": "Your cart is empty.",
+    "quantityLabel": "Quantity:",
+    "priceLabel": "Price:",
+    "selectShippingLocation": "Select Shipping Location",
+    "selectLocationPlaceholder": "Select Location",
+    "shippingAddressLabel": "Shipping Address",
+    "shippingAddressPlaceholder": "Enter your shipping address",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Phone Number, etc.",
+    "sendOrderButton": "Send Order",
+    "orderSuccessMessage": "Order created successfully!",
+    "orderErrorMessage": "An error occurred while creating the order."
+  },
+  "locationSelector": {
+    "selectLocationPlaceholder": "Select Location",
+    "selectCountryTitle": "Select Country",
+    "backToCountriesButton": "Back to Countries",
+    "selectGovernorateTitle": "Select Governorate",
+    "backToGovernoratesButton": "Back to Governorates",
+    "selectDistrictTitle": "Select District",
+    "backToDistrictsButton": "Back to Districts",
+    "selectSubDistrictTitle": "Select Sub-District",
+    "closeButton": "Close",
+    "confirmButton": "Confirm"
+  },
+  "productCard": {
+    "noImageAvailable": "No Image Available",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "noDescriptionAvailable": "No description available",
+    "addToCart": "Add to Cart",
+    "unavailable": "Unavailable"
   }
 }

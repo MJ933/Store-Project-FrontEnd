@@ -72,7 +72,7 @@ const DeleteProduct = ({
         <h1 className="text-2xl font-bold mb-6 text-center">
           {t("deleteProduct.deleteProductTitle")}
         </h1>
-        <form onSubmit={handleDeleteProduct} className="space-y-4">
+        <form onSubmit={handleDeleteProduct} className="gap-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
               {t("deleteProduct.productIDLabel")}

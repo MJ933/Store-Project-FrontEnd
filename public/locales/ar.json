@@ -393,5 +393,40 @@
     "copyright": "© {{year}} اسم متجرك",
     "privacyLink": "الخصوصية",
     "termsLink": "الشروط"
+  },
+  "currentCart": {
+    "title": "سلة مشترياتك",
+    "emptyMessage": "سلة مشترياتك فارغة.",
+    "quantityLabel": "الكمية:",
+    "priceLabel": "السعر:",
+    "selectShippingLocation": "اختر موقع التوصيل",
+    "selectLocationPlaceholder": "اختر موقعًا",
+    "shippingAddressLabel": "عنوان التوصيل",
+    "shippingAddressPlaceholder": "أدخل عنوان التوصيل الخاص بك",
+    "notesLabel": "ملاحظات",
+    "notesPlaceholder": "رقم الهاتف، إلخ.",
+    "sendOrderButton": "إرسال الطلب",
+    "orderSuccessMessage": "تم إنشاء الطلب بنجاح!",
+    "orderErrorMessage": "حدث خطأ أثناء إنشاء الطلب."
+  },
+  "locationSelector": {
+    "selectLocationPlaceholder": "اختر موقعًا",
+    "selectCountryTitle": "اختر الدولة",
+    "backToCountriesButton": "العودة إلى الدول",
+    "selectGovernorateTitle": "اختر المحافظة",
+    "backToGovernoratesButton": "العودة إلى المحافظات",
+    "selectDistrictTitle": "اختر القضاء",
+    "backToDistrictsButton": "العودة إلى الأقضية",
+    "selectSubDistrictTitle": "اختر الناحية",
+    "closeButton": "إغلاق",
+    "confirmButton": "تأكيد"
+  },
+  "productCard": {
+    "noImageAvailable": "لا توجد صورة متاحة",
+    "inStock": "في المخزن",
+    "outOfStock": "غير متوفر",
+    "noDescriptionAvailable": "لا يوجد وصف متاح",
+    "addToCart": "أضف إلى السلة",
+    "unavailable": "غير متوفر"
   }
 }

@@ -135,7 +135,7 @@ const LogIn = () => {
         )}
 
         {/* Toggle between Customer and Employee */}
-        <div className="mb-4 flex justify-center space-x-4">
+        <div className="mb-4 flex justify-center gap-4">
           <button
             type="button"
             onClick={() => setUserType("customer")}
@@ -161,7 +161,7 @@ const LogIn = () => {
         </div>
 
         {/* Toggle between Email and Phone */}
-        <div className=" mb-4 flex justify-center space-x-4">
+        <div className=" mb-4 flex justify-center gap-4">
           <button
             type="button"
             onClick={() => {

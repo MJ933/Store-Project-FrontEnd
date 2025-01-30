@@ -70,15 +70,15 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left Side: Logo and Navigation Links */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             {/* Logo */}
-            <Link to="/" className="text-xl font-bold text-cyan-600">
+            <Link to="/" className="store-logo text-xl font-bold text-cyan-600">
               {t("navbar.store")} {/* Translation key for Store */}
             </Link>
 
             {/* Employee-Specific Options (Desktop) */}
             {userType === "employee" && (
-              <div className="hidden sm:flex items-center space-x-4">
+              <div className="hidden sm:flex items-center gap-4">
                 {[
                   "Products",
                   "Categories",
@@ -110,13 +110,13 @@ const Navbar = () => {
           </div>
 
           {/* Right Side: Icons (Cart, Profile, Login/Logout) */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {/* Language Switch Button */}
             <button
               onClick={() =>
                 changeLanguage(i18n.resolvedLanguage === "en" ? "ar" : "en")
               }
-              className="p-1 sm:p-2 text-gray-800 hover:text-cyan-600 focus:outline-none"
+              className=" p-1 sm:p-2 text-gray-800 hover:text-cyan-600 focus:outline-none"
             >
               {i18n.resolvedLanguage === "en" ? "العربية" : "English"}
             </button>
@@ -172,7 +172,7 @@ const Navbar = () => {
         {/* Search Bar (Full Width) */}
         {isSearchOpen && (
           <div className="w-full px-2 pb-2">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <input
                 type="text"
                 placeholder={t("navbar.searchPlaceholder")} // Translation key for search placeholder
@@ -219,7 +219,7 @@ const MobileMenu = ({ userType, currentCustomer, currentEmployee }) => {
   const { t } = useTranslation(); // Initialize useTranslation hook
   return (
     <div className="sm:hidden bg-white">
-      <div className="px-2 pt-2 pb-3 space-y-1">
+      <div className="px-2 pt-2 pb-3 gap-y-1">
         {/* Employee-Specific Options */}
         {userType === "employee" &&
           ["Products", "Categories", "Employees", "Customers", "Orders"].map(
@@ -275,10 +275,10 @@ const ProfileSection = ({
 }) => {
   const { t } = useTranslation(); // Initialize useTranslation hook
   return currentCustomer || currentEmployee ? (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center gap-2">
       <button
         onClick={handleLogOut}
-        className="p-1 sm:p-2 text-gray-800 hover:text-cyan-600"
+        className=" p-1 sm:p-2 text-gray-800 hover:text-cyan-600"
       >
         <RiLogoutCircleFill className="w-5 h-5" />
       </button>
@@ -286,11 +286,11 @@ const ProfileSection = ({
         to={userType === "customer" ? "/customerProfile" : "/employeeProfile"}
         className="p-1 sm:p-2 text-gray-800 hover:text-cyan-600"
       >
-        <FaRegUserCircle className="w-5 h-5" />
+        <FaRegUserCircle className=" w-5 h-5" />
       </Link>
     </div>
   ) : (
-    <Link to="/login" className="p-1 sm:p-2 text-gray-800 hover:text-cyan-600">
+    <Link to="/login" className=" p-1 sm:p-2 text-gray-800 hover:text-cyan-600">
       <RiLoginCircleFill className="w-5 h-5" />
     </Link>
   );

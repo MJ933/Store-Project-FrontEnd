@@ -181,7 +181,7 @@ const ProductPage = () => {
                 {" "}
                 {product.product.productName}
               </h1>
-              <div className="flex items-center space-x-2 mb-4 md:mb-6">
+              <div className="flex items-center gap-2 mb-4 md:mb-6">
                 {" "}
                 {/* Reduced margin for mobile */}
                 <span className="text-xl md:text-2xl font-semibold text-green-600">
@@ -223,7 +223,7 @@ const ProductPage = () => {
                   {t("productPage.quantityLabel")}: {/* Use translation key */}
                 </label>{" "}
                 {/* Reduced margin and text size for mobile */}
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleQuantityChange(quantity - 1)}
                     disabled={quantity <= 1}

@@ -39,9 +39,9 @@ const Alert = ({ message, type, onClose, duration = 3000 }) => {
         type === "success" ? "border-green-200" : "border-red-200"
       } text-${
         type === "success" ? "green-800" : "red-800"
-      } p-4 rounded-lg shadow-lg flex items-center justify-between space-x-4 animate-slide-down`}
+      } p-4 rounded-lg shadow-lg flex items-center justify-between gap-4 animate-slide-down`}
     >
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center gap-3">
         {type === "success" ? (
           <svg
             className={`w-6 h-6 ${

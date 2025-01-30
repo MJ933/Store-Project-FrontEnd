@@ -4,8 +4,8 @@ const ErrorComponent = ({ message, onClose }) => {
   if (!message) return null;
 
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg shadow-lg flex items-center justify-between space-x-4 animate-slide-down">
-      <div className="flex items-center space-x-3">
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg shadow-lg flex items-center justify-between gap-4 animate-slide-down">
+      <div className="flex items-center gap-3">
         <svg
           className="w-6 h-6 text-red-500"
           fill="none"
