@@ -6,7 +6,8 @@ import { loginSuccessCustomer } from "../../redux/features/auth/authCustomerSlic
 import { clearSearchQuery } from "../../redux/features/search/searchSlice";
 import { useNavigate, useLocation } from "react-router-dom"; // Add this for navigation
 import { useTranslation } from "react-i18next";
-
+import { handleError } from "../../utils/handleError";
+import { jwtDecode } from "jwt-decode";
 const LogIn = () => {
   const location = useLocation(); // Initialize useLocation
   const [emailOrPhone, setEmailOrPhone] = useState(""); // Combined input for email or phone
@@ -60,16 +61,15 @@ const LogIn = () => {
       const { token } = response.data;
       if (token) {
         // Decode the token to get user info (e.g., email or phone)
-        const decodedToken = JSON.parse(atob(token.split(".")[1]));
-        const userIdentifier = decodedToken.sub; // This will be the email or phone
-
-        // Store the token and user info in localStorage
+        const decodedToken = jwtDecode(token);
+        const userIdentifier = decodedToken.email || decodedToken.phone_number;
         localStorage.setItem("token", token);
 
         // Update Redux state
         dispatch(loginSuccessCustomer({ identifier: userIdentifier }));
 
         console.log(t("login.loginSuccess"), userIdentifier);
+
         fetchUserData(userIdentifier);
 
         // Redirect after successful login
@@ -78,8 +78,7 @@ const LogIn = () => {
         setError(t("login.invalidCredentials"));
       }
     } catch (error) {
-      setError(t("login.loginFailed"));
-      console.error(t("login.loginError"), error);
+      handleError(error, navigate); // Use handleError to display the error// Use handleError to display the error
     } finally {
       setLoading(false);
     }
@@ -103,8 +102,24 @@ const LogIn = () => {
       );
 
       if (!response.ok) {
-        throw new Error(t("login.networkError"));
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
+
       const data = await response.json();
       dispatch(loginSuccessCustomer({ identifier: data }));
       if (userType === "employee") {
@@ -115,7 +130,9 @@ const LogIn = () => {
       dispatch(clearSearchQuery());
       localStorage.setItem("userType", userType);
     } catch (error) {
-      setError(error.message);
+      handleError(error, navigate); // Pass the error and navigate function
+
+      // setError(error.message);
     }
   };
 

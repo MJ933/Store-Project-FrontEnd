@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../../utils/handleError";
 
 const DeleteCategory = ({
   category = {},
@@ -48,11 +49,22 @@ const DeleteCategory = ({
       );
 
       if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error(t("deleteCategory.categoryNotFoundError"));
-        } else {
-          throw new Error(t("deleteCategory.categoryDeleteFailedError"));
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
         }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
 
       setSuccess(true);
@@ -60,9 +72,7 @@ const DeleteCategory = ({
       refreshCategories(); // Refresh the category list
       onClose(); // Close the modal
     } catch (err) {
-      console.error("Error:", err);
-      setError(err.message);
-      showAlert(err.message, "error");
+      handleError(err);
     } finally {
       setLoading(false);
     }

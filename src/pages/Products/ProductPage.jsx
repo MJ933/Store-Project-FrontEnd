@@ -18,6 +18,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { socialMediaLinks } from "/src/config";
+import { handleError } from "../../utils/handleError";
 
 const ProductPage = () => {
   const { productID } = useParams();
@@ -58,14 +59,28 @@ const ProductPage = () => {
           }
         );
         if (!response.ok) {
-          const message = `Network response was not ok: ${response.status} ${response.statusText}`;
-          console.error("API Error:", message);
-          throw new Error(message);
+          const errorData = await response.text(); // First get as text
+          let parsedError;
+
+          try {
+            parsedError = JSON.parse(errorData);
+          } catch {
+            parsedError = { message: errorData };
+          }
+
+          const error = {
+            response: {
+              status: response.status,
+              data: parsedError,
+            },
+          };
+          throw error;
         }
         const data = await response.json();
         setProductData(data);
       } catch (apiError) {
         setError(apiError.message);
+        handleError(apiError);
       } finally {
         setLoading(false);
       }

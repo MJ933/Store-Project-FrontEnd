@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../../utils/handleError";
 
 const DeleteEmployee = ({
   employee = {},
@@ -47,11 +48,22 @@ const DeleteEmployee = ({
       );
 
       if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error(t("deleteEmployee.notFoundError"));
-        } else {
-          throw new Error(t("deleteEmployee.deleteFailedError"));
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
         }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
 
       setSuccess(true);
@@ -59,7 +71,7 @@ const DeleteEmployee = ({
       refreshEmployees();
       onClose();
     } catch (err) {
-      setError(err.message);
+      handleError(err);
     } finally {
       setLoading(false);
     }

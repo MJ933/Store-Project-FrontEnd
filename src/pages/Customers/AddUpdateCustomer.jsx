@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../../utils/handleError";
 
 export default function AddNewUpdateCustomer({
   customer = {},
@@ -79,16 +80,23 @@ export default function AddNewUpdateCustomer({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        if (response.status === 409) {
-          throw new Error(t("addNewUpdateCustomer.emailOrPhoneUsed"));
-        } else {
-          throw new Error(
-            errorData.message || t("addNewUpdateCustomer.failedAddUpdate")
-          );
-        }
-      }
+        const errorData = await response.text(); // First get as text
+        let parsedError;
 
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
+      }
       const result = await response.json();
       setSuccess(true);
       showAlert(
@@ -115,9 +123,7 @@ export default function AddNewUpdateCustomer({
         onClose(); // Close the modal
       }
     } catch (error) {
-      console.error("Error:", error);
-      setError(error.message);
-      showAlert(error.message, "error");
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -260,7 +266,7 @@ export default function AddNewUpdateCustomer({
                   />
                   <label
                     htmlFor="isActive"
-                    className="ml-3 text-sm text-gray-600 cursor-pointer select-none"
+                    className="mx-3 text-sm text-gray-600 cursor-pointer select-none"
                   >
                     {t("addNewUpdateCustomer.activeStatus")}
                   </label>

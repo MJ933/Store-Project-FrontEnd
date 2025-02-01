@@ -9,12 +9,12 @@ const ManageOrderItems = ({ orderItems, handleOrderItemChange }) => {
       <h3 className="text-lg font-bold mb-4">
         {t("manageOrderItems.orderItems")}
       </h3>
-      {orderItems.length === 0 ? (
+      {orderItems?.length === 0 ? (
         <div className="text-gray-600 text-center">
           {t("manageOrderItems.noOrderItems")}
         </div>
       ) : (
-        orderItems.map((item, index) => (
+        orderItems?.map((item, index) => (
           <div key={item.orderItemID} className="grid grid-cols-5 gap-4 mb-4">
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">

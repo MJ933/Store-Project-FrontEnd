@@ -7,6 +7,7 @@ import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
 import { useTranslation } from "react-i18next";
 import Pagination from "../../components/Pagination";
+import { handleError } from "../../utils/handleError";
 
 const ManageCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -79,16 +80,29 @@ const ManageCategories = () => {
       });
 
       if (!response.ok) {
+        const errorData = await response.text(); // First get as text
+        let parsedError;
         if (response.status === 404) {
           setCategories([]);
           setTotalCount(0);
           setTotalPages(0);
           return;
         }
-        throw new Error(
-          `Failed to fetch categories: ${response.status} ${response.statusText}`
-        );
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
+
       const data = await response.json();
       setCategories(data.categoriesList);
       setTotalCount(data.totalCount);
@@ -98,6 +112,7 @@ const ManageCategories = () => {
       setCategories([]);
       setTotalCount(0);
       setTotalPages(0);
+      handleError(err);
     } finally {
       setLoading(false);
     }
@@ -161,13 +176,13 @@ const ManageCategories = () => {
         {t("manageCategories.error")} {error}
       </div>
     );
-  if (categories.length === 0 && !loading && !error && !isFiltersVisible)
+  if (categories?.length === 0 && !loading && !error && !isFiltersVisible)
     return (
       <div className="p-4 text-gray-500">
         {t("manageCategories.noCategoriesFound")}
       </div>
     );
-  if (categories.length === 0 && !loading && !error && isFiltersVisible)
+  if (categories?.length === 0 && !loading && !error && isFiltersVisible)
     return (
       <Alert
         message={t("manageCategories.noCategoriesFound")}
@@ -361,7 +376,7 @@ const ManageCategories = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {categories.map((category) => (
+                {categories?.map((category) => (
                   <tr key={category.categoryID} className="hover:bg-gray-50">
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
                       {category.categoryID}

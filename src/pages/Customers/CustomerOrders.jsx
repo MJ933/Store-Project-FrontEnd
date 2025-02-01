@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../../utils/handleError";
 
 const CustomerOrders = ({ customer, isShow, onClose }) => {
   const [orders, setOrders] = useState([]);
@@ -20,9 +21,11 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
       setAlertMessage(null);
     }, 3000);
   };
+
   // Fetch orders for the customer
   if (!customer?.customerID) {
     customer = JSON.parse(localStorage.getItem("currentCustomer"));
+    customer = customer.dto;
   }
 
   if (!customer) {
@@ -31,6 +34,11 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
   const api = new API();
 
   useEffect(() => {
+    if (!customer?.customerID) {
+      handleError(new Error("Customer ID is missing."), navigate);
+      return;
+    }
+
     const fetchOrders = async () => {
       setLoading(true);
       try {
@@ -44,21 +52,38 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
             },
           }
         );
-        console.log(response);
+
+        // In your component's fetch logic
         if (!response.ok) {
-          throw new Error(t("customerOrders.fetchOrdersError"));
+          const errorData = await response.text(); // First get as text
+          let parsedError;
+
+          try {
+            parsedError = JSON.parse(errorData);
+          } catch {
+            parsedError = { message: errorData };
+          }
+
+          const error = {
+            response: {
+              status: response.status,
+              data: parsedError,
+            },
+          };
+          throw error;
         }
+
         const data = await response.json();
         setOrders(data);
       } catch (err) {
-        setError(err.message);
+        handleError(err, navigate); // Pass the error and navigate function
       } finally {
         setLoading(false);
       }
     };
 
     fetchOrders();
-  }, []);
+  }, [customer?.customerID]);
 
   // Fetch items for the selected order
   useEffect(() => {
@@ -80,12 +105,27 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
         );
 
         if (!response.ok) {
-          throw new Error(t("customerOrders.fetchOrderItemsError"));
+          const errorData = await response.text(); // First get as text
+          let parsedError;
+
+          try {
+            parsedError = JSON.parse(errorData);
+          } catch {
+            parsedError = { message: errorData };
+          }
+
+          const error = {
+            response: {
+              status: response.status,
+              data: parsedError,
+            },
+          };
+          throw error;
         }
         const data = await response.json();
         setOrderItems(data);
       } catch (err) {
-        setError(err.message); // Set error state if fetching fails
+        handleError(error);
       } finally {
         setLoading(false);
       }
@@ -130,12 +170,24 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
       );
 
       if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Error response:", errorResponse);
-        throw new Error("Failed to cancel the order");
-      }
+        const errorData = await response.text(); // First get as text
+        let parsedError;
 
-      const updatedOrders = orders.map((order) =>
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
+      }
+      const updatedOrders = orders?.map((order) =>
         order.orderID === orderID
           ? { ...order, orderStatus: "Canceled" }
           : order
@@ -144,8 +196,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
 
       showAlert(t("manageOrders.cancelSuccessAlert"), "success");
     } catch (err) {
-      setError(err.message);
-      showAlert(t("manageOrders.cancelErrorAlert"), "error");
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -182,8 +233,8 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
         <h2 className="text-xl font-semibold text-gray-700">
           {t("customerOrders.orders")}
         </h2>
-        {orders.length > 0 ? (
-          orders.map((order) => (
+        {orders?.length > 0 ? (
+          orders?.map((order) => (
             <div
               key={order.orderID}
               className={`p-4 bg-white rounded-lg shadow-md cursor-pointer transition-all ${
@@ -247,7 +298,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
                     </p>
                   ) : error ? (
                     <p className="text-red-600">{error}</p>
-                  ) : orderItems.length > 0 ? (
+                  ) : orderItems?.length > 0 ? (
                     <div className="overflow-x-auto">
                       <table className="min-w-full bg-gray-100 rounded-lg">
                         <thead>
@@ -270,7 +321,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {orderItems.map((item) => (
+                          {orderItems?.map((item) => (
                             <tr
                               key={item.orderItemID}
                               className="bg-white hover:bg-gray-50 transition-colors"

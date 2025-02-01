@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { use } from "react";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../../utils/handleError";
 
 const DeleteProduct = ({
   product = { product: {}, image: {} },
@@ -48,11 +49,22 @@ const DeleteProduct = ({
       );
 
       if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error(t("deleteProduct.productNotFound"));
-        } else {
-          throw new Error(t("deleteProduct.deleteFailed"));
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
         }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
 
       setSuccess(true);
@@ -60,7 +72,7 @@ const DeleteProduct = ({
       refreshProducts();
       onClose();
     } catch (err) {
-      setError(err.message);
+      handleError(err);
     } finally {
       setLoading(false);
     }

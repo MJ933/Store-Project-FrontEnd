@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import i18n from "../i18n.js";
 import { useTranslation } from "react-i18next"; // Import useTranslation
 import Footer from "./components/Footer.jsx";
+import { ToastContainer } from "react-toastify";
 
 export default function App() {
   const { i18n: i18nInstance } = useTranslation(); // Get the i18n instance from the hook
@@ -31,6 +32,7 @@ export default function App() {
         <Navbar />
         <main className="flex-grow">
           <Outlet />
+          <ToastContainer position="top-right" autoClose={5000} />
         </main>
         <Footer />
       </div>

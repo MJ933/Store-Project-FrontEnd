@@ -23,6 +23,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
       setOrderItems(data);
     } catch (error) {
       setError(error.message);
+      handleError(error);
     }
   };
 
@@ -128,12 +129,12 @@ const OrderPage = ({ order, isShow, onClose }) => {
             <h3 className="text-lg font-bold mb-4">
               {t("orderPage.orderItems")}
             </h3>
-            {orderItems.length === 0 ? (
+            {orderItems?.length === 0 ? (
               <div className="text-gray-600 text-center">
                 {t("orderPage.noOrderItems")}
               </div>
             ) : (
-              orderItems.map((item, index) => (
+              orderItems?.map((item, index) => (
                 <div
                   key={item.orderItemID}
                   className="grid grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg"

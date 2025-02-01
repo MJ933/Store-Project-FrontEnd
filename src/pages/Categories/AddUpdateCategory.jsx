@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../../utils/handleError";
 
 export default function AddUpdateCategory({
   category = {},
@@ -71,13 +72,31 @@ export default function AddUpdateCategory({
         }),
       });
 
+      // if (!response.ok) {
+      //   const errorData = await response.json();
+      //   throw new Error(
+      //     errorData.errors?.CategoryName?.[0] ||
+      //       errorData.message ||
+      //       t("common.error.networkResponseNotOk")
+      //   );
+      // }
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.errors?.CategoryName?.[0] ||
-            errorData.message ||
-            t("common.error.networkResponseNotOk")
-        );
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
 
       const data = await response.json();
@@ -93,9 +112,7 @@ export default function AddUpdateCategory({
       refreshCategories(); // Refresh the category list
       onClose(); // Close the modal
     } catch (error) {
-      console.error("Error:", error);
-      setError(error.message);
-      showAlert(error.message, "error");
+      handleError(error);
     } finally {
       setLoading(false);
     }

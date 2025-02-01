@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ProductPage from "./ProductPage"; // Import the ProductPage component
 import AddNewUpdateProduct from "./AddUpdateProduct";
 import API from "../../Classes/clsAPI";
+import { handleError } from "../../utils/handleError";
 
 export default function FindProduct() {
   const [productId, setProductId] = useState("");
@@ -32,7 +33,22 @@ export default function FindProduct() {
       );
 
       if (!response.ok) {
-        throw new Error("Product not found.");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
 
       const data = await response.json();
@@ -45,7 +61,7 @@ export default function FindProduct() {
       setShowProductPage(true); // Show the ProductPage
       setShowUpdatePage(false); // Ensure UpdateProduct is hidden
     } catch (err) {
-      setError(err.message);
+      handleError(err);
       setProduct({ product: null, image: null }); // Reset product state on error
       setShowProductPage(false); // Hide ProductPage on error
     }

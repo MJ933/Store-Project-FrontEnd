@@ -9,6 +9,7 @@ import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
 import API from "../../Classes/clsAPI";
 import { Link } from "react-router-dom";
+import { handleError } from "../../utils/handleError";
 
 const ManageProducts = () => {
   const { t } = useTranslation();
@@ -109,17 +110,29 @@ const ManageProducts = () => {
           setProducts([]);
           setTotalCount(0);
           setTotalPages(0);
-          return;
         }
-        throw new Error(
-          `Failed to fetch products: ${response.status} ${response.statusText}`
-        );
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       setProducts(
-        data.productList.map((item) => ({
-          product: item.product,
-          images: item.images,
+        data?.productList?.map((item) => ({
+          product: item?.product,
+          images: item?.images,
         }))
       );
       setTotalCount(data.totalCount);
@@ -129,6 +142,7 @@ const ManageProducts = () => {
       setProducts([]);
       setTotalCount(0);
       setTotalPages(0);
+      handleError(err);
     } finally {
       setLoading(false);
     }
@@ -234,7 +248,7 @@ const ManageProducts = () => {
 
   return (
     <div>
-      {products.length === 0 && !loading && !error && isFiltersVisible && (
+      {products?.length === 0 && !loading && !error && isFiltersVisible && (
         <Alert message={t("manageProducts.noProductsFound")} type={"failure"} />
       )}
       <Alert
@@ -452,7 +466,7 @@ const ManageProducts = () => {
                     "sellingPrice",
                     "stockQuantity",
                     "image",
-                  ].map((key) => (
+                  ]?.map((key) => (
                     <th
                       key={key}
                       className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
@@ -472,7 +486,7 @@ const ManageProducts = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {sortedProducts.map((item) => {
+                {sortedProducts?.map((item) => {
                   if (!item.product) return null;
                   const primaryImages = item.images.filter(
                     (img) => img.isPrimary

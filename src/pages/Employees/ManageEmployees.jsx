@@ -9,6 +9,7 @@ import { FiEye, FiEdit, FiTrash2, FiPlus, FiFilter, FiX } from "react-icons/fi";
 import API from "../../Classes/clsAPI";
 import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
+import { handleError } from "../../utils/handleError";
 
 const ManageEmployees = () => {
   const { t } = useTranslation();
@@ -96,11 +97,23 @@ const ManageEmployees = () => {
           setEmployees([]);
           setTotalCount(0);
           setTotalPages(0);
-          return;
         }
-        throw new Error(
-          `Failed to fetch employees: ${response.status} ${response.statusText}`
-        );
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       setEmployees(data.employees);
@@ -111,6 +124,7 @@ const ManageEmployees = () => {
       setEmployees([]);
       setTotalCount(0);
       setTotalPages(0);
+      handleError(err);
     } finally {
       setLoading(false);
     }
@@ -209,7 +223,7 @@ const ManageEmployees = () => {
 
   return (
     <div>
-      {employees.length === 0 && !loading && !error && isFiltersVisible && (
+      {employees?.length === 0 && !loading && !error && isFiltersVisible && (
         <Alert
           message={t("manageEmployees.noEmployeesFound")}
           type={"failure"}
@@ -411,7 +425,7 @@ const ManageEmployees = () => {
                     "phone",
                     "role",
                     "isActive",
-                  ].map((key) => (
+                  ]?.map((key) => (
                     <th
                       key={key}
                       className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
@@ -431,7 +445,7 @@ const ManageEmployees = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {sortedEmployees.map((employee) => (
+                {sortedEmployees?.map((employee) => (
                   <tr key={employee.employeeID} className="hover:bg-gray-50">
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
                       {employee.employeeID}

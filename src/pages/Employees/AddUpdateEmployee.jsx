@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../../utils/handleError";
 
 export default function AddUpdateEmployee({
   employee = {},
@@ -86,19 +87,30 @@ export default function AddUpdateEmployee({
       console.log("Here is the value of the body being sent:");
       console.log(JSON.stringify(formData)); // Log the body here
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message || t("addUpdateEmployee.addUpdateError")
-        );
-      }
+        const errorData = await response.text(); // First get as text
+        let parsedError;
 
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
+      }
       const result = await response.json();
       setSuccess(true);
       showAlert(t("addUpdateEmployee.addUpdateSuccess"), "success");
       refreshEmployees();
       handleClose();
     } catch (error) {
-      setError(error.message);
+      handleError(error);
     } finally {
       setLoading(false);
     }

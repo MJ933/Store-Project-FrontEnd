@@ -5,6 +5,7 @@ import ManageOrderItems from "../OrderItems/ManageOrderItems";
 import ModernLoader from "../../components/ModernLoader";
 import ErrorComponent from "../../components/Error";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../../utils/handleError";
 
 export default function AddNewUpdateOrder({
   order = {},
@@ -46,9 +47,11 @@ export default function AddNewUpdateOrder({
     try {
       const orderItemInstance = new clsOrderItems();
       const data = await orderItemInstance.fetchOrderItemsByOrderID(orderID);
+      console.log("this is the order items data : ", data);
       setOrderItems(data);
     } catch (error) {
       setError(error.message);
+      handleError(error);
     } finally {
       setLoadingOrderItems(false);
     }
@@ -75,6 +78,10 @@ export default function AddNewUpdateOrder({
     setSuccess(false);
 
     try {
+      // Validate orderItems before proceeding
+      if (!Array.isArray(orderItems)) {
+        throw new TypeError("orderItems is not iterable. Expected an array.");
+      }
       const orderInstance = new clsOrders();
       const orderResult = isUpdateOrder
         ? await orderInstance.updateOrder(order.orderID, formData)
@@ -92,7 +99,8 @@ export default function AddNewUpdateOrder({
       showAlert(t("addNewUpdateOrder.orderSuccess"), "success");
       onClose();
     } catch (error) {
-      setError(error.message);
+      // setError(error.message);
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -106,12 +114,12 @@ export default function AddNewUpdateOrder({
           className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md"
         >
           {loadingOrderItems && <ModernLoader />}
-          {error && (
+          {/* {error && (
             <ErrorComponent
               message={error}
               onClose={() => setError(null)} // Clear the error when the user closes it
             />
-          )}
+          )} */}
           <div className="grid grid-cols-2 gap-4">
             <input type="hidden" name="orderID" value={formData.orderID} />
 

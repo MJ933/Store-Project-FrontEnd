@@ -18,6 +18,7 @@ import {
 import API from "../../Classes/clsAPI";
 import Alert from "../../components/Alert";
 import ModernLoader from "../../components/ModernLoader";
+import { handleError } from "../../utils/handleError";
 
 const ManageCustomers = () => {
   const { t } = useTranslation();
@@ -109,11 +110,23 @@ const ManageCustomers = () => {
           setCustomers([]);
           setTotalCount(0);
           setTotalPages(0);
-          return;
         }
-        throw new Error(
-          `Failed to fetch customers: ${response.status} ${response.statusText}`
-        );
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       setCustomers(data.customers);
@@ -124,6 +137,7 @@ const ManageCustomers = () => {
       setCustomers([]);
       setTotalCount(0);
       setTotalPages(0);
+      handleError(err);
     } finally {
       setLoading(false);
     }
@@ -212,7 +226,7 @@ const ManageCustomers = () => {
   };
 
   if (loading) return <ModernLoader />;
-  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (error) return <div className="p-4 text-red-500">Error: {error} </div>;
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -222,7 +236,7 @@ const ManageCustomers = () => {
   };
   return (
     <div>
-      {customers.length === 0 && !loading && !error && isFiltersVisible && (
+      {customers?.length === 0 && !loading && !error && isFiltersVisible && (
         <Alert
           message={t("manageCustomers.noCustomersFound")}
           type={"failure"}

@@ -4,6 +4,7 @@ import ProductCard from "../../components/ProductCard";
 import ModernLoader from "../../components/ModernLoader";
 import API from "../../Classes/clsAPI";
 import Pagination from "../../components/Pagination";
+import { handleError } from "../../utils/handleError";
 
 const ShowAllProducts = ({ selectedCategoryId = null }) => {
   const [products, setProducts] = useState([]);
@@ -41,8 +42,22 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
       }
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch products");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
 
       const data = await response.json();
@@ -53,6 +68,7 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
       setError(error.message);
       setProducts([]);
       setTotalCount(0);
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -71,7 +87,7 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
           <ModernLoader />
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
-        ) : products.length === 0 ? (
+        ) : products?.length === 0 ? (
           <div className="text-center text-gray-500">No products found.</div>
         ) : (
           <>
@@ -83,7 +99,7 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
               />
             )}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {products.map((item, index) => (
+              {products?.map((item, index) => (
                 <ProductCard
                   key={`${item.product?.productID}-${item.images?.[0]?.imageID}-${index}`}
                   product={item.product}

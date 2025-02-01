@@ -1,3 +1,4 @@
+import { handleError } from "../utils/handleError";
 import API from "./clsAPI";
 
 const api = new API();
@@ -15,13 +16,27 @@ export default class clsOrderItems {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text();
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error fetching order items:", error);
-      throw error; // Re-throw the error so it can be handled by the caller
+      handleError(error); // Pass the error and navigate function
     }
   }
 
@@ -37,13 +52,28 @@ export default class clsOrderItems {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data;
     } catch (error) {
       console.error("Error fetching order item by OrderItemID:", error);
-      throw error;
+      handleError(error); // Pass the error and navigate function
     }
   }
 
@@ -59,13 +89,29 @@ export default class clsOrderItems {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
+      console.log("this is the order items data : ", data);
       return data;
     } catch (error) {
       console.error("Error fetching order items by OrderID:", error);
-      throw error;
+      handleError(error); // Pass the error and navigate function
     }
   }
 
@@ -84,13 +130,28 @@ export default class clsOrderItems {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data; // Return the newly added order item
     } catch (error) {
       console.error("Error adding order item:", error);
-      throw error;
+      handleError(error); // Pass the error and navigate function
     }
   }
 
@@ -109,13 +170,28 @@ export default class clsOrderItems {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data; // Return the updated order item
     } catch (error) {
       console.error("Error updating order item:", error);
-      throw error;
+      handleError(error); // Pass the error and navigate function
     }
   }
 
@@ -132,13 +208,28 @@ export default class clsOrderItems {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data; // Return the result of the deletion
     } catch (error) {
       console.error("Error deleting order item:", error);
-      throw error;
+      handleError(error); // Pass the error and navigate function
     }
   }
 
@@ -154,13 +245,28 @@ export default class clsOrderItems {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return !!data; // Return true if the order item exists, false otherwise
     } catch (error) {
       console.error("Error checking if order item exists:", error);
-      throw error;
+      handleError(error); // Pass the error and navigate function
     }
   }
 }

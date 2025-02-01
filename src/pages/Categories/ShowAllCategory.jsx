@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "../../Classes/clsAPI";
+import { handleError } from "../../utils/handleError";
 
 const ShowAllCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -18,12 +19,27 @@ const ShowAllCategories = () => {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       setCategories(data);
     } catch (error) {
-      setError(error.message);
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -61,7 +77,7 @@ const ShowAllCategories = () => {
     return <div className="text-center text-red-600">Error: {error}</div>;
   }
 
-  if (categories.length === 0) {
+  if (categories?.length === 0) {
     return (
       <div className="text-center text-gray-600">No categories found.</div>
     );
@@ -94,7 +110,7 @@ const ShowAllCategories = () => {
             </tr>
           </thead>
           <tbody>
-            {categories.map((item) => {
+            {categories?.map((item) => {
               if (!item) {
                 return null;
               }

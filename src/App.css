@@ -31,6 +31,9 @@ html.ar .text-left {
   text-align: right !important; /* Override text-left to be right in RTL context if needed */
 }
 /* // No need to override direction for icons anymore! */
-html.ar .facebook-icon {
+/* html.ar .facebook-icon {
+  margin-left: 16px;
+} */
+.delete-customer-buttons.ar {
   margin-left: 16px;
 }

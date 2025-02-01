@@ -12,11 +12,12 @@ export default function CustomerPage({ customer, isShow = false, onClose }) {
     customer =
       userInfo?.identifier ||
       JSON.parse(localStorage.getItem("currentCustomer"));
+    customer = customer.dto;
   }
   if (!isShow || !customer) {
     return null;
   }
-
+  console.log(customer.dto);
   const handleClose = () => {
     if (onClose) {
       onClose();

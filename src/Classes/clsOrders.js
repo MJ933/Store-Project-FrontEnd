@@ -1,3 +1,4 @@
+import { handleError } from "../utils/handleError";
 import API from "./clsAPI";
 
 const api = new API();
@@ -11,13 +12,28 @@ export default class clsOrders {
         },
       });
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data;
     } catch (error) {
       console.error("Error fetching orders:", error);
-      throw error; // Re-throw the error so it can be handled by the caller
+      handleError(error, navigate);
     }
   }
 
@@ -32,13 +48,28 @@ export default class clsOrders {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data;
     } catch (error) {
       console.error(`Error fetching order with ID ${id}:`, error);
-      throw error; // Re-throw the error so it can be handled by the caller
+      handleError(error, navigate);
     }
   }
 
@@ -53,13 +84,28 @@ export default class clsOrders {
       });
       console.log("Response:", newOrderDTO);
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data;
     } catch (error) {
       console.error("Error creating order:", error);
-      throw error; // Re-throw the error so it can be handled by the caller
+      handleError(error, navigate);
     }
   }
 
@@ -77,13 +123,28 @@ export default class clsOrders {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data;
     } catch (error) {
       console.error(`Error updating order with ID ${id}:`, error);
-      throw error; // Re-throw the error so it can be handled by the caller
+      handleError(error, navigate);
     }
   }
 
@@ -99,13 +160,28 @@ export default class clsOrders {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data;
     } catch (error) {
       console.error(`Error deleting order with ID ${id}:`, error);
-      throw error; // Re-throw the error so it can be handled by the caller
+      handleError(error, navigate);
     }
   }
 
@@ -123,13 +199,28 @@ export default class clsOrders {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
       const data = await response.json();
       return data;
     } catch (error) {
       console.error(`Error updating order status for ID ${id}:`, error);
-      throw error; // Re-throw the error so it can be handled by the caller
+      handleError(error, navigate);
     }
   }
 }

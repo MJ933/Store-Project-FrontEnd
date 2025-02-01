@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../../utils/handleError";
 
 export default function AddNewUpdateProduct({
   product,
@@ -21,11 +22,11 @@ export default function AddNewUpdateProduct({
   const initialFormData = {
     productID: product?.product?.productID || 1,
     productName: product?.product?.productName || "",
-    initialPrice: product?.product?.initialPrice || 0,
-    sellingPrice: product?.product?.sellingPrice || 0,
+    initialPrice: product?.product?.initialPrice || 1,
+    sellingPrice: product?.product?.sellingPrice || 1,
     description: product?.product?.description || "",
     categoryID: product?.product?.categoryID || 1,
-    stockQuantity: product?.product?.stockQuantity || 0,
+    stockQuantity: product?.product?.stockQuantity || 1,
     isActive: product?.product?.isActive || true,
     images: product?.images || [], // Array to handle multiple images
   };
@@ -151,10 +152,22 @@ export default function AddNewUpdateProduct({
       });
 
       if (!productResponse.ok) {
-        const errorData = await productResponse.json();
-        throw new Error(
-          errorData.message || t("addNewUpdateProduct.addProductError")
-        );
+        const errorData = await productResponse.text(); // First get as text
+        let parsedError;
+
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: productResponse.status,
+            data: parsedError,
+          },
+        };
+        throw error;
       }
 
       const productResult = await productResponse.json();
@@ -163,12 +176,33 @@ export default function AddNewUpdateProduct({
         : productResult.productID;
       // Process removed images
       for (const imageId of pendingChanges.removedImageIds) {
-        await fetch(`${api.baseURL()}/API/ImagesAPI/Delete/${imageId}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await fetch(
+          `${api.baseURL()}/API/ImagesAPI/Delete/${imageId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.text(); // First get as text
+          let parsedError;
+
+          try {
+            parsedError = JSON.parse(errorData);
+          } catch {
+            parsedError = { message: errorData };
+          }
+
+          const error = {
+            response: {
+              status: response.status,
+              data: parsedError,
+            },
+          };
+          throw error;
+        }
       }
 
       // Inside handleSubmit, modify the image processing loop:
@@ -176,7 +210,7 @@ export default function AddNewUpdateProduct({
         if (image.imageID) {
           // Only handle existing images
           // Update isPrimary status for each image
-          await fetch(
+          const response = await fetch(
             `${api.baseURL()}/API/ImagesAPI/UpdateIsPrimaryState/${
               image.imageID
             }/${image.isPrimary}`,
@@ -187,6 +221,24 @@ export default function AddNewUpdateProduct({
               },
             }
           );
+          if (!response.ok) {
+            const errorData = await response.text(); // First get as text
+            let parsedError;
+
+            try {
+              parsedError = JSON.parse(errorData);
+            } catch {
+              parsedError = { message: errorData };
+            }
+
+            const error = {
+              response: {
+                status: response.status,
+                data: parsedError,
+              },
+            };
+            throw error;
+          }
         }
       }
 
@@ -214,7 +266,22 @@ export default function AddNewUpdateProduct({
             );
 
             if (!imageResponse.ok) {
-              throw new Error(t("addNewUpdateProduct.updateImageError"));
+              const errorData = await imageResponse.text(); // First get as text
+              let parsedError;
+
+              try {
+                parsedError = JSON.parse(errorData);
+              } catch {
+                parsedError = { message: errorData };
+              }
+
+              const error = {
+                response: {
+                  status: imageResponse.status,
+                  data: parsedError,
+                },
+              };
+              throw error;
             }
           }
         }
@@ -235,7 +302,22 @@ export default function AddNewUpdateProduct({
           );
 
           if (!imageResponse.ok) {
-            throw new Error(t("addNewUpdateProduct.addImageError"));
+            const errorData = await imageResponse.text(); // First get as text
+            let parsedError;
+
+            try {
+              parsedError = JSON.parse(errorData);
+            } catch {
+              parsedError = { message: errorData };
+            }
+
+            const error = {
+              response: {
+                status: imageResponse.status,
+                data: parsedError,
+              },
+            };
+            throw error;
           }
         }
       }
@@ -245,7 +327,7 @@ export default function AddNewUpdateProduct({
       refreshProducts();
       handleClose();
     } catch (error) {
-      setError(error.message);
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -295,6 +377,7 @@ export default function AddNewUpdateProduct({
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
               required
+              min={1}
             />
           </div>
 
@@ -309,6 +392,7 @@ export default function AddNewUpdateProduct({
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
               required
+              min={1}
             />
           </div>
 
@@ -325,6 +409,7 @@ export default function AddNewUpdateProduct({
               maxLength={1000}
               rows="3"
               required
+              minLength={1}
             />
           </div>
 
@@ -413,6 +498,7 @@ export default function AddNewUpdateProduct({
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                 required
+                min={1}
               />
             </div>
 
@@ -427,6 +513,7 @@ export default function AddNewUpdateProduct({
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                 required
+                min={1}
               />
             </div>
           </div>
