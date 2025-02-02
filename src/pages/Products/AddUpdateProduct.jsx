@@ -174,6 +174,7 @@ export default function AddNewUpdateProduct({
       const productID = isUpdateProduct
         ? formData.productID
         : productResult.productID;
+      // console.log("this product id: ", productResult);
       // Process removed images
       for (const imageId of pendingChanges.removedImageIds) {
         const response = await fetch(

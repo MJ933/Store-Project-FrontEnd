@@ -9,11 +9,6 @@ import { ToastContainer } from "react-toastify";
 
 export default function App() {
   const { i18n: i18nInstance } = useTranslation(); // Get the i18n instance from the hook
-  const { ready } = useTranslation(); // Get 'ready' flag
-
-  if (!ready) {
-    return <div>Loading translations...</div>; // Or a spinner, or null
-  }
 
   useEffect(() => {
     const lang = i18nInstance.language; // Use the i18n instance from the hook
@@ -23,6 +18,11 @@ export default function App() {
       htmlElement.classList.add("ar");
     } else {
       htmlElement.classList.remove("ar");
+    }
+    if (lang === "ar" || lang === "en") {
+      htmlElement.classList.add("notranslate");
+    } else {
+      htmlElement.classList.remove("notranslate");
     }
   }, [i18nInstance.language]); // Depend on the i18n.language from the hook
 
