@@ -25,11 +25,10 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
   // Fetch orders for the customer
   if (!customer?.customerID) {
     customer = JSON.parse(localStorage.getItem("currentCustomer"));
-    customer = customer.dto;
   }
 
   if (!customer) {
-    return <h1>{t("customerOrders.noOrders")}</h1>; // Don't render if the component is not shown or customer data is missing
+    return <h1 className="m-4">{t("customerOrders.noOrders")}</h1>; // Don't render if the component is not shown or customer data is missing
   }
   const api = new API();
 
@@ -351,7 +350,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
                       </table>
                     </div>
                   ) : (
-                    <p className="text-gray-600">
+                    <p className=" text-gray-600">
                       {t("customerOrders.noItems")}
                     </p>
                   )}
