@@ -15,9 +15,10 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage }) => {
   );
 
   return (
-    <div className="flex items-center justify-center gap-1.5 m-4">
+    <div className="flex items-center justify-center gap-1.5 m-2">
       <div className="flex items-center justify-center">
         <button
+          type="button" // <-- Set type="button"
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
           className="p-2 rounded-md bg-white text-gray-600 hover:bg-gray-50 transition-colors duration-200 border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -41,6 +42,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage }) => {
         {startPage > 1 && (
           <>
             <button
+              type="button" // <-- Set type="button"
               onClick={() => setCurrentPage(1)}
               className={`px-3.5 py-2 rounded-md ${
                 1 === currentPage
@@ -56,6 +58,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage }) => {
 
         {pages.map((page) => (
           <button
+            type="button" // <-- Set type="button"
             key={page}
             onClick={() => setCurrentPage(page)}
             className={`px-3.5 py-2 rounded-md ${
@@ -74,6 +77,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage }) => {
               <span className="px-2 text-gray-400">...</span>
             )}
             <button
+              type="button" // <-- Set type="button"
               onClick={() => setCurrentPage(totalPages)}
               className={`px-3.5 py-2 rounded-md ${
                 totalPages === currentPage
@@ -87,6 +91,7 @@ const Pagination = ({ totalPages, currentPage, setCurrentPage }) => {
         )}
 
         <button
+          type="button" // <-- Set type="button"
           onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage >= totalPages}
           className="p-2 rounded-md bg-white text-gray-600 hover:bg-gray-50 transition-colors duration-200 border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"

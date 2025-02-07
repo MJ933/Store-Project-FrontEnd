@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
 import { handleError } from "../../utils/handleError";
+import CategorySelector from "../Categories/CategorySelector";
 
 export default function AddNewUpdateProduct({
   product,
@@ -21,10 +22,10 @@ export default function AddNewUpdateProduct({
 
   const initialFormData = {
     productID: product?.product?.productID || 1,
-    productName: product?.product?.productName || "",
+    productName: product?.product?.productName || "a",
     initialPrice: product?.product?.initialPrice || 1,
     sellingPrice: product?.product?.sellingPrice || 1,
-    description: product?.product?.description || "",
+    description: product?.product?.description || "a",
     categoryID: product?.product?.categoryID || 1,
     stockQuantity: product?.product?.stockQuantity || 1,
     isActive: product?.product?.isActive || true,
@@ -379,6 +380,7 @@ export default function AddNewUpdateProduct({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
               required
               min={1}
+              step="0.01"
             />
           </div>
 
@@ -394,6 +396,7 @@ export default function AddNewUpdateProduct({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
               required
               min={1}
+              step="0.01"
             />
           </div>
 
@@ -488,18 +491,17 @@ export default function AddNewUpdateProduct({
 
           {/* Category and Stock */}
           <div className="col-span-2 md:col-span-1 gap-y-2">
-            <div>
+            <div className="w-full">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addNewUpdateProduct.categoryIDLabel")}
               </label>
-              <input
-                type="number"
-                name="categoryID"
-                value={formData.categoryID}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
-                required
-                min={1}
+              <CategorySelector
+                onCategorySelect={(categoryID) => {
+                  setFormData({
+                    ...formData,
+                    categoryID: categoryID, // Update the categoryID in formData
+                  });
+                }}
               />
             </div>
 
