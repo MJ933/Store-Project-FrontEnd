@@ -1,0 +1,39 @@
+/* Existing CSS (scrollbar styles - keep these) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+html.ar body {
+  direction: rtl;
+  text-align: right;
+}
+
+html.ar th.text-left {
+  text-align: start; /* or text-align: right; */
+}
+
+html.ar .text-left {
+  text-align: right !important; /* Override text-left to be right in RTL context if needed */
+}
+/* // No need to override direction for icons anymore! */
+/* html.ar .facebook-icon {
+  margin-left: 16px;
+} */
+.delete-customer-buttons.ar {
+  margin-left: 16px;
+}
