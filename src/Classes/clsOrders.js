@@ -33,7 +33,7 @@ export default class clsOrders {
       return data;
     } catch (error) {
       console.error("Error fetching orders:", error);
-      handleError(error, navigate);
+      handleError(error);
     }
   }
 
@@ -69,7 +69,7 @@ export default class clsOrders {
       return data;
     } catch (error) {
       console.error(`Error fetching order with ID ${id}:`, error);
-      handleError(error, navigate);
+      handleError(error);
     }
   }
 
@@ -105,7 +105,7 @@ export default class clsOrders {
       return data;
     } catch (error) {
       console.error("Error creating order:", error);
-      handleError(error, navigate);
+      handleError(error);
     }
   }
 
@@ -144,7 +144,7 @@ export default class clsOrders {
       return data;
     } catch (error) {
       console.error(`Error updating order with ID ${id}:`, error);
-      handleError(error, navigate);
+      handleError(error);
     }
   }
 
@@ -181,7 +181,7 @@ export default class clsOrders {
       return data;
     } catch (error) {
       console.error(`Error deleting order with ID ${id}:`, error);
-      handleError(error, navigate);
+      handleError(error);
     }
   }
 
@@ -220,7 +220,7 @@ export default class clsOrders {
       return data;
     } catch (error) {
       console.error(`Error updating order status for ID ${id}:`, error);
-      handleError(error, navigate);
+      handleError(error);
     }
   }
 }

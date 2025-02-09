@@ -65,7 +65,7 @@ const CurrentCart = () => {
 
       // Step 1: Create the order
       const createdOrder = await orderInstance.createOrder(orderData);
-      const orderID = createdOrder.orderID; // Get the orderID from the created order
+      const orderID = createdOrder?.orderID; // Get the orderID from the created order
       console.log(orderID);
       // Step 2: Create the order items
       for (const item of cartItems) {
