@@ -170,26 +170,27 @@ const ManageCategories = () => {
   };
 
   if (loading) return <ModernLoader />;
-  if (error)
-    return (
-      <div className="p-4 text-red-500">
-        {t("manageCategories.error")} {error}
-      </div>
-    );
-  if (categories?.length === 0 && !loading && !error && !isFiltersVisible)
-    return (
-      <div className="p-4 text-gray-500">
-        {t("manageCategories.noCategoriesFound")}
-      </div>
-    );
-  if (categories?.length === 0 && !loading && !error && isFiltersVisible)
-    return (
-      <Alert
-        message={t("manageCategories.noCategoriesFound")}
-        type={"failure"}
-      />
-    );
-
+  // if (error)
+  //   return (
+  //     <div className="p-4 text-red-500">
+  //       {t("manageCategories.error")} {error}
+  //     </div>
+  //   );
+  // if (categories?.length === 0 && !loading && !error && !isFiltersVisible)
+  //   return (
+  //     <div className="p-4 text-gray-500">
+  //       {t("manageCategories.noCategoriesFound")}
+  //     </div>
+  //   );
+  // if (categories?.length === 0 && !loading && !error && isFiltersVisible)
+  //   return (
+  //     <Alert
+  //       message={t("manageCategories.noCategoriesFound")}
+  //       type={"failure"}
+  //     />
+  //   );
+  if (loading) return <ModernLoader />;
+  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -199,6 +200,11 @@ const ManageCategories = () => {
 
   return (
     <div>
+      {categories?.length === 0 && !loading && !error && !isFiltersVisible && (
+        <div className="p-4 text-gray-500">
+          {t("manageCategories.noCategoriesFound")}
+        </div>
+      )}
       <Alert
         message={alertMessage}
         type={alertType}
