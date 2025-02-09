@@ -105,6 +105,7 @@ const ProductPage = () => {
         price: productData.product.sellingPrice,
         imageUrl: primaryImage,
         productName: productData.product.productName,
+        maxQuantity: productData.product.stockQuantity,
       })
     );
   };
