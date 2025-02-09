@@ -1,5 +1,5 @@
 export default class API {
   baseURL() {
-    return "https://localhost:7269";
+    return "https://healthandwealth.azurewebsites.net";
   }
 }
