@@ -114,7 +114,7 @@ const Navbar = () => {
           </div>
 
           {/* Right Side: Icons (Cart, Profile, Login/Logout) */}
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+          <div className="flex items-center gap-1 sm:gap-3 md:gap-4">
             {" "}
             {/* Adjusted gaps for different screen sizes */}
             {/* Language Switch Button */}
@@ -122,11 +122,16 @@ const Navbar = () => {
               onClick={() =>
                 changeLanguage(i18n.resolvedLanguage === "en" ? "ar" : "en")
               }
-              className=" p-1 sm:p-2 text-gray-800 hover:text-cyan-600 focus:outline-none text-sm" // Reduced padding and font size
+              className="  p-1 sm:p-2 text-gray-800 hover:text-cyan-600 focus:outline-none text-sm" // Reduced padding and font size
             >
-              {i18n.resolvedLanguage === "en" ? "العربية" : "English"}
+              <span className="hidden sm:inline">
+                {i18n.resolvedLanguage === "en" ? "العربية" : "English"}
+              </span>
+              <span className="sm:hidden">
+                {i18n.resolvedLanguage === "en" ? "ع" : "En"}
+              </span>{" "}
             </button>
-            {/* Search Icon (Only on Home Page) */}
+            {/* Search Icon (not Only on Home Page) */}
             {["/", "/products/ShowAllProducts"].includes(location.pathname) && (
               <>
                 {/* Search Icon (Mobile) */}
@@ -298,21 +303,33 @@ const ProfileSection = ({
     <div className="flex items-center gap-2">
       <button
         onClick={handleLogOut}
-        className=" p-1 text-gray-800 hover:text-cyan-600" // Reduced padding
+        className="flex items-center gap-2 p-3 text-gray-800 hover:text-cyan-600" // Reduced padding
       >
+        {" "}
+        <span className="hidden sm:inline text-sm mb-1">
+          {t("navbar.logout")}
+        </span>
         <RiLogoutCircleFill className="w-5 h-5" />
       </button>
-      <Link
-        to={userType === "customer" ? "/customerProfile" : "/employeeProfile"}
-        className="p-1 text-gray-800 hover:text-cyan-600" // Reduced padding
-      >
-        <FaRegUserCircle className=" w-5 h-5" />
-      </Link>
+      <span className="hidden sm:inline">
+        <Link
+          to={userType === "customer" ? "/customerProfile" : "/employeeProfile"}
+          className="p-1 text-gray-800 hover:text-cyan-600" // Reduced padding
+        >
+          <FaRegUserCircle className=" w-5 h-5" />
+        </Link>{" "}
+      </span>
     </div>
   ) : (
-    <Link to="/login" className=" p-1 text-gray-800 hover:text-cyan-600">
-      {" "}
+    <Link
+      to="/login"
+      className="flex items-center gap-2 p-1 text-gray-800 hover:text-cyan-600"
+    >
       {/* Reduced padding */}
+      <span className="hidden sm:inline text-sm mb-1">
+        {" "}
+        {t("navbar.login")}
+      </span>
       <RiLoginCircleFill className="w-5 h-5" />
     </Link>
   );
