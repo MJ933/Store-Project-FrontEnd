@@ -81,17 +81,21 @@ const ProductCard = ({ product, image }) => {
         </p>
 
         <button
-          className="mt-auto w-full bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 text-sm flex items-center justify-center gap-2 disabled:opacity-70 disabled:bg-gray-400 disabled:bg-none disabled:cursor-not-allowed"
+          className=" mt-auto w-full bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-semibold py-3 rounded-lg transition-all duration-300   flex items-center justify-center gap-2 disabled:opacity-70 disabled:bg-gray-400 disabled:bg-none disabled:cursor-not-allowed"
           onClick={handleAddToCart}
           disabled={!product.isActive}
         >
           {product.isActive ? (
             <>
-              <FaCartPlus className="text-base" />
-              {t("productCard.addToCart")}
+              <FaCartPlus className="text-base  min-[350px]:inline hidden " />
+              <span className="min-[350px]:text-xs text-xs">
+                {t("productCard.addToCart")}
+              </span>
             </>
           ) : (
-            t("productCard.unavailable")
+            <span className="min-[350px]:text-xs text-xs">
+              {t("productCard.unavailable")}
+            </span>
           )}
         </button>
       </div>
