@@ -80,13 +80,13 @@ const HomePage = () => {
       {/* Products Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="mb-4 sm:mb-6 flex items-center justify-between">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+          <h2 className="text-xs  sm:text-xl font-semibold text-gray-900">
             {t("homepage.featuredProducts")}{" "}
             {/* Translation key for "Featured Products" */}
           </h2>
           <button
             onClick={() => navigate("/products/ShowAllProducts")}
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center whitespace-nowrap"
+            className="text-xs text-blue-600 hover:text-blue-800 sm:text-sm  font-medium flex items-center whitespace-nowrap"
           >
             {t("homepage.viewAllProducts")}{" "}
             {/* Translation key for "View all products" */}
