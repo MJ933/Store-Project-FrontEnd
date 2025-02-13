@@ -20,6 +20,7 @@ const ProductCard = ({ product, image }) => {
         price: product.sellingPrice,
         imageUrl: image?.imageURL || "No Image URL",
         productName: product.productName,
+        maxQuantity: product.stockQuantity,
       })
     );
   };

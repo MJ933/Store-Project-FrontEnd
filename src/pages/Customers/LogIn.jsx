@@ -78,7 +78,7 @@ const LogIn = () => {
         setError(t("login.invalidCredentials"));
       }
     } catch (error) {
-      handleError(error, navigate); // Use handleError to display the error// Use handleError to display the error
+      handleError(error); // Use handleError to display the error// Use handleError to display the error
     } finally {
       setLoading(false);
     }
@@ -130,7 +130,7 @@ const LogIn = () => {
       dispatch(clearSearchQuery());
       localStorage.setItem("userType", userType);
     } catch (error) {
-      handleError(error, navigate); // Pass the error and navigate function
+      handleError(error); // Pass the error and navigate function
 
       // setError(error.message);
     }

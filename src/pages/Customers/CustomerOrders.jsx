@@ -34,7 +34,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
 
   useEffect(() => {
     if (!customer?.customerID) {
-      handleError(new Error("Customer ID is missing."), navigate);
+      handleError(new Error("Customer ID is missing."));
       return;
     }
 
@@ -75,7 +75,7 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
         const data = await response.json();
         setOrders(data);
       } catch (err) {
-        handleError(err, navigate); // Pass the error and navigate function
+        handleError(err); // Pass the error and navigate function
       } finally {
         setLoading(false);
       }
