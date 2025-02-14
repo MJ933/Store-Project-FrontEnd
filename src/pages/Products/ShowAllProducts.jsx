@@ -81,7 +81,7 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
-    <div className="bg-gray-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-100 min-h-screen py-4 px-2 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {loading ? (
           <ModernLoader />
@@ -98,7 +98,7 @@ const ShowAllProducts = ({ selectedCategoryId = null }) => {
                 setCurrentPage={setCurrentPage}
               />
             )}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
               {products?.map((item, index) => (
                 <ProductCard
                   key={`${item.product?.productID}-${item.images?.[0]?.imageID}-${index}`}

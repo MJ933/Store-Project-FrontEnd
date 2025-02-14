@@ -37,3 +37,8 @@ html.ar .text-left {
 .delete-customer-buttons.ar {
   margin-left: 16px;
 }
+
+.notranslate {
+  -webkit-translate: none !important;
+  translate: none !important;
+}

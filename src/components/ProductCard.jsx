@@ -55,7 +55,7 @@ const ProductCard = ({ product, image }) => {
         )}
         <div className="absolute top-2 right-2">
           <span
-            className={`text-xs px-3 py-1 rounded-full ${
+            className={`[@media(max-width:230px)]:hidden text-xs px-3 py-1 rounded-full ${
               product.isActive
                 ? "bg-green-500/20 text-green-700"
                 : "bg-red-500/20 text-red-700"
@@ -69,15 +69,17 @@ const ProductCard = ({ product, image }) => {
       </div>
 
       <div className="p-4 flex flex-col flex-grow gap-2">
-        <h3 className="text-gray-900 font-medium text-sm sm:text-base line-clamp-2">
+        <h3
+          className="[@media(max-width:299px)]:text-xs text-sm sm:text-lg md:text-lg lg:text-lg text-gray-900 font-medium
+         line-clamp-2 min-h-[calc(2em_*_1.5)] leading-[1.5] whitespace-normal"
+        >
           {product.productName}
         </h3>
-
-        <p className="text-lg font-bold text-gray-900 mt-1">
+        <p className="[@media(max-width:299px)]:text-xs text-sm sm:text-lg lg:text-xl  font-bold text-gray-900 mt-1">
           ${product.sellingPrice?.toFixed(2) || "0.00"}
         </p>
 
-        <p className="text-gray-500 text-sm line-clamp-3 mb-3">
+        <p className="text-gray-500 [@media(max-width:299px)]:text-xs text-sm line-clamp-3 mb-3">
           {product.description || t("productCard.noDescriptionAvailable")}
         </p>
 
