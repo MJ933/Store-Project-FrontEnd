@@ -30,7 +30,8 @@ const ProductCard = ({ product, image }) => {
   };
 
   const handleImageError = (e) => {
-    e.target.src = "/NoImage.png";
+    e.target.src = "https://dummyimage.com/300x300/cccccc/000000&text=No+Image";
+    e.target.alt = "Placeholder Image";
     e.target.onerror = null;
   };
 
@@ -46,7 +47,8 @@ const ProductCard = ({ product, image }) => {
             alt={product.productName}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             onError={(e) => {
-              e.target.src = "/NoImage.png"; // Replace with your placeholder image path
+              e.target.src =
+                "https://dummyimage.com/300x300/cccccc/000000&text=No+Image"; // Replace with your placeholder image path
               e.target.alt = "Placeholder Image";
               e.target.onerror = null;
             }}

@@ -231,7 +231,8 @@ const ProductPage = () => {
                               } - Image ${index + 1}`}
                               className="w-full h-full object-cover rounded-lg"
                               onError={(e) => {
-                                e.target.src = "/NoImage.png";
+                                e.target.src =
+                                  "https://dummyimage.com/300x300/cccccc/000000&text=No+Image";
                                 e.target.onerror = null;
                               }}
                             />
@@ -269,7 +270,8 @@ const ProductPage = () => {
                                   alt={`Thumbnail ${index + 1}`}
                                   className="w-full h-full object-cover"
                                   onError={(e) => {
-                                    e.target.src = "/NoImage.png"; // Replace with your placeholder image path
+                                    e.target.src =
+                                      "https://dummyimage.com/300x300/cccccc/000000&text=No+Image"; // Replace with your placeholder image path
                                     e.target.alt = "Placeholder Image";
                                     e.target.onerror = null;
                                   }}
@@ -284,11 +286,12 @@ const ProductPage = () => {
                 ) : (
                   <div className="relative aspect-square">
                     <img
-                      src="/NoImage.png"
+                      src="https://dummyimage.com/300x300/cccccc/000000&text=No+Image"
                       alt="No Image Available"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
-                        e.target.src = "/NoImage.png"; // Replace with your placeholder image path
+                        e.target.src =
+                          "https://dummyimage.com/300x300/cccccc/000000&text=No+Image"; // Replace with your placeholder image path
                         e.target.alt = "Placeholder Image";
                         e.target.onerror = null;
                       }}
@@ -426,7 +429,8 @@ const ProductPage = () => {
                     }`}
                     className="w-full h-auto rounded-lg"
                     onError={(e) => {
-                      e.target.src = "/NoImage.png"; // Replace with your placeholder image path
+                      e.target.src =
+                        "https://dummyimage.com/300x300/cccccc/000000&text=No+Image"; // Replace with your placeholder image path
                       e.target.alt = "Placeholder Image";
                       e.target.onerror = null;
                     }}

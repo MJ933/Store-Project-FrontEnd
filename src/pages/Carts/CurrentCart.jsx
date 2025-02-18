@@ -144,7 +144,8 @@ const CurrentCart = () => {
                   src={item.imageUrl}
                   alt={item.productName}
                   onError={(e) => {
-                    e.target.src = "/NoImage.png"; // Replace with your placeholder image path
+                    e.target.src =
+                      "https://dummyimage.com/300x300/cccccc/000000&text=No+Image"; // Replace with your placeholder image path
                     e.target.alt = "Placeholder Image";
                     e.target.onerror = null;
                   }}
