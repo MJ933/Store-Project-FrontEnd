@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import API from "../../Classes/clsAPI";
 import Pagination from "../../components/Pagination";
+import { useTranslation } from "react-i18next";
 
 const CategorySelector = ({ onCategorySelect }) => {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -42,7 +44,7 @@ const CategorySelector = ({ onCategorySelect }) => {
         } catch {
           parsedError = { message: errorData };
         }
-        throw new Error(parsedError.message || "Failed to fetch categories");
+        throw new Error(parsedError.message || t("categorySelector.error"));
       }
 
       const data = await response.json();
@@ -76,17 +78,17 @@ const CategorySelector = ({ onCategorySelect }) => {
   };
 
   return (
-    <div className={` w-full    relative  ${showDropdown ? "h-80" : "h-16"}`}>
+    <div className={`w-full relative ${showDropdown ? "h-80" : "h-16"}`}>
       {/* Input Field */}
       <div
-        className=" w-full relative mb-4"
+        className="w-full relative mb-4"
         onClick={() => {
           setShowDropdown((prev) => !prev);
         }} // Toggle dropdown visibility
       >
         <input
           type="text"
-          placeholder="Select a category..."
+          placeholder={t("categorySelector.placeholder.select")}
           value={selectedCategory?.categoryName || ""}
           readOnly // Make the input read-only to prevent manual editing
           className="w-full px-3 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm cursor-pointer"
@@ -116,7 +118,7 @@ const CategorySelector = ({ onCategorySelect }) => {
           <div className="p-2 border-b border-gray-200">
             <input
               type="text"
-              placeholder="Search by category name..."
+              placeholder={t("categorySelector.placeholder.search")}
               value={searchTerm}
               onChange={handleSearchChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm"
@@ -127,11 +129,13 @@ const CategorySelector = ({ onCategorySelect }) => {
           {error && <p className="text-red-500 text-sm p-2">{error}</p>}
 
           {/* Categories List */}
-          <div className="p-2 ">
+          <div className="p-2">
             {loading ? (
-              <p className="text-gray-500">Loading categories...</p>
+              <p className="text-gray-500">{t("categorySelector.loading")}</p>
             ) : categories.length === 0 ? (
-              <p className="text-gray-500">No categories found.</p>
+              <p className="text-gray-500">
+                {t("categorySelector.noCategories")}
+              </p>
             ) : (
               categories.map((category) => (
                 <div
@@ -150,7 +154,7 @@ const CategorySelector = ({ onCategorySelect }) => {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && loading === false && (
+          {totalPages > 1 && !loading && (
             <Pagination
               totalPages={totalPages}
               currentPage={currentPage}

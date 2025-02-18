@@ -172,7 +172,17 @@
     "whatsappButton": "Contact us",
     "imageGallery": "Image Gallery",
     "stockAvailable": "Stock Available",
-    "close": "Close"
+    "close": "Close",
+    "whatsappMessage": {
+      "greeting": "⭐ {{productName}} ⭐",
+      "detailsHeader": "Product Details:",
+      "id": "ID: {{productID}}",
+      "price": "Price: {{price}}",
+      "stock": "Stock: {{stock}} {{available}}",
+      "description": "Description: {{description}}",
+      "interested": "Interested in this amazing product? Get in touch to order!"
+    },
+    "available": "available"
   },
   "addNewUpdateProduct": {
     "productNameLabel": "Product Name",
@@ -202,7 +212,11 @@
     "imagesLabel": "Product Images",
     "setPrimaryLabel": "Set as Primary",
     "primaryLabel": "Primary",
-    "addImagesLabel": "Add Images"
+    "addImagesLabel": "Add Images",
+    "addNewUpdateProduct": "Add/Update Product",
+    "productID": "Product ID",
+    "CurrentCategory": "Current Category",
+    "NewCategory": "New Category"
   },
   "deleteProduct": {
     "deleteProductTitle": "Delete Product",
@@ -232,7 +246,9 @@
     "updateOrder": "Update Order",
     "addOrder": "Add Order",
     "close": "Close",
-    "orderSuccess": "Order Added/Updated Successfully"
+    "orderSuccess": "Order Added/Updated Successfully",
+    "orderID": "Order ID",
+    "addNewUpdateOrder": "Add/Update Order"
   },
   "orderPage": {
     "customerID": "Customer ID",
@@ -247,7 +263,9 @@
     "productName": "Product Name",
     "quantity": "Quantity",
     "price": "Price",
-    "close": "Close"
+    "close": "Close",
+    "orderDetail": "Order Detail",
+    "orderID": "Order ID"
   },
   "manageOrderItems": {
     "orderItems": "Order Items",
@@ -275,7 +293,9 @@
     "addUpdateError": "Failed to add/update the employee",
     "addUpdateSuccess": "Employee Added/Updated Successfully",
     "updateSuccess": "Employee updated successfully",
-    "addSuccess": "Employee added successfully"
+    "addSuccess": "Employee added successfully",
+    "employeeID": "employeeID",
+    "addUpdateEmployee": "Add/Update Employee"
   },
   "deleteEmployee": {
     "title": "Delete Employee",
@@ -304,7 +324,7 @@
   "addNewUpdateCustomer": {
     "signUp": "Sign Up",
     "editCustomer": "Edit Customer",
-    "createCustomer": "Create New Customer",
+    "createCustomer": "Save",
     "firstName": "First Name",
     "firstNamePlaceholder": "Enter first name",
     "lastName": "Last Name",
@@ -315,7 +335,7 @@
     "phonePlaceholder": "Enter phone number",
     "password": "Password",
     "passwordPlaceholder": "Enter password",
-    "activeStatus": "Active Status",
+    "activeStatus": "Active",
     "cancel": "Cancel",
     "signingUp": "Signing Up...",
     "updating": "Updating...",
@@ -411,20 +431,24 @@
     "privacyLink": "Privacy",
     "termsLink": "Terms"
   },
+
   "currentCart": {
-    "title": "Your Cart",
+    "title": "Current Cart",
     "emptyMessage": "Your cart is empty.",
     "quantityLabel": "Quantity:",
     "priceLabel": "Price:",
-    "selectShippingLocation": "Select Shipping Location",
-    "selectLocationPlaceholder": "Select Location",
     "shippingAddressLabel": "Shipping Address",
-    "shippingAddressPlaceholder": "Enter your shipping address",
+    "shippingAddressPlaceholder": "Enter shipping address",
     "notesLabel": "Notes",
-    "notesPlaceholder": "Phone Number, etc.",
+    "notesPlaceholder": "Add notes for the order (optional)",
     "sendOrderButton": "Send Order",
-    "orderSuccessMessage": "Order created successfully!",
-    "orderErrorMessage": "An error occurred while creating the order."
+    "orderSuccessMessage": "Order sent successfully!",
+    "orderErrorMessage": "An error occurred while sending the order. Please try again.",
+    "selectShippingLocation": "Select Shipping Location",
+    "selectLocationPlaceholder": "Select a location",
+    "alerts": {
+      "shippingAddressRequired": "Please enter a shipping address"
+    }
   },
   "locationSelector": {
     "selectLocationPlaceholder": "Select Location",
@@ -478,5 +502,77 @@
     "categoryNotFoundError": "Category not found. Please check the ID and try again.",
     "categoryDeleteFailedError": "Failed to delete the category.",
     "categoryDeleteSuccess": "Category deleted successfully!"
+  },
+  "Currency": "I.Q.D",
+  "detailedProductPage": {
+    "productDetails": "Product Details",
+    "productID": "Product ID",
+    "productNameLabel": "Product Name",
+    "initialPriceLabel": "Initial Price",
+    "sellingPriceLabel": "Selling Price",
+    "descriptionLabel": "Description",
+    "categoryIDLabel": "Category",
+    "stockQuantityLabel": "Stock Quantity",
+    "productIsActiveLabel": "Active Status",
+    "imagesLabel": "Images",
+    "primaryLabel": "Primary",
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel"
+  },
+  "ContactPage": {
+    "title": "Contact Us",
+    "description": "If you have any questions or need support, please fill out the form below, and we will get back to you as soon as possible. You can also contact us directly through the following channels:",
+    "form": {
+      "nameLabel": "Name",
+      "namePlaceholder": "Your name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Your email",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "Your phone number",
+      "phoneNotice": "Include country code (e.g., +1 for US).",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Your message",
+      "sendViaWhatsApp": "Send via WhatsApp",
+      "sendViaTelegram": "Send via Telegram"
+    },
+    "alerts": {
+      "fillAllFields": "Please fill in all fields.",
+      "validEmail": "Please enter a valid email address.",
+      "validPhone": "Please enter a valid phone number (8-15 digits, optional +).",
+      "success": "Message sent successfully"
+    }
+  },
+
+  "FAQsPage": {
+    "title": "Frequently Asked Questions",
+    "description": "Here you can find answers to the most common questions about our products and services.",
+    "question1": {
+      "title": "Question 1",
+      "answer": "Answer to question 1."
+    },
+    "question2": {
+      "title": "Question 2",
+      "answer": "Answer to question 2."
+    }
+  },
+  "PrivacyPolicyPage": {
+    "title": "Privacy Policy",
+    "description": "Your privacy is important to us. This policy explains how we collect, use, and safeguard your personal information.",
+    "content": "[Detailed privacy policy content...]"
+  },
+  "TermsAndConditionsPage": {
+    "title": "Terms and Conditions",
+    "description": "Please read these terms and conditions carefully before using our website. Your access to and use of the service is conditioned on your acceptance of these terms.",
+    "content": "[Detailed terms and conditions content...]"
+  },
+  "categorySelector": {
+    "placeholder": {
+      "select": "Select a category...",
+      "search": "Search by category name..."
+    },
+    "loading": "Loading categories...",
+    "noCategories": "No categories found.",
+    "error": "Failed to fetch categories"
   }
 }

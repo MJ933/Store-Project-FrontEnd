@@ -9,7 +9,8 @@ const OrderPage = ({ order, isShow, onClose }) => {
   const [error, setError] = useState(null);
   const [orderItems, setOrderItems] = useState([]);
   const { t } = useTranslation();
-
+  const { i18n: i18nInstance } = useTranslation();
+  const [isArabic, setIsArabic] = useState(false);
   useEffect(() => {
     if (isShow && order?.orderID) {
       fetchOrderItems(order.orderID);
@@ -23,7 +24,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
       setOrderItems(data);
     } catch (error) {
       setError(error.message);
-      handleError(error);
+      // Handle the error as needed
     }
   };
 
@@ -39,15 +40,46 @@ const OrderPage = ({ order, isShow, onClose }) => {
   };
 
   const [formData] = useState(initialFormData);
+  useEffect(() => {
+    // Apply notranslate class immediately when component mounts
+    document.documentElement.classList.add("notranslate");
+
+    const lang = i18nInstance.language;
+    if (lang === "ar") {
+      setIsArabic(true);
+    } else {
+      setIsArabic(false);
+    }
+  }, [i18nInstance.language]);
 
   return (
     <div className="mb-8">
       {isShow && (
-        <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-          <div className="grid grid-cols-2 gap-4">
+        <div
+          className="mx-auto bg-white p-4 sm:p-6 rounded-lg shadow-md"
+          style={{ width: "calc(100% - 20px)" }} // Ensures some padding on super small screens (e.g., 240px)
+        >
+          <h3 className="m-4 text-center text-[calc(1em+1vw)] font-medium text-gray-900">
+            {t("orderPage.orderDetail")}
+          </h3>
+          {/* Responsive grid for order details */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input type="hidden" name="orderID" value={formData.orderID} />
 
-            <div className="col-span-1">
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                {t("orderPage.orderID")}
+              </label>
+              <input
+                type="number"
+                name="orderID"
+                value={formData.orderID}
+                readOnly
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+              />
+            </div>
+
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("orderPage.customerID")}
               </label>
@@ -60,7 +92,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
               />
             </div>
 
-            <div className="col-span-1">
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("orderPage.orderDate")}
               </label>
@@ -73,20 +105,29 @@ const OrderPage = ({ order, isShow, onClose }) => {
               />
             </div>
 
-            <div className="col-span-1">
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("orderPage.total")}
               </label>
-              <input
-                type="number"
-                name="total"
-                value={formData.total}
-                readOnly
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
-              />
+              <div className="relative">
+                <span
+                  className={`absolute inset-y-0 ${
+                    isArabic ? "left-0" : "right-0"
+                  }   p-3 flex items-center text-gray-500  `}
+                >
+                  {t("Currency")}
+                </span>
+                <input
+                  type="number"
+                  name="total"
+                  value={formData.total}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                />
+              </div>
             </div>
 
-            <div className="col-span-1">
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("orderPage.orderStatus")}
               </label>
@@ -99,7 +140,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("orderPage.shippingAddress")}
               </label>
@@ -112,7 +153,7 @@ const OrderPage = ({ order, isShow, onClose }) => {
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("orderPage.notes")}
               </label>
@@ -134,10 +175,10 @@ const OrderPage = ({ order, isShow, onClose }) => {
                 {t("orderPage.noOrderItems")}
               </div>
             ) : (
-              orderItems?.map((item, index) => (
+              orderItems.map((item) => (
                 <div
                   key={item.orderItemID}
-                  className="grid grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg"
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg"
                 >
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -172,20 +213,27 @@ const OrderPage = ({ order, isShow, onClose }) => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
                     />
                   </div>
-
                   <div>
                     <label className="block text-gray-700 text-sm font-bold mb-2">
                       {t("orderPage.price")}
                     </label>
-                    <input
-                      type="number"
-                      value={item.price}
-                      readOnly
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
-                    />
+                    <div className="relative">
+                      <span
+                        className={`absolute inset-y-0 ${
+                          isArabic ? "left-0" : "right-0"
+                        }   p-3 flex items-center text-gray-500  `}
+                      >
+                        {t("Currency")}
+                      </span>
+                      <input
+                        type="number"
+                        value={item.price}
+                        readOnly
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                      />
+                    </div>
                   </div>
-
-                  <div>
+                  <div className="flex justify-center items-center">
                     <img
                       src={item.imageUrl}
                       alt={item.productName}

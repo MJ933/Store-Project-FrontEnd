@@ -339,10 +339,16 @@ const CustomerOrders = ({ customer, isShow, onClose }) => {
                                 {item.quantity}
                               </td>
                               <td className="px-4 py-2 text-sm text-gray-700">
-                                ${item.price}
+                                {item.price}
+                                <span className="mx-1 text-gray-500 text-sm">
+                                  {t("Currency")}
+                                </span>
                               </td>
                               <td className="px-4 py-2 text-sm text-gray-700">
-                                ${item.price * item.quantity}
+                                {item.price * item.quantity}
+                                <span className="mx-1 text-gray-500 text-sm">
+                                  {t("Currency")}
+                                </span>
                               </td>
                             </tr>
                           ))}

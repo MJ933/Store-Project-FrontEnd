@@ -30,7 +30,7 @@ const ProductCard = ({ product, image }) => {
   };
 
   const handleImageError = (e) => {
-    e.target.src = "https://dummyimage.com/300x300/cccccc/000000&text=No+Image";
+    e.target.src = "src/assets/NoImage.png";
     e.target.onerror = null;
   };
 
@@ -45,7 +45,11 @@ const ProductCard = ({ product, image }) => {
             src={image.imageURL}
             alt={product.productName}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={handleImageError}
+            onError={(e) => {
+              e.target.src = "/src/assets/NoImage.png"; // Replace with your placeholder image path
+              e.target.alt = "Placeholder Image";
+              e.target.onerror = null;
+            }}
             loading="lazy"
           />
         ) : (
@@ -53,9 +57,9 @@ const ProductCard = ({ product, image }) => {
             {t("productCard.noImageAvailable")}
           </div>
         )}
-        <div className="absolute top-2 right-2">
+        <div className="absolute  top-2 right-2">
           <span
-            className={`[@media(max-width:230px)]:hidden text-xs px-3 py-1 rounded-full ${
+            className={`text-[calc(0.5rem+1vw)]    px-3 py-1 rounded-full ${
               product.isActive
                 ? "bg-green-500/20 text-green-700"
                 : "bg-red-500/20 text-red-700"
@@ -76,7 +80,7 @@ const ProductCard = ({ product, image }) => {
           {product.productName}
         </h3>
         <p className="[@media(max-width:299px)]:text-xs text-sm sm:text-lg lg:text-xl  font-bold text-gray-900 mt-1">
-          ${product.sellingPrice?.toFixed(2) || "0.00"}
+          {product.sellingPrice?.toFixed(2) || "0.00"} {t("Currency")}
         </p>
 
         <p className="text-gray-500 [@media(max-width:299px)]:text-xs text-sm line-clamp-3 mb-3">
@@ -91,12 +95,12 @@ const ProductCard = ({ product, image }) => {
           {product.isActive ? (
             <>
               <FaCartPlus className="text-base  min-[350px]:inline hidden " />
-              <span className="min-[350px]:text-xs text-xs">
+              <span className="max-[350px]:text-[calc(0.5rem+1vw)] text-xs">
                 {t("productCard.addToCart")}
               </span>
             </>
           ) : (
-            <span className="min-[350px]:text-xs text-xs">
+            <span className="max-[350px]:text-[calc(0.5rem+1vw)] text-xs">
               {t("productCard.unavailable")}
             </span>
           )}

@@ -2,7 +2,7 @@
   "navbar": {
     "store": "المتجر",
     "products": "المنتجات",
-    "categories": "الأقسام",
+    "categories": "الفئات",
     "employees": "الموظفون",
     "customers": "العملاء",
     "orders": "الطلبات",
@@ -24,7 +24,7 @@
     "fastDelivery": "توصيل سريع",
     "highQuality": "جودة عالية",
     "support247": "دعم فني على مدار الساعة",
-    "shopByCategory": "تسوق حسب الأقسام",
+    "shopByCategory": "تسوق حسب الفئات",
     "featuredProducts": "المنتجات المميزة",
     "viewAllProducts": "عرض جميع المنتجات"
   },
@@ -32,11 +32,11 @@
     "loadingText": "جارٍ التحميل..."
   },
   "manageCategories": {
-    "categoriesTitle": "الأقسام",
-    "newCategoryButton": "قسم جديد",
-    "categoryIDHeader": "رقم القسم",
-    "parentCategoryIDHeader": "رقم القسم الأب",
-    "categoryNameHeader": "اسم القسم",
+    "categoriesTitle": "الفئات",
+    "newCategoryButton": "فئة جديد",
+    "categoryIDHeader": "رقم الفئة",
+    "parentCategoryIDHeader": "رقم الفئة الأب",
+    "categoryNameHeader": "اسم الفئة",
     "isActiveHeader": "نشط",
     "actionsHeader": "إجراءات",
     "na": "غير متوفر",
@@ -51,7 +51,7 @@
     "allStatus": "الكل",
     "clearFiltersButton": "مسح الفلاتر",
     "applyFiltersButton": "تطبيق الفلاتر",
-    "totalCategoriesText": "إجمالي الأقسام"
+    "totalCategoriesText": "إجمالي الفئات"
   },
   "manageCustomers": {
     "customersTitle": "العملاء",
@@ -146,7 +146,7 @@
     "productNameHeader": "اسم المنتج",
     "initialPriceHeader": "السعر الأولي",
     "sellingPriceHeader": "سعر البيع",
-    "categoryIdHeader": "معرّف القسم",
+    "categoryIdHeader": "معرّف الفئة",
     "stockQuantityHeader": "الكمية المتوفرة",
     "isActiveHeader": "الحالة",
     "allStatus": "الكل",
@@ -172,7 +172,17 @@
     "whatsappButton": "تواصل معنا",
     "imageGallery": "معرض الصور",
     "stockAvailable": "المخزون المتوفر",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "whatsappMessage": {
+      "greeting": "⭐ {{productName}} ⭐",
+      "detailsHeader": "تفاصيل المنتج:",
+      "id": "رقم المنتج: {{productID}}",
+      "price": "السعر: {{price}}",
+      "stock": "المخزون: {{stock}} {{available}}",
+      "description": "الوصف: {{description}}",
+      "interested": "مهتم بهذا المنتج الرائع؟ تواصل معنا للطلب!"
+    },
+    "available": "متوفر"
   },
   "addNewUpdateProduct": {
     "productNameLabel": "اسم المنتج",
@@ -184,7 +194,7 @@
     "noImage": "لا توجد صورة",
     "newImagePreviewLabel": "معاينة الصورة الجديدة",
     "newProductAlt": "المنتج الجديد",
-    "categoryIDLabel": "معرف الفئة",
+    "categoryIDLabel": "رقم الفئة",
     "stockQuantityLabel": "الكمية في المخزون",
     "productImageLabel": "صورة المنتج",
     "productIsActiveLabel": "المنتج نشط",
@@ -202,22 +212,26 @@
     "imagesLabel": "صور المنتج",
     "setPrimaryLabel": "تعيين كصورة رئيسية",
     "primaryLabel": "رئيسي",
-    "addImagesLabel": "إضافة صور"
+    "addImagesLabel": "إضافة صور",
+    "addNewUpdateProduct": "إضافة/تحديث منتج",
+    "productID": "رقم المنتج",
+    "CurrentCategory": "الفئة الحالي",
+    "NewCategory": "الفئة الجديد"
   },
   "deleteProduct": {
     "deleteProductTitle": "حذف المنتج",
-    "productIDLabel": "معرف المنتج:",
-    "productIDPlaceholder": "أدخل معرف المنتج",
+    "productIDLabel": "رقم المنتج:",
+    "productIDPlaceholder": "أدخل رقم المنتج",
     "deletingButton": "جاري الحذف...",
     "deleteProductButton": "حذف المنتج",
     "closeButton": "إغلاق",
-    "enterProductID": "يرجى إدخال معرف المنتج.",
-    "productNotFound": "المنتج غير موجود. يرجى التحقق من المعرف والمحاولة مرة أخرى.",
+    "enterProductID": "يرجى إدخال رقم المنتج.",
+    "productNotFound": "المنتج غير موجود. يرجى التحقق من الرقم والمحاولة مرة أخرى.",
     "deleteFailed": "فشل حذف المنتج.",
     "deleteSuccess": "تم حذف المنتج بنجاح!"
   },
   "addNewUpdateOrder": {
-    "customerID": "معرف العميل",
+    "customerID": "رقم العميل",
     "orderDate": "تاريخ الطلب",
     "total": "الإجمالي",
     "orderStatus": "حالة الطلب",
@@ -232,10 +246,12 @@
     "updateOrder": "تحديث الطلب",
     "addOrder": "إضافة طلب",
     "close": "إغلاق",
-    "orderSuccess": "تم تحديث/إضافة الطلب بنجاح!"
+    "orderSuccess": "تم تحديث/إضافة الطلب بنجاح!",
+    "orderID": "رقم الطلب",
+    "addNewUpdateOrder": "إضافة/تحديث الطلب"
   },
   "orderPage": {
-    "customerID": "معرف العميل",
+    "customerID": "رقم العميل",
     "orderDate": "تاريخ الطلب",
     "total": "الإجمالي",
     "orderStatus": "حالة الطلب",
@@ -243,16 +259,18 @@
     "notes": "ملاحظات",
     "orderItems": "عناصر الطلب",
     "noOrderItems": "لم يتم العثور على عناصر الطلب.",
-    "productID": "معرف المنتج",
+    "productID": "رقم المنتج",
     "productName": "اسم المنتج",
     "quantity": "الكمية",
     "price": "السعر",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "orderDetail": "تفاصيل الطلب",
+    "orderID": "رقم الطلب"
   },
   "manageOrderItems": {
     "orderItems": "عناصر الطلب",
     "noOrderItems": "لم يتم العثور على عناصر الطلب.",
-    "productID": "معرف المنتج",
+    "productID": "رقم المنتج",
     "productName": "اسم المنتج",
     "quantity": "الكمية",
     "price": "السعر"
@@ -275,23 +293,25 @@
     "addUpdateError": "فشل في إضافة/تحديث الموظف",
     "addUpdateSuccess": "تم إضافة/تحديث الموظف بنجاح",
     "updateSuccess": "تم تحديث الموظف بنجاح",
-    "addSuccess": "تم إضافة الموظف بنجاح"
+    "addSuccess": "تم إضافة الموظف بنجاح",
+    "employeeID": "رقم الموظف",
+    "addUpdateEmployee": "إضافة/تحديث موظف"
   },
   "deleteEmployee": {
     "title": "حذف موظف",
-    "employeeIDLabel": "معرف الموظف",
-    "employeeIDPlaceholder": "أدخل معرف الموظف",
+    "employeeIDLabel": "رقم الموظف",
+    "employeeIDPlaceholder": "أدخل رقم الموظف",
     "cancelButton": "إلغاء",
     "deletingButton": "جاري الحذف...",
     "deleteButton": "حذف",
-    "enterIDError": "يرجى إدخال معرف الموظف.",
-    "notFoundError": "الموظف غير موجود. يرجى التحقق من المعرف والمحاولة مرة أخرى.",
+    "enterIDError": "يرجى إدخال رقم الموظف.",
+    "notFoundError": "الموظف غير موجود. يرجى التحقق من الرقم والمحاولة مرة أخرى.",
     "deleteFailedError": "فشل حذف الموظف.",
     "deleteSuccess": "تم حذف الموظف بنجاح!"
   },
   "employeePage": {
     "employeeDetails": "تفاصيل الموظف",
-    "employeeID": "معرف الموظف",
+    "employeeID": "رقم الموظف",
     "userName": "اسم المستخدم",
     "email": "البريد الإلكتروني",
     "phone": "الهاتف",
@@ -304,7 +324,7 @@
   "addNewUpdateCustomer": {
     "signUp": "التسجيل",
     "editCustomer": "تعديل بيانات العميل",
-    "createCustomer": "إنشاء عميل جديد",
+    "createCustomer": " حفظ",
     "firstName": "الاسم الأول",
     "firstNamePlaceholder": "أدخل الاسم الأول",
     "lastName": "اسم العائلة",
@@ -315,7 +335,7 @@
     "phonePlaceholder": "أدخل رقم الهاتف",
     "password": "كلمة المرور",
     "passwordPlaceholder": "أدخل كلمة المرور",
-    "activeStatus": "الحالة",
+    "activeStatus": "نشط",
     "cancel": "إلغاء",
     "signingUp": "جاري التسجيل...",
     "updating": "جاري التحديث...",
@@ -359,7 +379,7 @@
   },
   "customerPage": {
     "customerDetails": "تفاصيل العميل",
-    "customerID": "معرف العميل",
+    "customerID": "رقم العميل",
     "firstName": "الاسم الأول",
     "lastName": "اسم العائلة",
     "email": "البريد الإلكتروني",
@@ -390,13 +410,13 @@
   },
   "deleteCustomer": {
     "deleteCustomer": "حذف العميل",
-    "customerIDLabel": "معرف العميل",
-    "customerIDPlaceholder": "أدخل معرف العميل",
+    "customerIDLabel": "رقم العميل",
+    "customerIDPlaceholder": "أدخل رقم العميل",
     "cancel": "إلغاء",
     "deleting": "جاري الحذف...",
     "delete": "حذف",
-    "enterCustomerID": "يرجى إدخال معرف العميل.",
-    "customerNotFound": "العميل غير موجود. يرجى التحقق من المعرف والمحاولة مرة أخرى.",
+    "enterCustomerID": "يرجى إدخال رقم العميل.",
+    "customerNotFound": "العميل غير موجود. يرجى التحقق من الرقم والمحاولة مرة أخرى.",
     "deleteFailed": "فشل حذف العميل.",
     "deleteSuccess": "تم حذف العميل بنجاح!"
   },
@@ -411,20 +431,24 @@
     "privacyLink": "الخصوصية",
     "termsLink": "الشروط"
   },
+
   "currentCart": {
-    "title": "سلة مشترياتك",
-    "emptyMessage": "سلة مشترياتك فارغة.",
+    "title": "عربة التسوق الحالية",
+    "emptyMessage": "عربة التسوق فارغة.",
     "quantityLabel": "الكمية:",
     "priceLabel": "السعر:",
-    "selectShippingLocation": "اختر موقع التوصيل",
-    "selectLocationPlaceholder": "اختر موقعًا",
-    "shippingAddressLabel": "عنوان التوصيل",
-    "shippingAddressPlaceholder": "أدخل عنوان التوصيل الخاص بك",
+    "shippingAddressLabel": "عنوان الشحن",
+    "shippingAddressPlaceholder": "أدخل عنوان الشحن",
     "notesLabel": "ملاحظات",
-    "notesPlaceholder": "رقم الهاتف، إلخ.",
+    "notesPlaceholder": "أضف ملاحظات للطلب (اختياري)",
     "sendOrderButton": "إرسال الطلب",
-    "orderSuccessMessage": "تم إنشاء الطلب بنجاح!",
-    "orderErrorMessage": "حدث خطأ أثناء إنشاء الطلب."
+    "orderSuccessMessage": "تم إرسال الطلب بنجاح!",
+    "orderErrorMessage": "حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.",
+    "selectShippingLocation": "حدد عنوان الشحن",
+    "selectLocationPlaceholder": "اختر موقعًا",
+    "alerts": {
+      "shippingAddressRequired": "الرجاء إدخال عنوان الشحن"
+    }
   },
   "locationSelector": {
     "selectLocationPlaceholder": "اختر موقعًا",
@@ -453,8 +477,8 @@
     "categoryCreatedSuccess": "تم إنشاء الفئة بنجاح!",
     "categoryNameLabel": "اسم الفئة",
     "categoryNamePlaceholder": "أدخل اسم الفئة",
-    "parentCategoryIdLabel": "معرف الفئة الأب (اختياري)",
-    "parentCategoryIdPlaceholder": "أدخل معرف الفئة الأب",
+    "parentCategoryIdLabel": "رقم الفئة الأب (اختياري)",
+    "parentCategoryIdPlaceholder": "أدخل رقم الفئة الأب",
     "activeStatusLabel": "الحالة النشطة",
     "cancelButton": "إلغاء",
     "updatingButton": "جاري التحديث...",
@@ -469,14 +493,87 @@
   },
   "deleteCategory": {
     "deleteCategoryTitle": "حذف الفئة",
-    "categoryIdLabel": "معرف الفئة",
-    "categoryIdPlaceholder": "أدخل معرف الفئة",
+    "categoryIdLabel": "رقم الفئة",
+    "categoryIdPlaceholder": "أدخل رقم الفئة",
     "cancelButton": "إلغاء",
     "deletingButton": "جاري الحذف...",
     "deleteCategoryButton": "حذف الفئة",
-    "categoryIdRequiredError": "الرجاء إدخال معرف الفئة.",
-    "categoryNotFoundError": "الفئة غير موجودة. يرجى التحقق من المعرف والمحاولة مرة أخرى.",
+    "categoryIdRequiredError": "الرجاء إدخال رقم الفئة.",
+    "categoryNotFoundError": "الفئة غير موجودة. يرجى التحقق من الرقم والمحاولة مرة أخرى.",
     "categoryDeleteFailedError": "فشل حذف الفئة.",
     "categoryDeleteSuccess": "تم حذف الفئة بنجاح!"
+  },
+  "Currency": "د.ع",
+  "detailedProductPage": {
+    "productDetails": "تفاصيل المنتج",
+    "productID": "رقم المنتج",
+    "productNameLabel": "اسم المنتج",
+    "initialPriceLabel": "السعر الأصلي",
+    "sellingPriceLabel": "سعر البيع",
+    "descriptionLabel": "الوصف",
+    "categoryIDLabel": "الفئة",
+    "stockQuantityLabel": "كمية المخزون",
+    "productIsActiveLabel": "حالة التفعيل",
+    "imagesLabel": "الصور",
+    "primaryLabel": "الصورة الرئيسية",
+    "yes": "نعم",
+    "no": "لا",
+    "cancel": "الخروج"
+  },
+
+  "ContactPage": {
+    "title": "تواصل معنا",
+    "description": "إذا كانت لديك أي أسئلة أو كنت بحاجة إلى دعم، يرجى ملء النموذج أدناه، وسنقوم بالرد عليك في أقرب وقت ممكن. يمكنك أيضًا الاتصال بنا مباشرة من خلال القنوات التالية:",
+    "form": {
+      "nameLabel": "الاسم",
+      "namePlaceholder": "اسمك",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "بريدك الإلكتروني",
+      "phoneLabel": "رقم الهاتف",
+      "phonePlaceholder": "رقم هاتفك",
+      "phoneNotice": "أدخل رمز الدولة (مثل +1 للولايات المتحدة).",
+      "messageLabel": "الرسالة",
+      "messagePlaceholder": "رسالتك",
+      "sendViaWhatsApp": "إرسال عبر واتساب",
+      "sendViaTelegram": "إرسال عبر تيليجرام"
+    },
+    "alerts": {
+      "fillAllFields": "يرجى ملء جميع الحقول.",
+      "validEmail": "يرجى إدخال عنوان بريد إلكتروني صالح.",
+      "validPhone": "يرجى إدخال رقم هاتف صالح (8-15 رقمًا، اختياري +).",
+      "success": "تم الإرسال بنجاح"
+    }
+  },
+
+  "FAQsPage": {
+    "title": "الأسئلة الشائعة",
+    "description": "هنا يمكنك العثور على إجابات للأسئلة الأكثر شيوعًا حول منتجاتنا وخدماتنا.",
+    "question1": {
+      "title": "السؤال 1",
+      "answer": "إجابة السؤال 1."
+    },
+    "question2": {
+      "title": "السؤال 2",
+      "answer": "إجابة السؤال 2."
+    }
+  },
+  "PrivacyPolicyPage": {
+    "title": "سياسة الخصوصية",
+    "description": "خصوصيتك مهمة بالنسبة لنا. توضح هذه السياسة كيفية جمع معلوماتك الشخصية واستخدامها وحمايتها.",
+    "content": "[محتوى سياسة الخصوصية التفصيلي...]"
+  },
+  "TermsAndConditionsPage": {
+    "title": "الشروط والأحكام",
+    "description": "يرجى قراءة هذه الشروط والأحكام بعناية قبل استخدام موقعنا.  يعتمد وصولك إلى الخدمة واستخدامها على قبولك لهذه الشروط.",
+    "content": "[محتوى الشروط والأحكام التفصيلي...]"
+  },
+  "categorySelector": {
+    "placeholder": {
+      "select": "اختر فئة...",
+      "search": "ابحث عن الفئة بالاسم..."
+    },
+    "loading": "جارٍ تحميل الفئات...",
+    "noCategories": "لم يتم العثور على فئات.",
+    "error": "فشل في جلب الفئات"
   }
 }

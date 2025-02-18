@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addToCart,
@@ -12,6 +12,7 @@ import clsOrderItems from "../../Classes/clsOrderItems";
 import LocationSelector from "../../components/LocationSelector"; // Import LocationSelector
 // Assuming you have a translation function 't' from your i18n setup
 import { useTranslation } from "react-i18next"; // or your translation hook/function
+import Alert from "../../components/Alert"; // Import the Alert component
 
 const CurrentCart = () => {
   const { t } = useTranslation(); // if using react-i18next, otherwise use your translation function
@@ -24,6 +25,12 @@ const CurrentCart = () => {
   const [shippingAddress, setShippingAddress] = useState(""); // Initialize as empty
   const [notes, setNotes] = useState("");
   const [showLocationSelector, setShowLocationSelector] = useState(false); // Control visibility
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
+
+  const closeAlert = () => {
+    setAlertMessage("");
+  };
 
   const handleIncreaseQuantity = (productID) => {
     dispatch(addToCart({ productID, quantity: 1 }));
@@ -38,6 +45,13 @@ const CurrentCart = () => {
   };
 
   const handleSendOrder = async () => {
+    // Input Validation (Crucial!)
+    if (!shippingAddress) {
+      setAlertMessage(t("currentCart.alerts.shippingAddressRequired"));
+      setAlertType("error");
+      return;
+    }
+
     try {
       const orderInstance = new clsOrders();
       const orderItemInstance = new clsOrderItems();
@@ -84,10 +98,12 @@ const CurrentCart = () => {
 
       // Clear the cart after the order is successfully created
       dispatch(clearCart());
-      alert(t("currentCart.orderSuccessMessage")); // Use translation for success alert
+      setAlertMessage(t("currentCart.orderSuccessMessage"));
+      setAlertType("success");
     } catch (error) {
       console.error("Error creating order:", error);
-      alert(t("currentCart.orderErrorMessage")); // Use translation for error alert
+      setAlertMessage(t("currentCart.orderErrorMessage"));
+      setAlertType("error");
     }
   };
 
@@ -95,30 +111,46 @@ const CurrentCart = () => {
     setShippingAddress(location);
     setShowLocationSelector(false); // Hide after selection
   };
-
+  const handelScroll = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+  useEffect(() => {
+    handelScroll();
+  }, [cartItems]);
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+    <div className="p-6 bg-white rounded-lg shadow-lg relative">
+      {alertMessage && (
+        <Alert message={alertMessage} type={alertType} onClose={closeAlert} />
+      )}
       <h2 className="text-2xl font-bold mb-6 text-gray-800">
         {t("currentCart.title")}
       </h2>
       {cartItems.length === 0 ? (
-        <p className="text-gray-600 text-center">
+        <p className="text-gray-600 text-center text-[calc(0.5rem+1vw)] px-4 py-8">
           {t("currentCart.emptyMessage")}
         </p>
       ) : (
-        <div className="gap-y-4">
+        <div className="gap-y-[calc(0.5rem+1vw)] px-2 py-4">
           {cartItems.map((item, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200"
+              className="flex flex-col md:flex-row items-left justify-between p-[calc(0.5rem+1vw)] bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200 gap-[calc(0.5rem+1vw)]"
             >
-              <div className=" flex items-center gap-x-4">
+              <div className="flex items-center gap-[calc(0.5rem+1vw)]">
                 <img
                   src={item.imageUrl}
                   alt={item.productName}
-                  className="mx-2 w-16 h-16 object-cover rounded-lg"
+                  onError={(e) => {
+                    e.target.src = "/src/assets/NoImage.png"; // Replace with your placeholder image path
+                    e.target.alt = "Placeholder Image";
+                    e.target.onerror = null;
+                  }}
+                  className="w-[calc(3rem+9vw)] h-[calc(3rem+9vw)] object-cover rounded-lg"
                 />
-                <div>
+                <div className="text-[calc(0.5rem+1vw)]">
                   <p className="text-gray-700 font-semibold">
                     {item.productName}
                   </p>
@@ -126,33 +158,28 @@ const CurrentCart = () => {
                     {t("currentCart.quantityLabel")} {item.quantity}
                   </p>
                   <p className="text-gray-600">
-                    {t("currentCart.priceLabel")} ${item.price}
+                    {t("currentCart.priceLabel")} {item.price} {t("Currency")}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-x-3">
-                {/* Increase Quantity Button */}
+              <div className="flex items-center gap-[calc(0.25rem+0.5vw)]">
                 <button
                   onClick={() => handleIncreaseQuantity(item.productID)}
-                  className=" p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200"
+                  className="p-[calc(0.25rem+0.5vw)] bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200"
                 >
-                  <FaPlus className=" w-4 h-4" />
+                  <FaPlus className="w-[calc(0.5rem+1vw)] h-[calc(0.5rem+1vw)]" />
                 </button>
-
-                {/* Decrease Quantity Button */}
                 <button
                   onClick={() => handleDecreaseQuantity(item.productID)}
-                  className="p-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-all duration-200"
+                  className="p-[calc(0.25rem+0.5vw)] bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-all duration-200"
                 >
-                  <FaMinus className="w-4 h-4" />
+                  <FaMinus className="w-[calc(0.5rem+1vw)] h-[calc(0.5rem+1vw)]" />
                 </button>
-
-                {/* Remove Product Button */}
                 <button
                   onClick={() => handleRemoveProduct(item.productID)}
-                  className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
+                  className="p-[calc(0.25rem+0.5vw)] bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
                 >
-                  <FaTrash className="w-4 h-4" />
+                  <FaTrash className="w-[calc(0.5rem+1vw)] h-[calc(0.5rem+1vw)]" />
                 </button>
               </div>
             </div>
@@ -162,15 +189,15 @@ const CurrentCart = () => {
 
       {/* Shipping Address and Notes Input Fields */}
       {cartItems.length > 0 && (
-        <div className="mt-6 gap-y-4">
+        <div className="text-[calc(0.7rem+1vw)] sm:text-sm mt-6 gap-y-4">
           {/* Location Selector Button */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">
+            <label className="text-[calc(0.7rem+1vw)] sm:text-sm block text-gray-700 font-semibold mb-2">
               {t("currentCart.selectShippingLocation")}
             </label>
             <button
               onClick={() => setShowLocationSelector(!showLocationSelector)}
-              className="w-full p-2 border border-gray-300 rounded-lg text-left"
+              className=" text-[calc(0.7rem+1vw)] sm:text-sm w-full p-2 border border-gray-300 rounded-lg text-left"
             >
               {shippingAddress || t("currentCart.selectLocationPlaceholder")}
             </button>
@@ -186,14 +213,14 @@ const CurrentCart = () => {
 
           {/* Shipping Address Display/Edit */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">
+            <label className="text-[calc(0.7rem+1vw)] sm:text-sm block text-gray-700 font-semibold mb-2">
               {t("currentCart.shippingAddressLabel")}
             </label>
             <input
               type="text"
               value={shippingAddress}
               onChange={(e) => setShippingAddress(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="text-[calc(0.7rem+1vw)] sm:text-sm w-full p-2 border border-gray-300 rounded-lg"
               placeholder={t("currentCart.shippingAddressPlaceholder")}
               // readOnly={!!shippingAddress} // Readonly if address is from selector
             />
@@ -201,13 +228,13 @@ const CurrentCart = () => {
 
           {/* Notes */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">
+            <label className="text-[calc(0.7rem+1vw)] sm:text-sm block text-gray-700 font-semibold mb-2">
               {t("currentCart.notesLabel")}
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="text-[calc(0.7rem+1vw)] sm:text-sm w-full p-2 border border-gray-300 rounded-lg"
               placeholder={t("currentCart.notesPlaceholder")}
             />
           </div>

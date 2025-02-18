@@ -35,11 +35,11 @@ export default function AddUpdateEmployee({
     let formattedRole = "";
     if (employee?.role) {
       if (employee.role.toLowerCase() === "marketing") {
-        formattedRole = "Marketing"; // Ensure it matches the option value exactly for "Marketing" option
+        formattedRole = "Marketing";
       } else if (employee.role.toLowerCase() === "admin") {
-        formattedRole = "Admin"; // Ensure it matches the option value exactly for "Admin" option
+        formattedRole = "Admin";
       } else {
-        formattedRole = employee.role; // For any other role, keep the original value as is
+        formattedRole = employee.role;
       }
     }
 
@@ -49,7 +49,7 @@ export default function AddUpdateEmployee({
       password: employee?.password || "",
       email: employee?.email || "",
       phone: employee?.phone || "",
-      role: formattedRole, // Use the formatted role here
+      role: formattedRole,
       isActive: employee?.isActive || true,
     });
   }, [employee]);
@@ -85,17 +85,15 @@ export default function AddUpdateEmployee({
         body: JSON.stringify(formData),
       });
       console.log("Here is the value of the body being sent:");
-      console.log(JSON.stringify(formData)); // Log the body here
+      console.log(JSON.stringify(formData));
       if (!response.ok) {
-        const errorData = await response.text(); // First get as text
+        const errorData = await response.text();
         let parsedError;
-
         try {
           parsedError = JSON.parse(errorData);
         } catch {
           parsedError = { message: errorData };
         }
-
         const error = {
           response: {
             status: response.status,
@@ -125,19 +123,37 @@ export default function AddUpdateEmployee({
   };
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 px-4">
       {isShow && (
         <form
           onSubmit={handleSubmit}
           className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md"
         >
-          <div className="grid grid-cols-2 gap-4">
+          <h3
+            className="mb-4 text-center font-medium text-gray-900"
+            style={{ fontSize: "calc(1em + 1vw)" }}
+          >
+            {t("addUpdateEmployee.addUpdateEmployee")}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="hidden"
               name="employeeID"
               value={formData.employeeID}
             />
-            <div className="col-span-1">
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                {t("addUpdateEmployee.employeeID")}
+              </label>
+              <input
+                type="number"
+                name="employeeID"
+                value={formData.employeeID}
+                readOnly
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+              />
+            </div>
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addUpdateEmployee.userName")}
               </label>
@@ -150,7 +166,7 @@ export default function AddUpdateEmployee({
                 required
               />
             </div>
-            <div className="col-span-1">
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addUpdateEmployee.password")}
               </label>
@@ -163,7 +179,7 @@ export default function AddUpdateEmployee({
                 required
               />
             </div>
-            <div className="col-span-1">
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addUpdateEmployee.email")}
               </label>
@@ -176,7 +192,7 @@ export default function AddUpdateEmployee({
                 required
               />
             </div>
-            <div className="col-span-1">
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addUpdateEmployee.phone")}
               </label>
@@ -189,7 +205,7 @@ export default function AddUpdateEmployee({
                 required
               />
             </div>
-            <div className="col-span-1">
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addUpdateEmployee.role")}
               </label>
@@ -200,7 +216,6 @@ export default function AddUpdateEmployee({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                 required
               >
-                {" "}
                 {formData.role &&
                   formData.role !== "Admin" &&
                   formData.role !== "Marketing" && (
@@ -212,26 +227,23 @@ export default function AddUpdateEmployee({
                 </option>
               </select>
             </div>
-            <div className="col-span-1">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                {t("addUpdateEmployee.isActive")}
-              </label>
+            <div className="flex items-center">
               <input
                 type="checkbox"
                 name="isActive"
                 checked={formData.isActive}
                 onChange={handleChange}
-                className="m-2 leading-tight"
+                className="mr-2 leading-tight"
               />
-              <span className="text-sm">
+              <label className="text-gray-700 text-sm font-bold">
                 {t("addUpdateEmployee.activeEmployee")}
-              </span>
+              </label>
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4">
+          <div className="flex flex-col md:flex-row items-center justify-between mt-6">
             <button
               type="submit"
-              className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full md:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               disabled={loading}
             >
               {loading
@@ -243,7 +255,8 @@ export default function AddUpdateEmployee({
                 : t("addUpdateEmployee.addEmployee")}
             </button>
             <button
-              className="ml-96 mt-6 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              className="w-full md:w-auto mt-4 md:mt-0 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline md:ml-4"
               onClick={handleClose}
             >
               {t("addUpdateEmployee.close")}

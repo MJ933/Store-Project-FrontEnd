@@ -165,7 +165,7 @@ export default function AddUpdateCategory({
               name="categoryName"
               value={formData.categoryName}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+              className="text-[calc(0.7rem+1vw)]  sm:text-sm w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
               placeholder={t("addUpdateCategory.categoryNamePlaceholder")}
               required
             />
@@ -180,7 +180,7 @@ export default function AddUpdateCategory({
               name="parentCategoryID"
               value={formData.parentCategoryID || ""}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+              className="text-[calc(0.5rem+1vw)]  sm:text-sm w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
               placeholder={t("addUpdateCategory.parentCategoryIdPlaceholder")}
             />
           </div>
@@ -205,7 +205,7 @@ export default function AddUpdateCategory({
             </div>
           </div>
 
-          <div className="flex justify-end gap-4 pt-6 border-t border-gray-100">
+          <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t border-gray-100">
             <button
               type="button"
               onClick={handleClose}

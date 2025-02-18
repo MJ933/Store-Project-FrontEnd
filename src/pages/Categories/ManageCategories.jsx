@@ -54,7 +54,7 @@ const ManageCategories = () => {
   const fetchPaginatedCategories = useCallback(async () => {
     setLoading(true);
     setError(null);
-    scrollPositionRef.current = window.scrollY;
+    // scrollPositionRef.current = window.scrollY;
     try {
       const url = new URL(
         `${new API().baseURL()}/API/CategoriesAPI/GetCategoriesPaginatedWithFilters`
@@ -122,18 +122,22 @@ const ManageCategories = () => {
     fetchPaginatedCategories();
   }, [fetchPaginatedCategories, appliedFilters]);
 
-  useEffect(() => {
-    if (!loading) {
-      window.scrollTo({
-        top: scrollPositionRef.current,
-        behavior: "auto",
-      });
-    }
-  }, [loading]);
+  // useEffect(() => {
+  //   if (!loading) {
+  //     window.scrollTo({
+  //       top: scrollPositionRef.current,
+  //       behavior: "auto",
+  //     });
+  //   }
+  // }, [loading]);
 
   const handleView = (view, category = null) => {
     setCurrentView(view);
     setSelectedCategory(category);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const handleFilterChange = (e, filterSetter) => {
@@ -347,7 +351,7 @@ const ManageCategories = () => {
           )}
 
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
-            <div className="px-4 py-2 flex justify-between items-center">
+            <div className="px-4 py-2 flex flex-col sm:flex-row justify-between items-center">
               <span className="text-sm text-gray-700">
                 {t("manageCategories.totalCategoriesText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>
@@ -369,7 +373,9 @@ const ManageCategories = () => {
                   ].map((key) => (
                     <th
                       key={key}
-                      className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
+                      className={`px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer ${
+                        ["isActive"].includes(key) ? "hidden sm:table-cell" : ""
+                      }`}
                     >
                       {t(`manageCategories.${key}Header`, {
                         defaultValue: key.replace(/([A-Z])/g, " $1").trim(),
@@ -384,18 +390,24 @@ const ManageCategories = () => {
               <tbody className="divide-y divide-gray-200">
                 {categories?.map((category) => (
                   <tr key={category.categoryID} className="hover:bg-gray-50">
-                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
+                    <td className="  px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
                       {category.categoryID}
                     </td>
-                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
-                      {category.categoryName}
+                    <td
+                      className={`px-2 py-2 md:px-4 md:py-3 text-sm ${
+                        category.isActive ? "text-gray-600" : "text-red-600"
+                      } `}
+                    >
+                      {category.categoryName.length > 0
+                        ? category.categoryName.substring(0, 7) + "..."
+                        : category.categoryName}
                     </td>
-                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
+                    <td className="text-[calc(0.5rem+1vw)]   px-2 py-2 md:px-4 md:py-3 sm:text-sm text-gray-600">
                       {category.parentCategoryID || t("manageCategories.na")}
                     </td>
-                    <td className="px-2 py-2 md:px-4 md:py-3">
+                    <td className="hidden sm:table-cell px-2 py-2 md:px-4 md:py-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        className={`text-[calc(0.4rem+1vw)] px-2 py-1 rounded-full sm:text-xs font-medium whitespace-nowrap ${
                           statusStyles[category.isActive] ||
                           "bg-gray-100 text-gray-800"
                         }`}
@@ -406,7 +418,7 @@ const ManageCategories = () => {
                       </span>
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
-                      <div className="flex items-center gap-2 md:gap-3">
+                      <div className="flex flex-col sm:flex-row items-center gap-2 md:gap-3">
                         <button
                           onClick={() => handleView("update", category)}
                           className="text-gray-600 hover:text-green-600"
@@ -427,7 +439,7 @@ const ManageCategories = () => {
                 ))}
               </tbody>
             </table>
-            <div className="px-4 py-2 flex justify-between items-center gap-2">
+            <div className="px-4 py-2 flex flex-col sm:flex-row justify-between items-center gap-2">
               <span className="text-sm text-gray-700">
                 {t("manageCategories.totalCategoriesText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>

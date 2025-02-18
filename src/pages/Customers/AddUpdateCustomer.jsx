@@ -138,7 +138,7 @@ export default function AddNewUpdateCustomer({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="  inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-gray-800">
@@ -169,7 +169,7 @@ export default function AddNewUpdateCustomer({
         </div>
 
         <form onSubmit={handleSubmit} className="px-8 py-6 gap-y-6">
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {!isSignUp && (
               <input
                 type="hidden"
@@ -275,7 +275,7 @@ export default function AddNewUpdateCustomer({
             )}
           </div>
 
-          <div className="flex justify-end gap-4 pt-6 border-t border-gray-100">
+          <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t border-gray-100">
             <button
               type="button"
               onClick={handleClose}

@@ -154,35 +154,36 @@ const Navbar = () => {
         </div>
 
         {/* Search Bar */}
-        {isSearchOpen && (
-          <div className="w-full px-2 pb-2">
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder={t("navbar.searchPlaceholder")}
-                value={localSearchQuery}
-                onChange={(e) => setLocalSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none text-sm"
-              />
-              <button
-                onClick={handleSearch}
-                className="px-3 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 focus:outline-none text-sm"
-              >
-                {t("navbar.find")}
-              </button>
-              <button
-                onClick={() => {
-                  setIsSearchOpen(false);
-                  dispatch(clearSearchQuery());
-                }}
-                className="p-2 text-gray-800 hover:text-cyan-600 focus:outline-none"
-              >
-                <RiCloseLine className="w-5 h-5" />
-              </button>
+        {["/", "/products/ShowAllProducts"].includes(location.pathname) &&
+          isSearchOpen && (
+            <div className="w-full px-2 pb-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder={t("navbar.searchPlaceholder")}
+                  value={localSearchQuery}
+                  onChange={(e) => setLocalSearchQuery(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none text-sm"
+                />
+                <button
+                  onClick={handleSearch}
+                  className="px-3 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 focus:outline-none text-sm"
+                >
+                  {t("navbar.find")}
+                </button>
+                <button
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    dispatch(clearSearchQuery());
+                  }}
+                  className="p-2 text-gray-800 hover:text-cyan-600 focus:outline-none"
+                >
+                  <RiCloseLine className="w-5 h-5" />
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       {/* Sidebar (hidden links) */}

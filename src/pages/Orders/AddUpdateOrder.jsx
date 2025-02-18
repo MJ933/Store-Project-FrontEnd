@@ -20,7 +20,8 @@ export default function AddNewUpdateOrder({
   const [success, setSuccess] = useState(false);
   const [orderItems, setOrderItems] = useState([]);
   const { t } = useTranslation();
-
+  const { i18n: i18nInstance } = useTranslation();
+  const [isArabic, setIsArabic] = useState(false);
   const isUpdateOrder = Boolean(order?.orderID);
 
   const initialFormData = {
@@ -47,7 +48,7 @@ export default function AddNewUpdateOrder({
     try {
       const orderItemInstance = new clsOrderItems();
       const data = await orderItemInstance.fetchOrderItemsByOrderID(orderID);
-      console.log("this is the order items data : ", data);
+      // console.log("this is the order items data : ", data);
       setOrderItems(data);
     } catch (error) {
       setError(error.message);
@@ -99,31 +100,66 @@ export default function AddNewUpdateOrder({
       showAlert(t("addNewUpdateOrder.orderSuccess"), "success");
       onClose();
     } catch (error) {
-      // setError(error.message);
       handleError(error);
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    // Apply notranslate class immediately when component mounts
+    document.documentElement.classList.add("notranslate");
+
+    const lang = i18nInstance.language;
+    if (lang === "ar") {
+      setIsArabic(true);
+    } else {
+      setIsArabic(false);
+    }
+  }, [i18nInstance.language]);
 
   return (
     <div className="mb-8">
       {isShow && (
         <form
           onSubmit={handleSubmit}
-          className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md"
+          className="max-w-full mx-auto bg-white p-4 rounded-lg shadow-md"
+          style={{
+            maxWidth: "calc(100vw - 20px)", // Adjust max-width for small screens
+          }}
         >
           {loadingOrderItems && <ModernLoader />}
-          {/* {error && (
-            <ErrorComponent
-              message={error}
-              onClose={() => setError(null)} // Clear the error when the user closes it
-            />
-          )} */}
-          <div className="grid grid-cols-2 gap-4">
+          <h3
+            className="m-4 text-center font-medium text-gray-900"
+            style={{
+              fontSize: "calc(1em + 1vw)", // Responsive font size
+            }}
+          >
+            {t("addNewUpdateOrder.addNewUpdateOrder")}
+          </h3>
+          <div
+            className="grid gap-4"
+            style={{
+              gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", // Responsive grid
+            }}
+          >
             <input type="hidden" name="orderID" value={formData.orderID} />
 
-            <div className="col-span-1">
+            {/* Order ID */}
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                {t("addNewUpdateOrder.orderID")}
+              </label>
+              <input
+                type="number"
+                name="orderID"
+                value={formData.orderID}
+                readOnly
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+              />
+            </div>
+
+            {/* Customer ID */}
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addNewUpdateOrder.customerID")}
               </label>
@@ -137,7 +173,8 @@ export default function AddNewUpdateOrder({
               />
             </div>
 
-            <div className="col-span-1">
+            {/* Order Date */}
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addNewUpdateOrder.orderDate")}
               </label>
@@ -151,21 +188,32 @@ export default function AddNewUpdateOrder({
               />
             </div>
 
-            <div className="col-span-1">
+            {/* Total */}
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addNewUpdateOrder.total")}
               </label>
-              <input
-                type="number"
-                name="total"
-                value={formData.total}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                required
-              />
+              <div className="relative">
+                <span
+                  className={`absolute inset-y-0 ${
+                    isArabic ? "left-0" : "right-0"
+                  }   p-3 flex items-center text-gray-500  `}
+                >
+                  {t("Currency")}
+                </span>
+                <input
+                  type="number"
+                  name="total"
+                  value={formData.total}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
             </div>
 
-            <div className="col-span-1">
+            {/* Order Status */}
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addNewUpdateOrder.orderStatus")}
               </label>
@@ -191,7 +239,8 @@ export default function AddNewUpdateOrder({
               </select>
             </div>
 
-            <div className="col-span-2">
+            {/* Shipping Address */}
+            <div className="col-span-full">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addNewUpdateOrder.shippingAddress")}
               </label>
@@ -204,7 +253,8 @@ export default function AddNewUpdateOrder({
               />
             </div>
 
-            <div className="col-span-2">
+            {/* Notes */}
+            <div className="col-span-full">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 {t("addNewUpdateOrder.notes")}
               </label>
@@ -217,16 +267,21 @@ export default function AddNewUpdateOrder({
             </div>
           </div>
 
+          {/* Manage Order Items */}
           <ManageOrderItems
             orderItems={orderItems}
             handleOrderItemChange={handleOrderItemChange}
           />
 
-          <div className="flex items-center justify-between mt-4">
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto mb-2 sm:mb-0"
               disabled={loading || loadingOrderItems}
+              style={{
+                fontSize: "calc(0.8em + 0.5vw)", // Responsive font size
+              }}
             >
               {loading
                 ? isUpdateOrder
@@ -237,15 +292,17 @@ export default function AddNewUpdateOrder({
                 : t("addNewUpdateOrder.addOrder")}
             </button>
             <button
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto"
               onClick={onClose}
+              style={{
+                fontSize: "calc(0.8em + 0.5vw)", // Responsive font size
+              }}
             >
               {t("addNewUpdateOrder.close")}
             </button>
           </div>
 
-          {/* {error && <div className="text-red-600 mt-4">{error}</div>} */}
-
+          {/* Success Message */}
           {success && (
             <div className="text-green-600 mt-4">
               {t("addNewUpdateOrder.orderSuccess")}

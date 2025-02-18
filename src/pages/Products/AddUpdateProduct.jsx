@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../Classes/clsAPI";
 import { useTranslation } from "react-i18next";
@@ -19,7 +19,8 @@ export default function AddNewUpdateProduct({
   const isUpdateProduct = Boolean(product?.product);
   const api = new API();
   const { t } = useTranslation();
-
+  const { i18n: i18nInstance } = useTranslation();
+  const [isArabic, setIsArabic] = useState(false);
   const initialFormData = {
     productID: product?.product?.productID || 1,
     productName: product?.product?.productName || "a",
@@ -31,7 +32,11 @@ export default function AddNewUpdateProduct({
     isActive: product?.product?.isActive || true,
     images: product?.images || [], // Array to handle multiple images
   };
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [category, setCategory] = useState([]);
   const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
@@ -342,15 +347,110 @@ export default function AddNewUpdateProduct({
       navigate("/");
     }
   };
+  useEffect(() => {
+    // Apply notranslate class immediately when component mounts
+    document.documentElement.classList.add("notranslate");
+
+    const lang = i18nInstance.language;
+    if (lang === "ar") {
+      setIsArabic(true);
+    } else {
+      setIsArabic(false);
+    }
+  }, [i18nInstance.language]);
+
+  const fetchPaginatedCategories = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const url = new URL(
+        `${new API().baseURL()}/API/CategoriesAPI/GetCategoriesPaginatedWithFilters`
+      );
+      const params = new URLSearchParams();
+      params.append("pageNumber", 1);
+      params.append("pageSize", 1);
+      if (product.product?.categoryID)
+        params.append("categoryID", product.product?.categoryID);
+      else params.append("categoryID", 0);
+      url.search = params.toString();
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text(); // First get as text
+        let parsedError;
+        if (response.status === 404) {
+          setCategory();
+          setTotalCount(0);
+          setTotalPages(0);
+          return;
+        }
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        const error = {
+          response: {
+            status: response.status,
+            data: parsedError,
+          },
+        };
+        throw error;
+      }
+
+      const data = await response.json();
+      setCategory(data.categoriesList[0].categoryName);
+      setTotalCount(data.totalCount);
+      setTotalPages(Math.ceil(data.totalCount / pageSize));
+    } catch (err) {
+      setError(err.message);
+      setCategory([]);
+      setTotalCount(0);
+      setTotalPages(0);
+      handleError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize]);
+
+  useEffect(() => {
+    fetchPaginatedCategories();
+  }, [fetchPaginatedCategories]);
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-white z-50 px-4 sm:px-6">
+    <div className="  inset-0 overflow-y-auto bg-white z-50 px-4 sm:px-6">
       <form
         onSubmit={handleSubmit}
         className="max-w-4xl mx-auto bg-white p-3 sm:p-6 rounded-lg shadow-md"
       >
+        <h3
+          className="m-4 text-center font-medium text-gray-900"
+          style={{
+            fontSize: "calc(1em + 1vw)", // Responsive font size
+          }}
+        >
+          {t("addNewUpdateProduct.addNewUpdateProduct")}
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           <input type="hidden" name="productID" value={formData.productID} />
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              {t("addNewUpdateProduct.productID")}
+            </label>
+            <input
+              type="number"
+              name="productID"
+              value={formData.productID}
+              readOnly
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+            />
+          </div>
 
           {/* Product Name */}
           <div className="col-span-2 md:col-span-1">
@@ -372,32 +472,50 @@ export default function AddNewUpdateProduct({
             <label className="block text-gray-700 text-sm font-bold mb-2">
               {t("addNewUpdateProduct.initialPriceLabel")}
             </label>
-            <input
-              type="number"
-              name="initialPrice"
-              value={formData.initialPrice}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
-              required
-              min={1}
-              step="0.01"
-            />
+            <div className="relative">
+              <span
+                className={`absolute inset-y-0 ${
+                  isArabic ? "left-0" : "right-0"
+                }   p-3 flex items-center text-gray-500  `}
+              >
+                {t("Currency")}
+              </span>
+              <input
+                type="number"
+                name="initialPrice"
+                value={formData.initialPrice}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
+                required
+                min={1}
+                step="0.01"
+              />
+            </div>
           </div>
 
           <div className="col-span-1">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               {t("addNewUpdateProduct.sellingPriceLabel")}
             </label>
-            <input
-              type="number"
-              name="sellingPrice"
-              value={formData.sellingPrice}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
-              required
-              min={1}
-              step="0.01"
-            />
+            <div className="relative">
+              <span
+                className={`absolute inset-y-0 ${
+                  isArabic ? "left-0" : "right-0"
+                }   p-3 flex items-center text-gray-500  `}
+              >
+                {t("Currency")}
+              </span>
+              <input
+                type="number"
+                name="sellingPrice"
+                value={formData.sellingPrice}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
+                required
+                min={1}
+                step="0.01"
+              />
+            </div>
           </div>
 
           {/* Description */}
@@ -433,16 +551,18 @@ export default function AddNewUpdateProduct({
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(index)}
-                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-full text-xs"
+                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 
+                    rounded-full text-[calc(0.2em+1vw)] sm:text-xs"
                   >
                     X
                   </button>
                   <button
                     type="button"
                     onClick={() => handleSetPrimary(index)}
-                    className={`absolute bottom-2 left-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded-full text-xs ${
-                      image.isPrimary ? "bg-green-500" : ""
-                    }`}
+                    className={`absolute bottom-1 left-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 
+                      rounded-full text-[calc(0.25em+1vw)] sm:text-xs ${
+                        image.isPrimary ? "bg-green-500" : ""
+                      }`}
                   >
                     {image.isPrimary
                       ? t("addNewUpdateProduct.primaryLabel")
@@ -491,9 +611,21 @@ export default function AddNewUpdateProduct({
 
           {/* Category and Stock */}
           <div className="col-span-2 md:col-span-1 gap-y-2">
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                {t("addNewUpdateProduct.CurrentCategory")}
+              </label>
+              <input
+                type="text"
+                name="CurrentCategory"
+                value={category}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm sm:text-base"
+                readOnly
+              />
+            </div>
             <div className="w-full">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                {t("addNewUpdateProduct.categoryIDLabel")}
+                {t("addNewUpdateProduct.NewCategory")}
               </label>
               <CategorySelector
                 onCategorySelect={(categoryID) => {

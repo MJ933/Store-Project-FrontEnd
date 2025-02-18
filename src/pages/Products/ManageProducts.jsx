@@ -10,6 +10,7 @@ import ModernLoader from "../../components/ModernLoader";
 import API from "../../Classes/clsAPI";
 import { Link } from "react-router-dom";
 import { handleError } from "../../utils/handleError";
+import DetailedProductPage from "./DetailedProductPage";
 
 const ManageProducts = () => {
   const { t } = useTranslation();
@@ -71,7 +72,7 @@ const ManageProducts = () => {
   const fetchPaginatedProducts = useCallback(async () => {
     setLoading(true);
     setError(null);
-    scrollPositionRef.current = window.scrollY;
+    // scrollPositionRef.current = window.scrollY;
 
     try {
       const url = new URL(
@@ -152,18 +153,22 @@ const ManageProducts = () => {
     fetchPaginatedProducts();
   }, [fetchPaginatedProducts, appliedFilters]);
 
-  useEffect(() => {
-    if (!loading) {
-      window.scrollTo({
-        top: scrollPositionRef.current,
-        behavior: "auto",
-      });
-    }
-  }, [loading]);
+  // useEffect(() => {
+  //   if (!loading) {
+  //     window.scrollTo({
+  //       top: scrollPositionRef.current,
+  //       behavior: "auto",
+  //     });
+  //   }
+  // }, [loading]);
 
   const handleView = (view, product = null) => {
     setCurrentView(view);
     setSelectedProduct(product);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const handleSort = useCallback(
@@ -446,7 +451,7 @@ const ManageProducts = () => {
             </div>
           )}
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
-            <div className="px-4 py-2 flex justify-between items-center">
+            <div className="px-4 py-2 flex flex-col sm:flex-row justify-between items-center">
               <span className="text-sm text-gray-700">
                 {t("manageProducts.totalProductsText")}:
                 <span className="font-semibold">{totalCount}</span>
@@ -469,7 +474,11 @@ const ManageProducts = () => {
                   ]?.map((key) => (
                     <th
                       key={key}
-                      className="px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer"
+                      className={`px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer ${
+                        ["productID", "stockQuantity"].includes(key)
+                          ? "hidden md:table-cell"
+                          : ""
+                      }`}
                       onClick={() => handleSort(key)}
                     >
                       {t(`manageProducts.${key}Header`)}
@@ -501,16 +510,23 @@ const ManageProducts = () => {
                       key={item.product.productID}
                       className="hover:bg-gray-50"
                     >
-                      <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
+                      <td className="hidden md:table-cell px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
                         {item.product.productID}
                       </td>
-                      <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
+                      <td
+                        className={`px-2 py-2 md:px-4 md:py-3 text-sm ${
+                          item.product.stockQuantity > 0
+                            ? "text-gray-600"
+                            : "text-red-600"
+                        } `}
+                      >
                         {item.product.productName}
                       </td>
                       <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
-                        ${item.product.sellingPrice.toFixed(2)}
+                        {item.product.sellingPrice.toFixed(2)} {""}
+                        {t("Currency")}
                       </td>
-                      <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
+                      <td className="hidden md:table-cell px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
                         {item.product.stockQuantity}
                       </td>
                       <td className="px-2 py-2 md:px-4 md:py-3">
@@ -520,20 +536,28 @@ const ManageProducts = () => {
                               src={lastPrimaryImage.imageURL}
                               alt={item.product.productName}
                               className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.src = "/src/assets/NoImage.png"; // Replace with your placeholder image path
+                                e.target.alt = "Placeholder Image";
+                                e.target.onerror = null;
+                              }}
                             />
                           </div>
                         )}
                       </td>
                       <td className="px-2 py-2 md:px-4 md:py-3">
-                        <div className="flex items-center gap-2 md:gap-3">
-                          <Link
+                        <div className="flex flex-col gap-1 sm:gap-2  items-center  md:gap-3">
+                          {/* <Link
                             to={`/products/${item.product.productID}`}
                             title={t("manageProducts.viewTitle")}
+                          > */}
+                          <button
+                            onClick={() => handleView("read", item)}
+                            className="text-gray-600 hover:text-blue-600"
                           >
-                            <button className="text-gray-600 hover:text-blue-600">
-                              <FiEye className="w-4 mt-2 h-4 md:w-5 md:h-5" />
-                            </button>
-                          </Link>
+                            <FiEye className="w-4 mt-2 h-4 md:w-5 md:h-5" />
+                          </button>
+                          {/* </Link> */}
                           <button
                             onClick={() => handleView("update", item)}
                             className="text-gray-600 hover:text-green-600"
@@ -555,7 +579,7 @@ const ManageProducts = () => {
                 })}
               </tbody>
             </table>
-            <div className="px-4 py-2 flex justify-between items-center gap-2">
+            <div className="px-4 py-2 flex flex-col sm:flex-row justify-between items-center gap-2">
               <span className="text-sm text-gray-700">
                 {t("manageProducts.totalProductsText")}:
                 <span className="font-semibold">{totalCount}</span>
@@ -583,9 +607,16 @@ const ManageProducts = () => {
               refreshProducts={fetchPaginatedProducts}
             />
           )}
-          {currentView === "read" && (
+          {/* {currentView === "read" && (
             <ProductPage
               product={selectedProduct.product.productID}
+              isShow={true}
+              onClose={() => handleView(null)}
+            />
+          )} */}
+          {currentView === "read" && (
+            <DetailedProductPage
+              product={selectedProduct}
               isShow={true}
               onClose={() => handleView(null)}
             />

@@ -38,13 +38,47 @@ const ProductPage = () => {
   const modalSliderRef = useRef(null);
   const openWhatsApp = () => {
     if (!productData?.product) return;
+
     const whatsappNumber = socialMediaLinks.whatsapp;
-    const message = `Hello! I'm interested in the product: ${productData.product.productName} (Product ID: ${productData.product.productID}).`;
+
+    // Helper function to format currency
+    const formatCurrency = (amount) => {
+      return `${amount.toFixed(2)} ${t("Currency")}`;
+    };
+
+    const { product } = productData;
+
+    const messageParts = [
+      t("productPage.whatsappMessage.greeting", {
+        productName: product.productName,
+      }),
+      "",
+      t("productPage.whatsappMessage.detailsHeader"),
+      t("productPage.whatsappMessage.id", { productID: product.productID }),
+      t("productPage.whatsappMessage.price", {
+        price: formatCurrency(product.sellingPrice),
+      }),
+      t("productPage.whatsappMessage.stock", {
+        stock: product.stockQuantity,
+        available: t("productPage.available"),
+      }),
+      product.description
+        ? t("productPage.whatsappMessage.description", {
+            description: product.description,
+          })
+        : "",
+      "",
+      t("productPage.whatsappMessage.interested"),
+    ];
+
+    const message = messageParts.filter(Boolean).join("\n");
+
     const encodedMessage = encodeURIComponent(message);
     const whatsappLink = `${whatsappNumber}?text=${encodedMessage}`;
     console.log(whatsappLink);
     window.open(whatsappLink, "_blank");
   };
+
   useEffect(() => {
     const fetchProductDetails = async () => {
       setLoading(true);
@@ -85,6 +119,7 @@ const ProductPage = () => {
         setLoading(false);
       }
     };
+    window.scrollTo(0, 0);
     if (productID) {
       fetchProductDetails();
     } else {
@@ -173,10 +208,10 @@ const ProductPage = () => {
       {!productData || !productData.product ? (
         <Alert message={t("productPage.productNotFound")} type={"failure"} />
       ) : (
-        <div className="container mx-auto px-4 md:px-8 lg:px-12 py-12">
+        <div className="container  mx-auto px-2 md:px-8 lg:px-12 py-4">
           <button
             onClick={handleGoBack}
-            className="mb-8 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg shadow-sm inline-flex items-center transition-colors duration-200"
+            className=" mb-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg shadow-sm inline-flex items-center transition-colors duration-200"
           >
             <FaArrowLeft className="m-2" /> {t("productPage.backButton")}
           </button>
@@ -196,8 +231,7 @@ const ProductPage = () => {
                               } - Image ${index + 1}`}
                               className="w-full h-full object-cover rounded-lg"
                               onError={(e) => {
-                                e.target.src =
-                                  "https://dummyimage.com/500x500/cccccc/000000&text=No+Image";
+                                e.target.src = "/src/assets/NoImage.png";
                                 e.target.onerror = null;
                               }}
                             />
@@ -234,6 +268,11 @@ const ProductPage = () => {
                                   src={image.imageURL}
                                   alt={`Thumbnail ${index + 1}`}
                                   className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.target.src = "/src/assets/NoImage.png"; // Replace with your placeholder image path
+                                    e.target.alt = "Placeholder Image";
+                                    e.target.onerror = null;
+                                  }}
                                 />
                               </div>
                             </div>
@@ -245,40 +284,46 @@ const ProductPage = () => {
                 ) : (
                   <div className="relative aspect-square">
                     <img
-                      src="https://dummyimage.com/500x500/cccccc/000000&text=No+Image"
+                      src="/src/assets/NoImage.png"
                       alt="No Image Available"
                       className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.src = "src/assets/NoImage.png"; // Replace with your placeholder image path
+                        e.target.alt = "Placeholder Image";
+                        e.target.onerror = null;
+                      }}
                     />
                   </div>
                 )}
               </div>
               <div className="md:w-1/2 p-8">
-                <h1 className="text-gray-900 text-3xl font-semibold mb-4">
+                <h1 className="text-gray-900  text-[calc(1.3rem+1vw)] font-semibold mb-4">
                   {productData.product.productName}
                 </h1>
-                <div className="flex items-center mb-6">
-                  <span className="font-bold text-2xl text-indigo-600 m-3">
-                    ${productData.product.sellingPrice}
+                <div className="  mb-6">
+                  <span className="font-bold text-[calc(1.2rem+1vw)] text-indigo-600 my-3">
+                    {productData.product.sellingPrice} {t("Currency")}
                   </span>
-                  {productData.product.sellingPrice && (
-                    <span className="text-gray-500 line-through text-lg">
-                      ${(productData.product.sellingPrice * 1.05).toFixed(2)}
+                  {/* {productData.product.sellingPrice && (
+                    <span className="text-gray-500 line-through text-[calc(0.7rem+1vw)]">
+                      {(productData.product.sellingPrice * 1.05).toFixed(2)}
+                      {t("Currency")}
                     </span>
-                  )}
+                  )} */}
                 </div>
-                <div className="mb-6">
+                {/* <div className="mb-6">
                   <span
                     className={`inline-block bg-${
                       productData.product.isActive ? "green" : "red"
                     }-100 text-${
                       productData.product.isActive ? "green" : "red"
-                    }-800 py-1 px-3 rounded-full text-sm font-semibold`}
+                    }-800 py-1 px-3 rounded-full text-[calc(0.7rem+1vw)] font-semibold`}
                   >
                     {productData.product.isActive
                       ? t("productPage.inStock")
                       : t("productPage.outOfStock")}
                   </span>
-                </div>
+                </div> */}
                 <div className="mb-8">
                   <label
                     htmlFor="quantity"
@@ -298,7 +343,7 @@ const ProductPage = () => {
                     <input
                       type="number"
                       id="quantity"
-                      min="1"
+                      min="0"
                       max={productData.product.stockQuantity}
                       value={quantity}
                       onChange={(e) =>
@@ -381,8 +426,8 @@ const ProductPage = () => {
                     }`}
                     className="w-full h-auto rounded-lg"
                     onError={(e) => {
-                      e.target.src =
-                        "https://dummyimage.com/500x500/cccccc/000000&text=No+Image";
+                      e.target.src = "/src/assets/NoImage.png"; // Replace with your placeholder image path
+                      e.target.alt = "Placeholder Image";
                       e.target.onerror = null;
                     }}
                   />

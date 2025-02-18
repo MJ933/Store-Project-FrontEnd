@@ -120,7 +120,7 @@ const DeleteCategory = ({
             />
           </div>
 
-          <div className="flex justify-end gap-4 pt-6 border-t border-gray-100">
+          <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6 border-t border-gray-100">
             <button
               type="button"
               onClick={onClose}

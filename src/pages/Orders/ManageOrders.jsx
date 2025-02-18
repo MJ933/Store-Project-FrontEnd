@@ -91,7 +91,7 @@ const ManageOrders = () => {
   const fetchPaginatedOrders = useCallback(async () => {
     setLoading(true);
     setError(null);
-    scrollPositionRef.current = window.scrollY;
+    // scrollPositionRef.current = window.scrollY;
     try {
       const url = new URL(
         `${new API().baseURL()}/API/OrdersAPI/GetOrdersPaginatedWithFilters`
@@ -162,18 +162,22 @@ const ManageOrders = () => {
     fetchPaginatedOrders();
   }, [fetchPaginatedOrders, appliedFilters]);
 
-  useEffect(() => {
-    if (!loading) {
-      window.scrollTo({
-        top: scrollPositionRef.current,
-        behavior: "auto",
-      });
-    }
-  }, [loading]);
+  // useEffect(() => {
+  //   if (!loading) {
+  //     window.scrollTo({
+  //       top: scrollPositionRef.current,
+  //       behavior: "auto",
+  //     });
+  //   }
+  // }, [loading]);
 
   const handleView = (view, order = null) => {
     setCurrentView(view);
     setSelectedOrder(order);
+    window.scrollTo({
+      top: 0, // Scroll to the very top
+      behavior: "smooth", // Optional: Add smooth scrolling
+    });
   };
 
   const handleSort = useCallback(
@@ -506,8 +510,8 @@ const ManageOrders = () => {
             </div>
           )}
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
-            <div className="px-4 py-2 flex justify-between items-center">
-              <span className="text-sm text-gray-700">
+            <div className="px-4 py-2 flex justify-between items-center flex-col sm:flex-row">
+              <span className="text-sm text-gray-700 mb-2 sm:mb-0">
                 {t("manageOrders.totalOrdersText")}:
                 <span className="font-semibold">{totalCount}</span>
               </span>
@@ -532,7 +536,12 @@ const ManageOrders = () => {
                     <th
                       key={key}
                       className={`px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer ${
-                        ["shippingAddress", "notes"].includes(key)
+                        [
+                          "orderID",
+                          "customerID",
+                          "shippingAddress",
+                          "notes",
+                        ].includes(key)
                           ? "hidden md:table-cell"
                           : ""
                       }`}
@@ -554,25 +563,25 @@ const ManageOrders = () => {
               <tbody className="divide-y divide-gray-200">
                 {sortedOrders.map((order) => (
                   <tr key={order.orderID} className="hover:bg-gray-50">
-                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
+                    <td className="hidden md:table-cell px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
                       {order.orderID}
                     </td>
-                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
+                    <td className="hidden md:table-cell px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
                       {order.customerID}
                     </td>
-                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
-                      {new Date(order.orderDate).toLocaleDateString("en-US", {
+                    <td className=" text-[calc(0.6em+1vw)] sm:text-sm px-2 py-2 md:px-4 md:py-3 text-sm text-gray-900">
+                      {new Date(order.orderDate).toLocaleDateString("en-UK", {
                         year: "numeric",
-                        month: "short",
+                        month: "numeric",
                         day: "numeric",
                       })}
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm font-medium text-gray-900">
-                      ${order.total.toFixed(2)}
+                      {order.total.toFixed(2)} {t("Currency")}
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
                       <span
-                        className={`rounded-full text-xs font-medium inline-block ${
+                        className={`rounded-full text-[calc(0.5em+1vw)] sm:text-xs font-medium inline-block ${
                           statusStyles[order.orderStatus]?.base ||
                           "bg-gray-100 text-gray-800"
                         } ${getStatusPaddingClass(order.orderStatus)}`}
@@ -589,7 +598,7 @@ const ManageOrders = () => {
                       {order.notes}
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
-                      <div className="flex items-center gap-2 md:gap-3">
+                      <div className="flex flex-col gap-1 sm:gap-2 sm:flex-row items-center  md:gap-3">
                         <button
                           onClick={() => handleView("read", order)}
                           className="text-gray-600 hover:text-blue-600"
@@ -617,8 +626,8 @@ const ManageOrders = () => {
                 ))}
               </tbody>
             </table>
-            <div className="px-4 py-2 flex justify-between items-center gap-2">
-              <span className="text-sm text-gray-700">
+            <div className="px-4 py-2 flex justify-between items-center flex-col sm:flex-row">
+              <span className="text-sm text-gray-700 mb-2 sm:mb-0">
                 {t("manageOrders.totalOrdersText")}:
                 <span className="font-semibold">{totalCount}</span>
               </span>

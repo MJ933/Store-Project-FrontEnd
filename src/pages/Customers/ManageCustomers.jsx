@@ -74,7 +74,7 @@ const ManageCustomers = () => {
   const fetchPaginatedCustomers = useCallback(async () => {
     setLoading(true);
     setError(null);
-    scrollPositionRef.current = window.scrollY;
+    // scrollPositionRef.current = window.scrollY;
     try {
       const url = new URL(
         `${new API().baseURL()}/API/CustomersAPI/GetCustomersPaginatedWithFilters`
@@ -147,18 +147,22 @@ const ManageCustomers = () => {
     fetchPaginatedCustomers();
   }, [fetchPaginatedCustomers, appliedFilters]);
 
-  useEffect(() => {
-    if (!loading) {
-      window.scrollTo({
-        top: scrollPositionRef.current,
-        behavior: "auto",
-      });
-    }
-  }, [loading]);
+  // useEffect(() => {
+  //   if (!loading) {
+  //     window.scrollTo({
+  //       top: scrollPositionRef.current,
+  //       behavior: "auto",
+  //     });
+  //   }
+  // }, [loading]);
 
   const handleView = (view, customer = null) => {
     setCurrentView(view);
     setSelectedCustomer(customer);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const handleSort = useCallback(
@@ -434,7 +438,7 @@ const ManageCustomers = () => {
           )}
 
           <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
-            <div className="px-4 py-2 flex justify-between items-center">
+            <div className="px-4 py-2 flex flex-col sm:flex-row justify-between items-center">
               <span className="text-sm text-gray-700">
                 {t("manageCustomers.totalCustomersText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>
@@ -460,7 +464,9 @@ const ManageCustomers = () => {
                     <th
                       key={key}
                       className={`px-2 py-2 md:px-4 md:py-3 text-left text-sm font-medium text-gray-500 cursor-pointer ${
-                        ["email", "phone", "registeredAt"].includes(key)
+                        ["lastName", "email", "phone", "registeredAt"].includes(
+                          key
+                        )
                           ? "hidden md:table-cell"
                           : ""
                       }`}
@@ -482,13 +488,15 @@ const ManageCustomers = () => {
               <tbody className="divide-y divide-gray-200">
                 {sortedCustomers.map((customer) => (
                   <tr key={customer.customerID} className="hover:bg-gray-50">
-                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
+                    <td className="  px-2 py-2 md:px-4 md:py-3 text-sm text-gray-700">
                       {customer.customerID}
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
-                      {customer.firstName}
+                      {customer.firstName.length > 0
+                        ? customer.firstName.substring(0, 7) + "..."
+                        : customer.firstName}
                     </td>
-                    <td className="px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
+                    <td className="hidden sm:table-cell px-2 py-2 md:px-4 md:py-3 text-sm text-gray-600">
                       {customer.lastName}
                     </td>
                     <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-600">
@@ -502,8 +510,9 @@ const ManageCustomers = () => {
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          statusStyles[customer.isActive]
+                        className={`text-[calc(0.5rem+1vw)] px-2 py-1 rounded-full sm:text-xs font-medium whitespace-nowrap ${
+                          statusStyles[customer.isActive] ||
+                          "bg-gray-100 text-gray-800"
                         }`}
                       >
                         {customer.isActive
@@ -512,7 +521,7 @@ const ManageCustomers = () => {
                       </span>
                     </td>
                     <td className="px-2 py-2 md:px-4 md:py-3">
-                      <div className="flex items-center gap-1 md:gap-3">
+                      <div className="flex flex-col sm:flex-row items-center gap-1 md:gap-3">
                         <button
                           onClick={() => handleView("read", customer)}
                           className="text-gray-600 hover:text-blue-600"
@@ -547,7 +556,7 @@ const ManageCustomers = () => {
                 ))}
               </tbody>
             </table>
-            <div className="px-4 py-2 flex justify-between items-center gap-2">
+            <div className="px-4 py-2 flex flex-col sm:flex-row justify-between items-center gap-2">
               <span className="text-sm text-gray-700">
                 {t("manageCustomers.totalCustomersText")}:{" "}
                 <span className="font-semibold">{totalCount}</span>

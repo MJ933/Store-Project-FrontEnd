@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   FaFacebook,
   FaTwitter,
@@ -13,42 +14,40 @@ const Footer = () => {
   const { t } = useTranslation();
 
   return (
-    <footer className="bg-gray-900 text-gray-300 py-8 border-t border-gray-700">
+    <footer className="text-[calc(0.6rem+1vw)] sm:text-sm bg-gray-900 text-gray-300 sm:py-8 py-4 border-t border-gray-700">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 sm:gap-8 gap-4 sm:mb-8 mb-4">
           {/* Section 1: Help & Contact */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">
+            <h4 className="text-[calc(0.8rem+1vw)] sm:text-lg font-semibold text-white mb-4">
               {t("footer.helpContactTitle")}
             </h4>
             <ul className="gap-y-2">
               <li>
-                <a href="#" className="hover:text-gray-100">
+                <Link to="/faqs" className="hover:text-gray-100">
                   {t("footer.faqsLink")}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-gray-100">
+                <Link to="/contact-us" className="hover:text-gray-100">
                   {t("footer.contactUsLink")}
-                </a>
+                </Link>
               </li>
-              <li>
-                <a href="#" className="hover:text-gray-100">
+              {/* <li>
+                <Link to="/track-order" className="hover:text-gray-100">
                   {t("footer.trackOrderLink")}
-                </a>
-              </li>
+                </Link>
+              </li> */}
             </ul>
           </div>
 
           {/* Section 2: Stay Connected */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">
+            <h4 className="text-[calc(0.8rem+1vw)] sm:text-lg font-semibold text-white sm:mb-4 mb-2">
               {t("footer.stayConnectedTitle")}
             </h4>
             <p className="mb-4">{t("footer.stayConnectedDescription")}</p>
-            <div className="flex gap-4 mt-2 footer-icons-container">
-              {" "}
-              {/* ADD CLASS HERE */}
+            <div className="flex gap-2 sm:gap-4 mt-2 footer-icons-container">
               <a
                 href={socialMediaLinks.facebook}
                 className="hover:text-white facebook-icon"
@@ -94,22 +93,22 @@ const Footer = () => {
         </div>
 
         {/* Bottom Footer */}
-        <div className="border-t border-gray-700 pt-6">
+        <div className="border-t border-gray-700 sm:pt-6 pt-4">
           <div className="md:flex md:justify-between items-center text-center md:text-left">
-            <p className="text-sm">
+            <p className="text-[calc(0.6rem+1vw)] sm:text-sm">
               {t("footer.copyright", { year: new Date().getFullYear() })}
             </p>
             <div className="mt-2 md:mt-0">
-              <ul className="flex gap-4 justify-center md:justify-start">
+              <ul className="text-[calc(0.6rem+1vw)] sm:text-sm flex gap-2 sm:gap-4 justify-center md:justify-start">
                 <li>
-                  <a href="#" className="text-sm mx-4 hover:text-gray-100">
+                  <Link to="/privacy" className="mx-4 hover:text-gray-100">
                     {t("footer.privacyLink")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-sm hover:text-gray-100">
+                  <Link to="/terms" className="hover:text-gray-100">
                     {t("footer.termsLink")}
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>

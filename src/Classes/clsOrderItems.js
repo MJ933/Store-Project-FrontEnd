@@ -107,7 +107,7 @@ export default class clsOrderItems {
         throw error;
       }
       const data = await response.json();
-      console.log("this is the order items data : ", data);
+      // console.log("this is the order items data : ", data);
       return data;
     } catch (error) {
       console.error("Error fetching order items by OrderID:", error);
