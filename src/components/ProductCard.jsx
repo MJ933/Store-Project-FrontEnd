@@ -30,7 +30,7 @@ const ProductCard = ({ product, image }) => {
   };
 
   const handleImageError = (e) => {
-    e.target.src = "src/assets/NoImage.png";
+    e.target.src = "/NoImage.png";
     e.target.onerror = null;
   };
 
@@ -46,7 +46,7 @@ const ProductCard = ({ product, image }) => {
             alt={product.productName}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             onError={(e) => {
-              e.target.src = "/src/assets/NoImage.png"; // Replace with your placeholder image path
+              e.target.src = "/NoImage.png"; // Replace with your placeholder image path
               e.target.alt = "Placeholder Image";
               e.target.onerror = null;
             }}
@@ -59,7 +59,7 @@ const ProductCard = ({ product, image }) => {
         )}
         <div className="absolute  top-2 right-2">
           <span
-            className={`text-[calc(0.5rem+1vw)]    px-3 py-1 rounded-full ${
+            className={`text-[calc(0.5rem+1vw)] sm:text-sm   px-3 py-1 rounded-full ${
               product.isActive
                 ? "bg-green-500/20 text-green-700"
                 : "bg-red-500/20 text-red-700"

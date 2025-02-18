@@ -231,7 +231,7 @@ const ProductPage = () => {
                               } - Image ${index + 1}`}
                               className="w-full h-full object-cover rounded-lg"
                               onError={(e) => {
-                                e.target.src = "/src/assets/NoImage.png";
+                                e.target.src = "/NoImage.png";
                                 e.target.onerror = null;
                               }}
                             />
@@ -269,7 +269,7 @@ const ProductPage = () => {
                                   alt={`Thumbnail ${index + 1}`}
                                   className="w-full h-full object-cover"
                                   onError={(e) => {
-                                    e.target.src = "/src/assets/NoImage.png"; // Replace with your placeholder image path
+                                    e.target.src = "/NoImage.png"; // Replace with your placeholder image path
                                     e.target.alt = "Placeholder Image";
                                     e.target.onerror = null;
                                   }}
@@ -284,11 +284,11 @@ const ProductPage = () => {
                 ) : (
                   <div className="relative aspect-square">
                     <img
-                      src="/src/assets/NoImage.png"
+                      src="/NoImage.png"
                       alt="No Image Available"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
-                        e.target.src = "src/assets/NoImage.png"; // Replace with your placeholder image path
+                        e.target.src = "/NoImage.png"; // Replace with your placeholder image path
                         e.target.alt = "Placeholder Image";
                         e.target.onerror = null;
                       }}
@@ -426,7 +426,7 @@ const ProductPage = () => {
                     }`}
                     className="w-full h-auto rounded-lg"
                     onError={(e) => {
-                      e.target.src = "/src/assets/NoImage.png"; // Replace with your placeholder image path
+                      e.target.src = "/NoImage.png"; // Replace with your placeholder image path
                       e.target.alt = "Placeholder Image";
                       e.target.onerror = null;
                     }}

@@ -537,7 +537,7 @@ const ManageProducts = () => {
                               alt={item.product.productName}
                               className="w-full h-full object-cover"
                               onError={(e) => {
-                                e.target.src = "/src/assets/NoImage.png"; // Replace with your placeholder image path
+                                e.target.src = "/NoImage.png"; // Replace with your placeholder image path
                                 e.target.alt = "Placeholder Image";
                                 e.target.onerror = null;
                               }}
